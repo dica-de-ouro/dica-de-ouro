@@ -523,8 +523,15 @@
       <input id="cad-telefone" type="text" placeholder="(31) 9 9999-9999">
     </div>
     <div class="campo-grupo">
-      <label>Link de uma foto do estabelecimento (opcional)</label>
-      <input id="cad-foto" type="url" placeholder="https://...">
+      <label>Foto do estabelecimento (opcional)</label>
+      <div id="cad-foto-preview" style="width:100%;height:140px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff20;margin-bottom:8px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;">
+        <span style="opacity:0.3;font-size:0.8rem;" id="cad-foto-label">Nenhuma foto selecionada</span>
+      </div>
+      <input type="file" id="cad-foto-input" accept="image/*" style="display:none" onchange="previewFotoCad(this)">
+      <button type="button" onclick="document.getElementById('cad-foto-input').click()" style="width:100%;padding:11px;background:#ffffff08;border:1px dashed #ffffff25;border-radius:12px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.82rem;cursor:pointer;">
+        📷 Escolher foto do celular
+      </button>
+      <input type="hidden" id="cad-foto" value="">
     </div>
 
     <button class="btn-login" onclick="fazerCadastro()">Criar conta e entrar</button>
@@ -592,8 +599,15 @@
         <input id="painel-telefone" type="text" placeholder="(31) 9 9999-9999">
       </div>
       <div class="campo-editar">
-        <label>Link de foto do estabelecimento</label>
-        <input id="painel-foto" type="url" placeholder="https://...">
+        <label>Foto do estabelecimento</label>
+        <div id="painel-foto-preview" style="width:100%;height:160px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff15;margin-bottom:10px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+          <span style="opacity:0.3;font-size:0.82rem;" id="painel-foto-label">Nenhuma foto ainda</span>
+        </div>
+        <input type="file" id="painel-foto-input" accept="image/*" style="display:none" onchange="previewFoto(this)">
+        <button type="button" onclick="document.getElementById('painel-foto-input').click()" style="width:100%;padding:11px;background:#ffffff08;border:1px dashed #ffffff25;border-radius:12px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.82rem;cursor:pointer;margin-bottom:4px;">
+          📷 Escolher foto do celular
+        </button>
+        <input type="hidden" id="painel-foto" value="">
       </div>
       <button class="btn-salvar" onclick="salvarLoja()">Salvar e renovar prazo</button>
       <div class="salvo-msg" id="salvo-msg"></div>
@@ -651,6 +665,57 @@
     if (c.includes('museu')||c.includes('patrimônio')||c.includes('patrimonio'))
       return `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${s}" stroke-width="1.5"><path d="M12 2 L4 7v6c0 5 4 8 8 9 4-1 8-4 8-9V7z"/></svg>`;
     return `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${s}" stroke-width="1.5"><path d="M6 2h12l1 7H5zm0 7v11h12V9"/></svg>`;
+  }
+
+  function previewFoto(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const preview = document.getElementById('painel-foto-preview');
+      const label = document.getElementById('painel-foto-label');
+      if (preview) {
+        preview.style.backgroundImage = `url('${e.target.result}')`;
+        if (label) label.style.display = 'none';
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function previewFotoCad(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const preview = document.getElementById('cad-foto-preview');
+      const label = document.getElementById('cad-foto-label');
+      if (preview) {
+        preview.style.backgroundImage = `url('${e.target.result}')`;
+        if (label) label.style.display = 'none';
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function uploadFoto(file, uid) {
+    if (!file) return null;
+    const ext = file.name.split('.').pop();
+    const path = `${uid}/${Date.now()}.${ext}`;
+    const r = await fetch(
+      `${SUPA_URL}/storage/v1/object/fotos-lojas/${path}`,
+      {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': file.type,
+          'x-upsert': 'true'
+        },
+        body: file
+      }
+    );
+    if (!r.ok) return null;
+    return `${SUPA_URL}/storage/v1/object/public/fotos-lojas/${path}`;
   }
 
   function abrirMaps() {
@@ -924,7 +989,16 @@
       }
 
       erroEl.style.color = 'var(--gold-bright)';
-      erroEl.textContent = 'Conta criada! Cadastrando sua loja…';
+      erroEl.textContent = 'Conta criada! Enviando foto…';
+
+      // Upload da foto se houver
+      let fotoUrl = null;
+      const fotoInputCad = document.getElementById('cad-foto-input');
+      if (fotoInputCad && fotoInputCad.files && fotoInputCad.files[0]) {
+        fotoUrl = await uploadFoto(fotoInputCad.files[0], uid);
+      }
+
+      erroEl.textContent = 'Cadastrando sua loja…';
 
       // Passo 2: cria a loja no banco
       const rLoja = await fetch(`${SUPA_URL}/rest/v1/lojas`, {
@@ -940,7 +1014,7 @@
           'CATEGORIA': categoria,
           'ENDEREÇO': endereco,
           'TELEFONE': telefone || null,
-          'FOTO': document.getElementById('cad-foto')?.value.trim() || null,
+          'FOTO': fotoUrl,
           'lojista_id': uid
         })
       });
@@ -1032,7 +1106,14 @@
     document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || '—';
     document.getElementById('painel-descricao').value = loja['DESCRIÇÃO'] || loja.descricao || '';
     document.getElementById('painel-telefone').value = loja['TELEFONE'] || loja.telefone || '';
-    document.getElementById('painel-foto').value = loja['FOTO'] || loja.foto || '';
+    const fotoExistente = loja['FOTO'] || loja.foto || '';
+    document.getElementById('painel-foto').value = fotoExistente;
+    const preview = document.getElementById('painel-foto-preview');
+    const label = document.getElementById('painel-foto-label');
+    if (fotoExistente && preview) {
+      preview.style.backgroundImage = `url('${fotoExistente}')`;
+      if (label) label.style.display = 'none';
+    }
 
     // Calcula validade (72h após atualizado_em)
     const atualizado = loja.atualizado_em ? new Date(loja.atualizado_em) : null;
@@ -1063,13 +1144,25 @@
 
   async function salvarLoja() {
     const token = localStorage.getItem('dica_token');
+    const uid = localStorage.getItem('dica_uid');
     const lojaId = localStorage.getItem('dica_loja_id');
     const msgEl = document.getElementById('salvo-msg');
     msgEl.textContent = '';
+    msgEl.style.color = 'var(--gold-bright)';
+    msgEl.textContent = 'Salvando…';
 
     const descricao = document.getElementById('painel-descricao').value;
     const telefone = document.getElementById('painel-telefone').value;
     const agora = new Date().toISOString();
+
+    // Upload da foto se houver arquivo selecionado
+    let fotoUrl = document.getElementById('painel-foto').value || null;
+    const fotoInput = document.getElementById('painel-foto-input');
+    if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+      msgEl.textContent = 'Enviando foto…';
+      const url = await uploadFoto(fotoInput.files[0], uid || lojaId);
+      if (url) fotoUrl = url;
+    }
 
     try {
       const r = await fetch(`${SUPA_URL}/rest/v1/lojas?id=eq.${lojaId}`, {
