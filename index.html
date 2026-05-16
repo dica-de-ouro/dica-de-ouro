@@ -306,6 +306,14 @@
   .btn-salvar { width:100%; padding:15px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:13px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.88rem; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; margin-top:8px; transition:all 0.2s; }
   .btn-salvar:active { transform:scale(0.98); }
   .btn-sair { width:100%; padding:13px; background:transparent; color:var(--cal); border:1px solid #ffffff20; border-radius:13px; font-family:'Inter',sans-serif; font-size:0.82rem; cursor:pointer; margin-top:10px; opacity:0.55; }
+  .loja-selector { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+  .loja-btn { background:#ffffff06; border:1px solid #ffffff15; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.2s; }
+  .loja-btn.ativa { background:#d4a04a20; border-color:var(--gold-bright); }
+  .loja-btn .loja-thumb-mini { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#8a6428,#d4a04a); flex-shrink:0; background-size:cover; background-position:center; }
+  .loja-btn .loja-info-mini { flex:1; min-width:0; }
+  .loja-btn .loja-info-mini .nome { font-size:0.9rem; font-weight:500; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .loja-btn .loja-info-mini .cat { font-size:0.68rem; opacity:0.5; letter-spacing:0.05em; }
+  .btn-nova-loja { width:100%; padding:12px; background:transparent; color:var(--gold-bright); border:1px dashed var(--gold-bright); border-radius:13px; font-family:'Inter',sans-serif; font-size:0.82rem; cursor:pointer; margin-bottom:20px; opacity:0.8; }
   .salvo-msg { text-align:center; color:#9dd49d; font-size:0.8rem; margin-top:10px; min-height:20px; }
 </style>
 </head>
@@ -358,26 +366,31 @@
       <div class="cat" onclick="filtrarLojas('Serviços',this)">🔧 Serviços</div>
       <div class="cat" onclick="filtrarLojas('Saúde',this)">🏥 Saúde</div>
     </div>
-    <div class="destaque" id="card-destaque" onclick="abrirDestaque()">
-      <div class="destaque-img" id="destaque-img"><div class="destaque-badge">Dica do dia</div></div>
-      <div class="destaque-corpo">
-        <h3 id="destaque-nome">Carregando…</h3>
-        <p id="destaque-desc" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;opacity:0.68;margin-bottom:12px;line-height:1.4;"></p>
-        <div class="destaque-meta">
-          <div class="rating" id="destaque-rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> —</div>
-          <div class="fresco" id="destaque-fresco"><span class="dot verde"></span> —</div>
+
+    <!-- Seção principal — reordenável -->
+    <div id="secao-destaque">
+      <div class="destaque" id="card-destaque" onclick="abrirDestaque()">
+        <div class="destaque-img" id="destaque-img"><div class="destaque-badge">Dica do dia</div></div>
+        <div class="destaque-corpo">
+          <h3 id="destaque-nome">Carregando…</h3>
+          <p id="destaque-desc" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;opacity:0.68;margin-bottom:12px;line-height:1.4;"></p>
+          <div class="destaque-meta">
+            <div class="rating" id="destaque-rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> —</div>
+            <div class="fresco" id="destaque-fresco"><span class="dot verde"></span> —</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-eventos">
+        <div class="ev-label">Próximos eventos</div>
+        <h3>Agenda de <em>Ouro Preto</em></h3>
+        <p>Cadastrados pela equipe do Dica de Ouro.</p>
+        <div class="ev-lista" id="card-ev-lista">
+          <div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Carregando…</div>
         </div>
       </div>
     </div>
-    <div class="card-eventos">
-      <div class="ev-label">Próximos eventos</div>
-      <h3>Agenda de <em>Ouro Preto</em></h3>
-      <p>Cadastrados pela equipe do Dica de Ouro.</p>
-      <div class="ev-lista" id="card-ev-lista">
-        <div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Carregando…</div>
-      </div>
-    </div>
-    <div class="sec-topo"><h2>Atualizados <em>hoje</em></h2><a href="#">Ver tudo</a></div>
+
+    <div class="sec-topo" id="sec-lista-titulo"><h2>Atualizados <em>hoje</em></h2><a href="#">Ver tudo</a></div>
     <div class="lugares" id="lista-lojas"><div class="carregando">Carregando lojas…</div></div>
   </div>
 </div>
@@ -647,6 +660,15 @@
       <div class="validade-msg">Após o prazo, sua loja some das buscas. Manter fresco é manter visível.</div>
     </div>
 
+    <!-- Seletor de lojas -->
+    <div id="painel-loja-selector" style="display:none;">
+      <div class="painel-sec">
+        <h3>Suas lojas</h3>
+        <div class="loja-selector" id="lista-lojas-painel"></div>
+        <button class="btn-nova-loja" onclick="irPara('tela-cadastro')">+ Cadastrar nova loja</button>
+      </div>
+    </div>
+
     <div class="painel-sec">
       <h3>Informações da loja</h3>
       <div class="campo-editar">
@@ -850,19 +872,36 @@
 
   // Filtro de lojas na home
   let _todasLojas = [];
+  function moverDestaque(paraFim) {
+    const corpo = document.querySelector('.home-corpo');
+    const secDestaque = document.getElementById('secao-destaque');
+    const secTitulo = document.getElementById('sec-lista-titulo');
+    const lista = document.getElementById('lista-lojas');
+    if (paraFim) {
+      // Move destaque e eventos para depois da lista
+      corpo.appendChild(secDestaque);
+    } else {
+      // Volta destaque para o início (antes do título)
+      corpo.insertBefore(secDestaque, secTitulo);
+    }
+  }
+
   function filtrarLojas(cat, el) {
     document.querySelectorAll('#cats-home .cat').forEach(c => c.classList.remove('ativo'));
     el.classList.add('ativo');
     const container = document.getElementById('lista-lojas');
 
     if (cat === 'Visitar') {
+      moverDestaque(true);
       carregarEventos();
       return;
     }
     if (cat === 'Tudo') {
+      moverDestaque(false);
       renderLojas(_todasLojas);
       return;
     }
+    moverDestaque(true);
     const filtradas = _todasLojas.filter(l => {
       const c = (l['CATEGORIA'] || l.categoria || '').toLowerCase();
       return c.includes(cat.toLowerCase());
@@ -1588,29 +1627,67 @@
   }
 
   async function abrirPainel(uid, email, token) {
-    // Busca a loja do lojista
-    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*`, {
+    // Busca todas as lojas do lojista
+    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, {
       headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${token}` }
     });
     const lojas = await r.json();
 
     if (!lojas.length || lojas.error) {
-      // Sessão inválida — limpa e manda para login
       localStorage.clear();
       irPara('tela-login');
       return;
     }
 
-    const loja = lojas[0];
     const nomeExibido = email.split('@')[0];
-
-    // Preenche o painel
     document.getElementById('painel-nome-lojista').textContent = nomeExibido;
+
+    // Se tem mais de uma loja, mostra o seletor
+    const selectorDiv = document.getElementById('painel-loja-selector');
+    if (lojas.length > 1) {
+      selectorDiv.style.display = 'block';
+      const listaEl = document.getElementById('lista-lojas-painel');
+      listaEl.innerHTML = lojas.map((l, i) => {
+        const nome = l['NOME'] || l.nome || '—';
+        const cat = l['CATEGORIA'] || l.categoria || '';
+        const foto = l['FOTO'] || l.foto || '';
+        const thumbStyle = foto ? `style="background-image:url('${foto}');"` : '';
+        return `<div class="loja-btn ${i===0?'ativa':''}" onclick="trocarLoja(${l.id}, this)">
+          <div class="loja-thumb-mini" ${thumbStyle}></div>
+          <div class="loja-info-mini">
+            <div class="nome">${nome}</div>
+            <div class="cat">${cat}</div>
+          </div>
+        </div>`;
+      }).join('');
+    } else {
+      selectorDiv.style.display = 'none';
+    }
+
+    // Guarda todas as lojas em memória
+    window._lojasDoLojista = lojas;
+
+    // Preenche com a primeira loja
+    preencherFormularioLoja(lojas[0]);
+    irPara('tela-painel');
+  }
+
+  function trocarLoja(lojaId, btn) {
+    // Atualiza visual dos botões
+    document.querySelectorAll('.loja-btn').forEach(b => b.classList.remove('ativa'));
+    btn.classList.add('ativa');
+    // Preenche o formulário com os dados da loja selecionada
+    const loja = (window._lojasDoLojista || []).find(l => l.id === lojaId);
+    if (!loja) return;
+    preencherFormularioLoja(loja);
+  }
+
+  function preencherFormularioLoja(loja) {
+    localStorage.setItem('dica_loja_id', loja.id);
     document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || '—';
     document.getElementById('painel-nome').value = loja['NOME'] || loja.nome || '';
     const catAtual = loja['CATEGORIA'] || loja.categoria || '';
     document.getElementById('painel-categoria').value = catAtual;
-    // Marca a categoria no seletor visual
     document.querySelectorAll('#painel-cat-selector .cat-option').forEach(o => {
       if (catAtual.includes(o.dataset.cat)) o.classList.add('selecionado');
       else o.classList.remove('selecionado');
@@ -1625,21 +1702,22 @@
     if (fotoExistente && preview) {
       preview.style.backgroundImage = `url('${fotoExistente}')`;
       if (label) label.style.display = 'none';
+    } else if (preview) {
+      preview.style.backgroundImage = '';
+      if (label) label.style.display = 'block';
     }
-
-    // Calcula validade (72h após atualizado_em)
-    const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em ? new Date(loja['ATUALIZADO_EM'] || loja.atualizado_em) : null;
+    // Validade
+    const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em
+      ? new Date(loja['ATUALIZADO_EM'] || loja.atualizado_em) : null;
     const expira = atualizado ? new Date(atualizado.getTime() + 72 * 3600000) : null;
     const agora = new Date();
-
     if (expira) {
       const diffMs = expira - agora;
       if (diffMs > 0) {
         const h = Math.floor(diffMs / 3600000);
         const m = Math.floor((diffMs % 3600000) / 60000);
         document.getElementById('painel-expira').textContent = `${h}h ${m}min`;
-        const pct = Math.min(100, (diffMs / (72 * 3600000)) * 100);
-        document.getElementById('painel-barra-val').style.width = pct + '%';
+        document.getElementById('painel-barra-val').style.width = Math.min(100, (diffMs/(72*3600000))*100) + '%';
       } else {
         document.getElementById('painel-expira').textContent = 'Expirado';
         document.getElementById('painel-barra-val').style.width = '0%';
@@ -1648,10 +1726,6 @@
       document.getElementById('painel-expira').textContent = 'Nunca atualizado';
       document.getElementById('painel-barra-val').style.width = '0%';
     }
-
-    // Guarda id da loja para salvar depois
-    localStorage.setItem('dica_loja_id', loja.id);
-    irPara('tela-painel');
   }
 
   async function salvarLoja() {
