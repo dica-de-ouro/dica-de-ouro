@@ -370,13 +370,11 @@
       </div>
     </div>
     <div class="card-eventos">
-      <div class="ev-label">Da prefeitura, ao vivo</div>
-      <h3>Esta semana em <em>Vila Rica</em></h3>
-      <p>Puxado direto dos sites oficiais.</p>
-      <div class="ev-lista">
-        <div class="ev-row"><div class="ev-data"><div class="d">18</div><div class="m">Mai</div></div><div class="ev-texto"><div class="nome">Festival de Inverno · Abertura</div><div class="src">ufop.br</div></div></div>
-        <div class="ev-row"><div class="ev-data"><div class="d">21</div><div class="m">Mai</div></div><div class="ev-texto"><div class="nome">Procissão de Aleijadinho</div><div class="src">ouropreto.mg.gov.br</div></div></div>
-        <div class="ev-row"><div class="ev-data"><div class="d">24</div><div class="m">Mai</div></div><div class="ev-texto"><div class="nome">Feira de antiguidades · Largo</div><div class="src">iphan.gov.br</div></div></div>
+      <div class="ev-label">Próximos eventos</div>
+      <h3>Agenda de <em>Ouro Preto</em></h3>
+      <p>Cadastrados pela equipe do Dica de Ouro.</p>
+      <div class="ev-lista" id="card-ev-lista">
+        <div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Carregando…</div>
       </div>
     </div>
     <div class="sec-topo"><h2>Atualizados <em>hoje</em></h2><a href="#">Ver tudo</a></div>
@@ -1775,6 +1773,38 @@
     }
   }
 
+  async function carregarCardEventos() {
+    const lista = document.getElementById('card-ev-lista');
+    if (!lista) return;
+    try {
+      const hoje = new Date().toISOString().split('T')[0];
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hoje}&order=data_evento.asc&select=id,nome,data_evento,fonte&limit=5`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const eventos = await r.json();
+      if (!eventos.length) {
+        lista.innerHTML = '<div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Nenhum evento cadastrado.</div>';
+        return;
+      }
+      lista.innerHTML = eventos.map(ev => {
+        const data = new Date(ev.data_evento + 'T12:00:00');
+        const dia = data.getDate();
+        const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
+        return `<div class="ev-row" style="cursor:pointer;" onclick="abrirEvento('${ev.id}')">
+          <div class="ev-data"><div class="d">${dia}</div><div class="m">${mes}</div></div>
+          <div class="ev-texto">
+            <div class="nome">${ev.nome}</div>
+            <div class="src">${ev.fonte || 'Dica de Ouro'}</div>
+          </div>
+          <div style="opacity:0.35;font-size:0.8rem;">›</div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      lista.innerHTML = '<div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Erro ao carregar.</div>';
+    }
+  }
+
   // INIT — limpa sessão corrompida se necessário
   (function() {
     const token = localStorage.getItem('dica_token');
@@ -1785,6 +1815,7 @@
     }
   })();
   carregarLojas();
+  carregarCardEventos();
 </script>
 </body>
 </html>
