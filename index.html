@@ -585,22 +585,41 @@
     </div>
 
     <div class="painel-sec">
-      <h3>Atualizar informações</h3>
+      <h3>Informações da loja</h3>
       <div class="campo-editar">
-        <label>Descrição / novidade de hoje</label>
-        <textarea id="painel-descricao" rows="3" placeholder="O que tem de especial hoje?"></textarea>
+        <label>Nome da loja</label>
+        <input id="painel-nome" type="text" placeholder="Nome do estabelecimento">
       </div>
       <div class="campo-editar">
-        <label>Horário de hoje</label>
-        <input id="painel-horario" type="text" placeholder="ex: 11h às 23h — fechado às 2ª">
+        <label>Categoria</label>
+        <input id="painel-categoria" type="text" placeholder="ex: Restaurante · Comida mineira">
+      </div>
+      <div class="campo-editar">
+        <label>Endereço</label>
+        <input id="painel-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro">
       </div>
       <div class="campo-editar">
         <label>Telefone / WhatsApp</label>
         <input id="painel-telefone" type="text" placeholder="(31) 9 9999-9999">
       </div>
+    </div>
+
+    <div class="painel-sec">
+      <h3>Novidade de hoje</h3>
       <div class="campo-editar">
-        <label>Foto do estabelecimento</label>
-        <div id="painel-foto-preview" style="width:100%;height:160px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff15;margin-bottom:10px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+        <label>Descrição / destaque do dia</label>
+        <textarea id="painel-descricao" rows="3" placeholder="O que tem de especial hoje?"></textarea>
+      </div>
+      <div class="campo-editar">
+        <label>Horário de funcionamento</label>
+        <input id="painel-horario" type="text" placeholder="ex: 11h às 23h — fechado às 2ª">
+      </div>
+    </div>
+
+    <div class="painel-sec">
+      <h3>Foto do estabelecimento</h3>
+      <div class="campo-editar">
+        <div id="painel-foto-preview" style="width:100%;height:180px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff15;margin-bottom:10px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;overflow:hidden;">
           <span style="opacity:0.3;font-size:0.82rem;" id="painel-foto-label">Nenhuma foto ainda</span>
         </div>
         <input type="file" id="painel-foto-input" accept="image/*" style="display:none" onchange="previewFoto(this)">
@@ -856,23 +875,51 @@
       });
       const lojas = await r.json();
       if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
+      // Busca médias de avaliações para todas as lojas
+      const ids = lojas.map(l => l.id).join(',');
+      let mediasMap = {};
+      try {
+        const rAval = await fetch(
+          `${SUPA_URL}/rest/v1/avaliacoes?select=loja_id,nota_geral&loja_id=in.(${ids})`,
+          { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+        );
+        const avals = await rAval.json();
+        // Agrupa por loja_id e calcula média
+        avals.forEach(a => {
+          if (!mediasMap[a.loja_id]) mediasMap[a.loja_id] = [];
+          mediasMap[a.loja_id].push(parseFloat(a.nota_geral || 0));
+        });
+      } catch(e) {}
+
       el.innerHTML = lojas.map((l,i) => {
         const tc = ['t1','t2','t3'][i%3];
         const nome = l['NOME'] || l.nome || '—';
         const cat = l['CATEGORIA'] || l.categoria || 'Local';
         const end = l['ENDEREÇO'] || l.endereco || '';
         const atualizado = l['ATUALIZADO_EM'] || l.atualizado_em || null;
+        const foto = l['FOTO'] || l.foto || '';
+        // Calcula média desta loja
+        const notas = mediasMap[l.id] || [];
+        const media = notas.length
+          ? (notas.reduce((s,n) => s+n, 0) / notas.length).toFixed(1)
+          : null;
+        const notaStr = media ? `★ ${media}` : '★ —';
         // Guarda loja em memória indexada pelo id
         window._lojas = window._lojas || {};
         window._lojas[l.id] = l;
+        // Thumb: foto ou ícone
+        const thumbStyle = foto
+          ? `style="background-image:url('${foto}');background-size:cover;background-position:center;"`
+          : '';
+        const thumbIcone = foto ? '' : svgIcone(cat, tc);
         return `<div class="lugar" onclick="abrirLojaPorId(${l.id},'${tc}')">
-          <div class="lugar-thumb ${tc}">${svgIcone(cat,tc)}</div>
+          <div class="lugar-thumb ${foto ? '' : tc}" ${thumbStyle}>${thumbIcone}</div>
           <div class="lugar-info">
             <div class="cat-tag">${cat}</div>
             <h4>${nome}</h4>
             <div class="onde">${end}</div>
             <div class="meta-row">
-              <span class="stars">★ —</span>
+              <span class="stars">${notaStr}</span>
               <div class="fresco"><span class="dot ${corDot(atualizado)}"></span> ${tempoAtras(atualizado)}</div>
             </div>
           </div>
@@ -1116,6 +1163,9 @@
     // Preenche o painel
     document.getElementById('painel-nome-lojista').textContent = nomeExibido;
     document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || '—';
+    document.getElementById('painel-nome').value = loja['NOME'] || loja.nome || '';
+    document.getElementById('painel-categoria').value = loja['CATEGORIA'] || loja.categoria || '';
+    document.getElementById('painel-endereco').value = loja['ENDEREÇO'] || loja.endereco || '';
     document.getElementById('painel-descricao').value = loja['DESCRIÇÃO'] || loja.descricao || '';
     document.getElementById('painel-telefone').value = loja['TELEFONE'] || loja.telefone || '';
     const fotoExistente = loja['FOTO'] || loja.foto || '';
@@ -1186,8 +1236,11 @@
           'Prefer': 'return=minimal'
         },
         body: JSON.stringify({
-          'DESCRIÇÃO': descricao,
-          'TELEFONE': telefone,
+          'NOME': document.getElementById('painel-nome').value.trim(),
+          'CATEGORIA': document.getElementById('painel-categoria').value.trim(),
+          'ENDEREÇO': document.getElementById('painel-endereco').value.trim(),
+          'DESCRIÇÃO': document.getElementById('painel-descricao').value.trim(),
+          'TELEFONE': document.getElementById('painel-telefone').value.trim(),
           'FOTO': fotoUrl,
           'ATUALIZADO_EM': agora
         })
