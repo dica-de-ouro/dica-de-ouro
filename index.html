@@ -1176,23 +1176,26 @@
         body: JSON.stringify({
           'DESCRIÇÃO': descricao,
           'TELEFONE': telefone,
-          'FOTO': document.getElementById('painel-foto')?.value.trim() || null,
+          'FOTO': fotoUrl,
           atualizado_em: agora
         })
       });
 
       if (r.ok) {
+        msgEl.style.color = '#9dd49d';
         msgEl.textContent = '✓ Salvo! Prazo renovado por 72 horas.';
         setTimeout(() => msgEl.textContent = '', 4000);
-        // Atualiza o contador
         const h = 72;
         document.getElementById('painel-expira').textContent = `${h}h 0min`;
         document.getElementById('painel-barra-val').style.width = '100%';
       } else {
-        msgEl.textContent = 'Erro ao salvar. Tente novamente.';
+        const erroJson = await r.json().catch(() => ({}));
+        msgEl.style.color = '#ff6b6b';
+        msgEl.textContent = 'Erro ' + r.status + ': ' + (erroJson.message || erroJson.hint || 'tente novamente');
       }
     } catch(e) {
-      msgEl.textContent = 'Erro de conexão.';
+      msgEl.style.color = '#ff6b6b';
+      msgEl.textContent = 'Erro de conexão: ' + e.message;
     }
   }
 
