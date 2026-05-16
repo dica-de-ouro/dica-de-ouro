@@ -223,6 +223,14 @@
   .ev-card h4 { font-family:'Fraunces',serif; font-weight:500; font-size:1.05rem; line-height:1.2; margin-bottom:5px; }
   .ev-card p { font-family:'Cormorant Garamond',serif; font-size:0.92rem; line-height:1.4; opacity:0.65; margin-bottom:10px; }
   .ev-card .local-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; opacity:0.6; padding-top:9px; border-top:1px solid var(--line); }
+  .lugar-card { background:var(--paper); border:1px solid var(--line); border-radius:17px; overflow:hidden; margin-bottom:13px; box-shadow:0 4px 12px -4px #1a141015; cursor:pointer; transition:all 0.2s; }
+  .lugar-card:active { transform:scale(0.98); }
+  .lugar-card-hero { height:120px; background:linear-gradient(135deg,#2c2218,#3d2e1f); background-size:cover; background-position:center; position:relative; }
+  .lugar-card-hero::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,#1a141080 100%); }
+  .lugar-card-cat { position:absolute; top:10px; left:12px; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-bright); font-weight:600; z-index:1; }
+  .lugar-card-body { padding:14px 16px; }
+  .lugar-card-body h4 { font-family:'Fraunces',serif; font-weight:500; font-size:1rem; line-height:1.2; margin-bottom:4px; }
+  .lugar-card-body .horario { font-size:0.72rem; opacity:0.6; display:flex; align-items:center; gap:5px; }
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
   .btn-fav.curtido { background:#ff4d6d; border-color:#ff4d6d; color:#fff; }
@@ -492,6 +500,30 @@
   </div>
 </div>
 
+<!-- TELA 4.4: DETALHE DO LUGAR -->
+<div id="tela-lugar" class="tela oculta">
+  <div class="evento-hero" id="lugar-hero">
+    <div class="evento-hero-foto" id="lugar-foto"></div>
+    <div class="detalhe-nav">
+      <button class="btn-redondo" onclick="voltarPara('tela-agenda')">←</button>
+    </div>
+    <div class="evento-fundo">
+      <div class="data-chip" id="lugar-cat-chip">🏛 —</div>
+      <h2 id="lugar-nome">—</h2>
+    </div>
+  </div>
+  <div class="evento-corpo">
+    <p class="evento-desc" id="lugar-desc"></p>
+    <div id="lugar-infos"></div>
+  </div>
+  <div class="cta-evento">
+    <button class="btn-mapa" onclick="abrirMapsLugar()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/><circle cx="12" cy="10" r="3"/></svg>
+    </button>
+    <button class="btn-site" id="btn-site-lugar" onclick="abrirSiteLugar()">Ver site oficial</button>
+  </div>
+</div>
+
 <!-- TELA 4.5: DETALHE DO EVENTO -->
 <div id="tela-evento" class="tela oculta">
   <div class="evento-hero" id="evento-hero">
@@ -520,37 +552,19 @@
 <!-- TELA 5: AGENDA -->
 <div id="tela-agenda" class="tela oculta">
   <div class="agenda-hero">
-    <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-bright);margin-top:calc(var(--safe-top) + 8px);">Agenda oficial</div>
-    <h2>Acontece em <em>Ouro Preto</em></h2>
-    <div class="sub">Lido direto das fontes oficiais.</div>
-    <div class="api-status"><span class="api-dot"></span><span>Sincronizado · <b>há 12 min</b> · 4 fontes</span></div>
+    <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-bright);margin-top:calc(var(--safe-top) + 8px);">Explorar Ouro Preto</div>
+    <h2>O que <em>visitar</em></h2>
+    <div class="sub">Igrejas, museus, minas, parques e eventos da semana.</div>
   </div>
-  <div class="filtros">
-    <div class="filtro ativo">Esta semana</div>
-    <div class="filtro">Festivais</div>
-    <div class="filtro">Religiosos</div>
-    <div class="filtro">Cultura</div>
-    <div class="filtro">Acadêmico</div>
+  <div class="filtros" id="filtros-agenda">
+    <div class="filtro ativo" onclick="filtrarAgenda('semana',this)">📅 Esta semana</div>
+    <div class="filtro" onclick="filtrarAgenda('Igrejas',this)">⛪ Igrejas</div>
+    <div class="filtro" onclick="filtrarAgenda('Museus',this)">🏛 Museus</div>
+    <div class="filtro" onclick="filtrarAgenda('Minas',this)">⛏ Minas</div>
+    <div class="filtro" onclick="filtrarAgenda('Parques e Cachoeiras',this)">🌿 Parques</div>
   </div>
-  <div class="agenda-feed">
-    <div class="ev-card">
-      <div class="top-row"><div class="data-bloco"><div class="dia">18</div><div class="dinfo">SÁB · MAI<br>20:00</div></div><div class="fonte">ufop.br</div></div>
-      <h4>Festival de Inverno · Concerto de abertura</h4>
-      <p>Orquestra de Câmara da UFOP abre os 35 anos do festival com peças de Lobo de Mesquita.</p>
-      <div class="local-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/></svg> Teatro Municipal · Casa da Ópera</div>
-    </div>
-    <div class="ev-card">
-      <div class="top-row"><div class="data-bloco"><div class="dia">21</div><div class="dinfo">TER · MAI<br>06:30</div></div><div class="fonte">ouropreto.mg.gov.br</div></div>
-      <h4>Procissão dos Passos</h4>
-      <p>Cortejo histórico que percorre o circuito de igrejas barrocas do centro. Trânsito alterado das 06h às 11h.</p>
-      <div class="local-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/></svg> Largo de Antônio Dias → Pilar</div>
-    </div>
-    <div class="ev-card">
-      <div class="top-row"><div class="data-bloco"><div class="dia">24</div><div class="dinfo">SEX · MAI<br>09:00</div></div><div class="fonte">iphan.gov.br</div></div>
-      <h4>Feira de antiguidades do Largo</h4>
-      <p>Sessão mensal aberta com peças certificadas pelo IPHAN. Inclui mostra de oratórios e moedas coloniais.</p>
-      <div class="local-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/></svg> Largo do Coimbra</div>
-    </div>
+  <div class="agenda-feed" id="agenda-feed">
+    <div class="carregando">Carregando…</div>
   </div>
 </div>
 
@@ -1050,6 +1064,139 @@
     window.open(url, '_blank');
   }
 
+  // AGENDA
+  let _lugarAtual = null;
+
+  async function filtrarAgenda(cat, el) {
+    document.querySelectorAll('#filtros-agenda .filtro').forEach(f => f.classList.remove('ativo'));
+    el.classList.add('ativo');
+    const feed = document.getElementById('agenda-feed');
+    feed.innerHTML = '<div class="carregando">Carregando…</div>';
+
+    if (cat === 'semana') {
+      // Eventos da semana atual
+      const hoje = new Date();
+      const fimSemana = new Date(hoje);
+      fimSemana.setDate(hoje.getDate() + 7);
+      const inicioStr = hoje.toISOString().split('T')[0];
+      const fimStr = fimSemana.toISOString().split('T')[0];
+      try {
+        const r = await fetch(
+          `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${inicioStr}&data_evento=lte.${fimStr}&order=data_evento.asc&select=*`,
+          { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+        );
+        const eventos = await r.json();
+        window._eventos = window._eventos || {};
+        eventos.forEach(ev => window._eventos[ev.id] = ev);
+        if (!eventos.length) {
+          feed.innerHTML = '<div class="carregando">Nenhum evento esta semana.</div>';
+          return;
+        }
+        feed.innerHTML = eventos.map(ev => {
+          const data = new Date(ev.data_evento + 'T12:00:00');
+          const dia = data.getDate();
+          const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
+          const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
+          const fotoStyle = ev.foto ? `background-image:url('${ev.foto}');` : '';
+          return `<div class="lugar-card" onclick="abrirEventoCompleto('${ev.id}')">
+            <div class="lugar-card-hero" style="${fotoStyle}">
+              <div class="lugar-card-cat">📅 ${semana} ${dia}/${mes}</div>
+            </div>
+            <div class="lugar-card-body">
+              <h4>${ev.nome}</h4>
+              <div class="horario">⏰ ${ev.horario || '—'} &nbsp;·&nbsp; 📍 ${ev.local || '—'}</div>
+            </div>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        feed.innerHTML = '<div class="carregando">Erro ao carregar eventos.</div>';
+      }
+      return;
+    }
+
+    // Lugares por categoria
+    try {
+      const enc = encodeURIComponent(cat);
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/lugares?categoria=eq.${enc}&order=nome.asc&select=*`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const lugares = await r.json();
+      window._lugares = window._lugares || {};
+      lugares.forEach(l => window._lugares[l.id] = l);
+      if (!lugares.length) {
+        feed.innerHTML = '<div class="carregando">Nenhum local encontrado.</div>';
+        return;
+      }
+      const emojis = { 'Igrejas':'⛪','Museus':'🏛','Minas':'⛏','Parques e Cachoeiras':'🌿' };
+      feed.innerHTML = lugares.map(l => {
+        const emoji = emojis[l.categoria] || '📍';
+        const fotoStyle = l.foto ? `background-image:url('${l.foto}');` : '';
+        return `<div class="lugar-card" onclick="abrirLugar('${l.id}')">
+          <div class="lugar-card-hero" style="${fotoStyle}">
+            <div class="lugar-card-cat">${emoji} ${l.categoria}</div>
+          </div>
+          <div class="lugar-card-body">
+            <h4>${l.nome}</h4>
+            <div class="horario">🕐 ${(l.horario_funcionamento||'Confirmar horário').substring(0,60)}${(l.horario_funcionamento||'').length>60?'…':''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+    }
+  }
+
+  function abrirLugar(id) {
+    const l = (window._lugares || {})[id];
+    if (!l) return;
+    _lugarAtual = l;
+    const emojis = { 'Igrejas':'⛪','Museus':'🏛','Minas':'⛏','Parques e Cachoeiras':'🌿' };
+    const emoji = emojis[l.categoria] || '📍';
+
+    // Foto
+    const fotoEl = document.getElementById('lugar-foto');
+    if (l.foto) { fotoEl.style.backgroundImage = `url('${l.foto}')`; fotoEl.style.display = 'block'; }
+    else { fotoEl.style.backgroundImage = ''; fotoEl.style.display = 'none'; }
+
+    // Nome e categoria
+    const partes = l.nome.split(' ');
+    const ultima = partes.pop();
+    document.getElementById('lugar-nome').innerHTML = partes.length
+      ? partes.join(' ') + ' <em>' + ultima + '</em>' : l.nome;
+    document.getElementById('lugar-cat-chip').textContent = emoji + ' ' + l.categoria;
+
+    // Descrição
+    document.getElementById('lugar-desc').textContent = l.descricao || '';
+
+    // Infos
+    let infos = '';
+    if (l.horario_funcionamento) infos += `<div class="evento-info-row"><div class="ic">🕐</div><div class="cnt"><div class="lbl">Horário</div><div class="val">${l.horario_funcionamento}</div></div></div>`;
+    if (l.endereco) infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Endereço</div><div class="val">${l.endereco}</div></div></div>`;
+    if (l.site) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);word-break:break-all;">${l.site}</div></div></div>`;
+    document.getElementById('lugar-infos').innerHTML = infos;
+
+    // Botão site
+    const btnSite = document.getElementById('btn-site-lugar');
+    if (l.site) { btnSite.textContent = 'Ver site oficial'; btnSite.classList.remove('sem-link'); }
+    else { btnSite.textContent = 'Sem site cadastrado'; btnSite.classList.add('sem-link'); }
+
+    irPara('tela-lugar');
+  }
+
+  function abrirMapsLugar() {
+    if (!_lugarAtual || !_lugarAtual.endereco) return;
+    const q = encodeURIComponent(_lugarAtual.endereco + ' Ouro Preto MG');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank');
+  }
+
+  function abrirSiteLugar() {
+    if (!_lugarAtual || !_lugarAtual.site) return;
+    let url = _lugarAtual.site;
+    if (!url.startsWith('http')) url = 'https://' + url;
+    window.open(url, '_blank');
+  }
+
   // FAVORITOS — guardados no localStorage
   function getFavoritos() {
     try { return JSON.parse(localStorage.getItem('dica_favoritos') || '[]'); }
@@ -1445,6 +1592,11 @@
     irPara(telaId);
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
     document.getElementById(tabId).classList.add('ativo');
+    // Carrega agenda automaticamente ao entrar
+    if (telaId === 'tela-agenda') {
+      const filtroAtivo = document.querySelector('#filtros-agenda .filtro.ativo');
+      if (filtroAtivo) filtrarAgenda('semana', filtroAtivo);
+    }
   }
 
   // ESTRELAS
