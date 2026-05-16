@@ -589,61 +589,60 @@
   }
 
   function abrirLoja(loja, tc) {
-    // Preenche nome
-    const nomeEl = document.getElementById('det-nome');
-    const partes = loja.nome.split(' ');
-    const ultima = partes.pop();
-    nomeEl.innerHTML = partes.join(' ') + (partes.length ? ' <em>' + ultima + '</em>' : ultima);
+    // Normaliza campos (maiúsculo ou minúsculo)
+    const nome     = loja['NOME']      || loja.nome      || '—';
+    const cat      = loja['CATEGORIA'] || loja.categoria || 'Local';
+    const end      = loja['ENDEREÇO']  || loja.endereco  || 'Endereço não informado';
+    const desc     = loja['DESCRIÇÃO'] || loja.descricao || '';
+    const tel      = loja['TELEFONE']  || loja.telefone  || '';
+    const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em || null;
 
-    // Categoria, endereço, telefone, frescor
-    document.getElementById('det-categoria').textContent = loja.categoria || 'Local';
-    document.getElementById('det-endereco').textContent = loja.endereco || 'Endereço não informado';
+    // Preenche nome (última palavra em itálico)
+    const nomeEl = document.getElementById('det-nome');
+    const partes = nome.split(' ');
+    const ultima = partes.pop();
+    nomeEl.innerHTML = (partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : nome);
+
+    // Categoria e endereço
+    document.getElementById('det-categoria').textContent = cat;
+    document.getElementById('det-endereco').textContent = end;
     document.getElementById('det-avaliacoes').textContent = '';
 
     // Descrição
     const descBloco = document.getElementById('det-descricao-bloco');
     const descEl = document.getElementById('det-descricao');
-    if (loja.descricao) {
-      descEl.textContent = loja.descricao;
-      descBloco.style.display = 'block';
-    } else {
-      descBloco.style.display = 'none';
-    }
+    if (desc) { descEl.textContent = desc; descBloco.style.display = 'block'; }
+    else { descBloco.style.display = 'none'; }
 
     // Telefone
     const telLinha = document.getElementById('det-telefone-linha');
-    if (loja.telefone) {
-      document.getElementById('det-telefone').textContent = loja.telefone;
-      telLinha.style.display = 'flex';
-    } else {
-      telLinha.style.display = 'none';
-    }
+    if (tel) { document.getElementById('det-telefone').textContent = tel; telLinha.style.display = 'flex'; }
+    else { telLinha.style.display = 'none'; }
 
     // Frescor
     const frescorEl = document.getElementById('det-frescor');
     const barraEl = document.getElementById('det-barra');
-    if (loja.atualizado_em) {
-      const h = (new Date() - new Date(loja.atualizado_em)) / 3600000;
-      frescorEl.textContent = 'Atualizado ' + tempoAtras(loja.atualizado_em).toLowerCase();
-      // Barra: 100% = 0h, 0% = 72h
+    if (atualizado) {
+      const h = (new Date() - new Date(atualizado)) / 3600000;
+      frescorEl.textContent = 'Atualizado ' + tempoAtras(atualizado).toLowerCase();
       const pct = Math.max(0, Math.min(100, 100 - (h / 72 * 100)));
       barraEl.style.width = pct + '%';
       barraEl.style.background = h < 12
         ? 'linear-gradient(90deg,#6db96d,#b8893a)'
-        : h < 48
-          ? 'linear-gradient(90deg,#b8893a,#d4a04a)'
-          : 'linear-gradient(90deg,#8a3a1f,#c46b48)';
+        : h < 48 ? 'linear-gradient(90deg,#b8893a,#d4a04a)'
+        : 'linear-gradient(90deg,#8a3a1f,#c46b48)';
     } else {
-      frescorEl.textContent = 'Sem data de atualização';
-      barraEl.style.width = '0%';
+      frescorEl.textContent = 'Nunca atualizado';
+      barraEl.style.width = '2%';
+      barraEl.style.background = 'linear-gradient(90deg,#8a3a1f,#c46b48)';
     }
 
-    // Guarda dados da loja atual para a avaliação
+    // Guarda para avaliação
     localStorage.setItem('aval_loja_id', loja.id);
-    localStorage.setItem('aval_loja_nome', loja.nome || loja['NOME'] || '—');
-    // Preenche header da tela de avaliação
+    localStorage.setItem('aval_loja_nome', nome);
     const avalNome = document.getElementById('aval-nome-loja');
-    if (avalNome) avalNome.textContent = loja.nome || loja['NOME'] || '—';
+    if (avalNome) avalNome.textContent = nome;
+
     irPara('tela-detalhe');
   }
 
@@ -657,15 +656,19 @@
       if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
       el.innerHTML = lojas.map((l,i) => {
         const tc = ['t1','t2','t3'][i%3];
+        const nome = l['NOME'] || l.nome || '—';
+        const cat = l['CATEGORIA'] || l.categoria || 'Local';
+        const end = l['ENDEREÇO'] || l.endereco || '';
+        const atualizado = l['ATUALIZADO_EM'] || l.atualizado_em || null;
         return `<div class="lugar" onclick="abrirLoja(${JSON.stringify(l).replace(/'/g, "&#39;")},'${tc}')">
-          <div class="lugar-thumb ${tc}">${svgIcone(l.categoria,tc)}</div>
+          <div class="lugar-thumb ${tc}">${svgIcone(cat,tc)}</div>
           <div class="lugar-info">
-            <div class="cat-tag">${l.categoria||'Local'}</div>
-            <h4>${l.nome}</h4>
-            <div class="onde">${l.endereco||''}</div>
+            <div class="cat-tag">${cat}</div>
+            <h4>${nome}</h4>
+            <div class="onde">${end}</div>
             <div class="meta-row">
               <span class="stars">★ —</span>
-              <div class="fresco"><span class="dot ${corDot(l.atualizado_em)}"></span> ${tempoAtras(l.atualizado_em)}</div>
+              <div class="fresco"><span class="dot ${corDot(atualizado)}"></span> ${tempoAtras(atualizado)}</div>
             </div>
           </div>
         </div>`;
