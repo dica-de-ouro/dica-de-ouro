@@ -516,17 +516,30 @@
   let telaAtual = 'tela-splash';
 
   function irPara(id) {
-    document.getElementById(telaAtual).classList.add('saindo');
-    setTimeout(()=>{ const t=document.getElementById(telaAtual); t.classList.add('oculta'); t.classList.remove('saindo'); }, 300);
-    document.getElementById(id).classList.remove('oculta','saindo');
+    if (id === telaAtual) return;
+    const anterior = telaAtual;
     telaAtual = id;
+    // Mostra a nova tela imediatamente
+    const nova = document.getElementById(id);
+    nova.classList.remove('oculta', 'saindo');
+    // Esconde a anterior com animação
+    const ant = document.getElementById(anterior);
+    ant.classList.add('saindo');
+    setTimeout(() => {
+      ant.classList.add('oculta');
+      ant.classList.remove('saindo');
+    }, 320);
     document.getElementById('tabbar').style.display = TELAS_COM_TAB.includes(id) ? 'flex' : 'none';
   }
 
   function voltarPara(id) {
-    document.getElementById(telaAtual).classList.add('oculta');
-    document.getElementById(id).classList.remove('oculta','saindo');
+    if (id === telaAtual) return;
+    const anterior = telaAtual;
     telaAtual = id;
+    // Volta sem animação de slide
+    document.getElementById(anterior).classList.add('oculta');
+    document.getElementById(anterior).classList.remove('saindo');
+    document.getElementById(id).classList.remove('oculta', 'saindo');
     document.getElementById('tabbar').style.display = TELAS_COM_TAB.includes(id) ? 'flex' : 'none';
   }
 
