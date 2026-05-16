@@ -965,7 +965,12 @@
     const uid = localStorage.getItem('dica_uid');
     const email = localStorage.getItem('dica_email');
     if (token && uid) {
-      await abrirPainel(uid, email, token);
+      try {
+        await abrirPainel(uid, email, token);
+      } catch(e) {
+        localStorage.clear();
+        irPara('tela-login');
+      }
     } else {
       irPara('tela-login');
     }
@@ -978,8 +983,10 @@
     });
     const lojas = await r.json();
 
-    if (!lojas.length) {
-      alert('Nenhuma loja associada a esse email. Fale com o administrador.');
+    if (!lojas.length || lojas.error) {
+      // Sessão inválida — limpa e manda para login
+      localStorage.clear();
+      irPara('tela-login');
       return;
     }
 
@@ -1137,7 +1144,15 @@
     }
   }
 
-  // INIT
+  // INIT — limpa sessão corrompida se necessário
+  (function() {
+    const token = localStorage.getItem('dica_token');
+    const uid = localStorage.getItem('dica_uid');
+    // Se tem token mas não tem uid (ou vice-versa), limpa tudo
+    if ((token && !uid) || (!token && uid)) {
+      localStorage.clear();
+    }
+  })();
   carregarLojas();
 </script>
 </body>
