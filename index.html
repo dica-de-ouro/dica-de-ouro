@@ -275,6 +275,9 @@
   .campo-editar input, .campo-editar textarea { width:100%; padding:12px 14px; background:#ffffff06; border:1px solid #ffffff15; border-radius:12px; color:var(--cal); font-family:'Inter',sans-serif; font-size:0.88rem; outline:none; transition:border 0.2s; resize:none; }
   .campo-editar input:focus, .campo-editar textarea:focus { border-color:var(--gold-bright); }
   .campo-editar input::placeholder, .campo-editar textarea::placeholder { opacity:0.3; }
+  .cat-selector { display:flex; flex-wrap:wrap; gap:8px; }
+  .cat-option { padding:8px 14px; background:#ffffff06; border:1px solid #ffffff15; border-radius:999px; font-size:0.75rem; color:var(--cal); cursor:pointer; white-space:nowrap; transition:all 0.15s; opacity:0.6; }
+  .cat-option.selecionado { background:var(--gold-bright); color:var(--ink); border-color:var(--gold-bright); opacity:1; font-weight:600; }
   .btn-salvar { width:100%; padding:15px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:13px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.88rem; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; margin-top:8px; transition:all 0.2s; }
   .btn-salvar:active { transform:scale(0.98); }
   .btn-sair { width:100%; padding:13px; background:transparent; color:var(--cal); border:1px solid #ffffff20; border-radius:13px; font-family:'Inter',sans-serif; font-size:0.82rem; cursor:pointer; margin-top:10px; opacity:0.55; }
@@ -320,13 +323,15 @@
     </div>
   </div>
   <div class="home-corpo">
-    <div class="cats">
-      <div class="cat ativo">Tudo</div>
-      <div class="cat">Comer</div>
-      <div class="cat">Beber</div>
-      <div class="cat">Hospedar</div>
-      <div class="cat">Visitar</div>
-      <div class="cat">Comprar</div>
+    <div class="cats" id="cats-home">
+      <div class="cat ativo" onclick="filtrarLojas('Tudo',this)">Tudo</div>
+      <div class="cat" onclick="filtrarLojas('Comer',this)">🍽 Comer</div>
+      <div class="cat" onclick="filtrarLojas('Beber',this)">🍺 Beber</div>
+      <div class="cat" onclick="filtrarLojas('Hospedar',this)">🛏 Hospedar</div>
+      <div class="cat" onclick="filtrarLojas('Visitar',this)">🏛 Visitar</div>
+      <div class="cat" onclick="filtrarLojas('Comprar',this)">🛍 Comprar</div>
+      <div class="cat" onclick="filtrarLojas('Serviços',this)">🔧 Serviços</div>
+      <div class="cat" onclick="filtrarLojas('Saúde',this)">🏥 Saúde</div>
     </div>
     <div class="destaque" onclick="irPara('tela-detalhe')">
       <div class="destaque-img"><div class="destaque-badge">Dica do dia</div></div>
@@ -512,7 +517,17 @@
     </div>
     <div class="campo-grupo">
       <label>Categoria</label>
-      <input id="cad-categoria" type="text" placeholder="ex: Restaurante · Comida mineira">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;" id="cad-cat-selector">
+        <div onclick="selecionarCatCad(this)" data-cat="Comer" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🍽 Comer</div>
+        <div onclick="selecionarCatCad(this)" data-cat="Beber" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🍺 Beber</div>
+        <div onclick="selecionarCatCad(this)" data-cat="Hospedar" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🛏 Hospedar</div>
+        <div onclick="selecionarCatCad(this)" data-cat="Visitar" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🏛 Visitar</div>
+        <div onclick="selecionarCatCad(this)" data-cat="Comprar" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🛍 Comprar</div>
+        <div onclick="selecionarCatCad(this)" data-cat="Serviços" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🔧 Serviços</div>
+        <div onclick="selecionarCatCad(this)" data-cat="Saúde" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🏥 Saúde</div>
+      </div>
+      <input id="cad-categoria" type="hidden">
+      <input id="cad-subcategoria" type="text" placeholder="Detalhe opcional: ex. Cachaça artesanal" style="width:100%;padding:12px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:13px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.88rem;outline:none;">
     </div>
     <div class="campo-grupo">
       <label>Endereço</label>
@@ -592,7 +607,19 @@
       </div>
       <div class="campo-editar">
         <label>Categoria</label>
-        <input id="painel-categoria" type="text" placeholder="ex: Restaurante · Comida mineira">
+        <div class="cat-selector" id="painel-cat-selector">
+          <div class="cat-option" data-cat="Comer" onclick="selecionarCat(this)">🍽 Comer</div>
+          <div class="cat-option" data-cat="Beber" onclick="selecionarCat(this)">🍺 Beber</div>
+          <div class="cat-option" data-cat="Hospedar" onclick="selecionarCat(this)">🛏 Hospedar</div>
+          <div class="cat-option" data-cat="Visitar" onclick="selecionarCat(this)">🏛 Visitar</div>
+          <div class="cat-option" data-cat="Comprar" onclick="selecionarCat(this)">🛍 Comprar</div>
+          <div class="cat-option" data-cat="Serviços" onclick="selecionarCat(this)">🔧 Serviços</div>
+          <div class="cat-option" data-cat="Saúde" onclick="selecionarCat(this)">🏥 Saúde</div>
+        </div>
+        <input type="hidden" id="painel-categoria">
+        <div style="margin-top:8px;">
+          <input id="painel-subcategoria" type="text" placeholder="Detalhe opcional: ex. Cachaça artesanal" style="width:100%;padding:10px 13px;background:#ffffff06;border:1px solid #ffffff15;border-radius:12px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.82rem;outline:none;">
+        </div>
       </div>
       <div class="campo-editar">
         <label>Endereço</label>
@@ -749,6 +776,51 @@
     }
   }
 
+  // Categoria no painel
+  function selecionarCat(el) {
+    document.querySelectorAll('#painel-cat-selector .cat-option').forEach(o => o.classList.remove('selecionado'));
+    el.classList.add('selecionado');
+    document.getElementById('painel-categoria').value = el.dataset.cat;
+  }
+
+  // Categoria no cadastro
+  function selecionarCatCad(el) {
+    document.querySelectorAll('#cad-cat-selector div').forEach(o => {
+      o.style.background = '#ffffff08';
+      o.style.borderColor = '#ffffff20';
+      o.style.opacity = '0.65';
+      o.style.fontWeight = 'normal';
+      o.style.color = 'var(--cal)';
+    });
+    el.style.background = 'var(--gold-bright)';
+    el.style.borderColor = 'var(--gold-bright)';
+    el.style.opacity = '1';
+    el.style.fontWeight = '600';
+    el.style.color = 'var(--ink)';
+    document.getElementById('cad-categoria').value = el.dataset.cat;
+  }
+
+  // Filtro de lojas na home
+  let _todasLojas = [];
+  function filtrarLojas(cat, el) {
+    document.querySelectorAll('#cats-home .cat').forEach(c => c.classList.remove('ativo'));
+    el.classList.add('ativo');
+    const container = document.getElementById('lista-lojas');
+    if (cat === 'Tudo') {
+      renderLojas(_todasLojas);
+      return;
+    }
+    const filtradas = _todasLojas.filter(l => {
+      const c = (l['CATEGORIA'] || l.categoria || '').toLowerCase();
+      return c.includes(cat.toLowerCase());
+    });
+    if (!filtradas.length) {
+      container.innerHTML = '<div class="carregando">Nenhuma loja nessa categoria ainda.</div>';
+    } else {
+      renderLojas(filtradas);
+    }
+  }
+
   function abrirMaps() {
     const end = localStorage.getItem('det_endereco') || '';
     const query = encodeURIComponent(end + ' Ouro Preto MG');
@@ -875,7 +947,16 @@
       });
       const lojas = await r.json();
       if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
-      // Busca médias de avaliações para todas as lojas
+      _todasLojas = lojas;
+      await renderLojas(lojas);
+    } catch(e) {
+      el.innerHTML = '<div class="carregando">Erro ao carregar. Tente novamente.</div>';
+    }
+  }
+
+  async function renderLojas(lojas) {
+    const el = document.getElementById('lista-lojas');
+    // Busca médias de avaliações para todas as lojas
       const ids = lojas.map(l => l.id).join(',');
       let mediasMap = {};
       try {
@@ -925,9 +1006,6 @@
           </div>
         </div>`;
       }).join('');
-    } catch(e) {
-      el.innerHTML = '<div class="carregando">Erro ao carregar. Tente novamente.</div>';
-    }
   }
 
   // NAVEGAÇÃO
@@ -1070,7 +1148,11 @@
         },
         body: JSON.stringify({
           'NOME': nome,
-          'CATEGORIA': categoria,
+          'CATEGORIA': (() => {
+            const base = document.getElementById('cad-categoria').value.trim();
+            const sub = document.getElementById('cad-subcategoria').value.trim();
+            return sub ? `${base} · ${sub}` : base || categoria;
+          })(),
           'ENDEREÇO': endereco,
           'TELEFONE': telefone || null,
           'FOTO': fotoUrl,
@@ -1164,7 +1246,13 @@
     document.getElementById('painel-nome-lojista').textContent = nomeExibido;
     document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || '—';
     document.getElementById('painel-nome').value = loja['NOME'] || loja.nome || '';
-    document.getElementById('painel-categoria').value = loja['CATEGORIA'] || loja.categoria || '';
+    const catAtual = loja['CATEGORIA'] || loja.categoria || '';
+    document.getElementById('painel-categoria').value = catAtual;
+    // Marca a categoria no seletor visual
+    document.querySelectorAll('#painel-cat-selector .cat-option').forEach(o => {
+      if (catAtual.includes(o.dataset.cat)) o.classList.add('selecionado');
+      else o.classList.remove('selecionado');
+    });
     document.getElementById('painel-endereco').value = loja['ENDEREÇO'] || loja.endereco || '';
     document.getElementById('painel-descricao').value = loja['DESCRIÇÃO'] || loja.descricao || '';
     document.getElementById('painel-telefone').value = loja['TELEFONE'] || loja.telefone || '';
@@ -1237,7 +1325,11 @@
         },
         body: JSON.stringify({
           'NOME': document.getElementById('painel-nome').value.trim(),
-          'CATEGORIA': document.getElementById('painel-categoria').value.trim(),
+          'CATEGORIA': (() => {
+            const base = document.getElementById('painel-categoria').value.trim();
+            const sub = document.getElementById('painel-subcategoria').value.trim();
+            return sub ? `${base} · ${sub}` : base;
+          })(),
           'ENDEREÇO': document.getElementById('painel-endereco').value.trim(),
           'DESCRIÇÃO': document.getElementById('painel-descricao').value.trim(),
           'TELEFONE': document.getElementById('painel-telefone').value.trim(),
