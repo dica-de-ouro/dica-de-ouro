@@ -1116,7 +1116,7 @@
     }
 
     // Calcula validade (72h após atualizado_em)
-    const atualizado = loja.atualizado_em ? new Date(loja.atualizado_em) : null;
+    const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em ? new Date(loja['ATUALIZADO_EM'] || loja.atualizado_em) : null;
     const expira = atualizado ? new Date(atualizado.getTime() + 72 * 3600000) : null;
     const agora = new Date();
 
@@ -1177,7 +1177,7 @@
           'DESCRIÇÃO': descricao,
           'TELEFONE': telefone,
           'FOTO': fotoUrl,
-          atualizado_em: agora
+          'ATUALIZADO_EM': agora
         })
       });
 
