@@ -222,6 +222,51 @@
   .ev-card .local-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; opacity:0.6; padding-top:9px; border-top:1px solid var(--line); }
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
+
+  /* LOGIN */
+  #tela-login { background:linear-gradient(180deg,#1a1410,#2c2218); display:flex; flex-direction:column; padding-bottom:0; }
+  .login-content { flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 32px; color:var(--cal); }
+  .login-eyebrow { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px; }
+  .login-titulo { font-family:'Fraunces',serif; font-weight:300; font-size:2rem; line-height:1.05; letter-spacing:-0.02em; margin-bottom:6px; }
+  .login-titulo em { font-style:italic; color:var(--gold-bright); }
+  .login-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.95rem; opacity:0.65; margin-bottom:40px; }
+  .campo-grupo { margin-bottom:16px; }
+  .campo-grupo label { display:block; font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:7px; }
+  .campo-grupo input { width:100%; padding:14px 16px; background:#ffffff08; border:1px solid #ffffff20; border-radius:13px; color:var(--cal); font-family:'Inter',sans-serif; font-size:0.95rem; outline:none; transition:border 0.2s; }
+  .campo-grupo input:focus { border-color:var(--gold-bright); }
+  .campo-grupo input::placeholder { opacity:0.35; }
+  .btn-login { width:100%; padding:16px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:13px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.9rem; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; margin-top:8px; transition:all 0.2s; }
+  .btn-login:active { transform:scale(0.98); }
+  .login-erro { color:#ff6b6b; font-size:0.8rem; margin-top:10px; text-align:center; min-height:20px; }
+  .login-voltar { text-align:center; margin-top:20px; }
+  .login-voltar button { background:none; border:none; color:var(--cal); opacity:0.5; font-size:0.82rem; cursor:pointer; font-family:'Inter',sans-serif; border-bottom:1px solid currentColor; padding-bottom:2px; }
+
+  /* PAINEL LOJISTA */
+  #tela-painel { background:var(--ink); color:var(--cal); }
+  .painel-topo { padding:calc(var(--safe-top) + 14px) 22px 20px; border-bottom:1px solid #ffffff10; }
+  .painel-eyebrow { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:6px; }
+  .painel-topo h2 { font-family:'Fraunces',serif; font-weight:300; font-size:1.7rem; letter-spacing:-0.02em; }
+  .painel-topo h2 em { font-style:italic; color:var(--gold-bright); }
+  .painel-topo .sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.88rem; opacity:0.55; margin-top:2px; }
+  .painel-corpo { padding:22px; }
+  .validade-card { background:linear-gradient(135deg,#d4a04a18,#8a3a1f15); border:1px solid #d4a04a35; border-radius:18px; padding:18px; margin-bottom:22px; }
+  .validade-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .validade-row .lbl { font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold-bright); }
+  .validade-row .count { font-family:'Fraunces',serif; font-size:1.3rem; color:var(--cal); }
+  .validade-barra { height:5px; background:#ffffff10; border-radius:3px; overflow:hidden; margin-bottom:10px; }
+  .validade-barra .fill { height:100%; background:linear-gradient(90deg,var(--rust),var(--gold-bright)); border-radius:3px; transition:width 0.5s; }
+  .validade-msg { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.85rem; opacity:0.7; line-height:1.4; }
+  .painel-sec h3 { font-family:'Fraunces',serif; font-weight:400; font-size:1rem; color:var(--gold-bright); margin-bottom:14px; }
+  .painel-sec { margin-bottom:24px; }
+  .campo-editar { margin-bottom:14px; }
+  .campo-editar label { display:block; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; opacity:0.5; margin-bottom:6px; }
+  .campo-editar input, .campo-editar textarea { width:100%; padding:12px 14px; background:#ffffff06; border:1px solid #ffffff15; border-radius:12px; color:var(--cal); font-family:'Inter',sans-serif; font-size:0.88rem; outline:none; transition:border 0.2s; resize:none; }
+  .campo-editar input:focus, .campo-editar textarea:focus { border-color:var(--gold-bright); }
+  .campo-editar input::placeholder, .campo-editar textarea::placeholder { opacity:0.3; }
+  .btn-salvar { width:100%; padding:15px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:13px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.88rem; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; margin-top:8px; transition:all 0.2s; }
+  .btn-salvar:active { transform:scale(0.98); }
+  .btn-sair { width:100%; padding:13px; background:transparent; color:var(--cal); border:1px solid #ffffff20; border-radius:13px; font-family:'Inter',sans-serif; font-size:0.82rem; cursor:pointer; margin-top:10px; opacity:0.55; }
+  .salvo-msg { text-align:center; color:#9dd49d; font-size:0.8rem; margin-top:10px; min-height:20px; }
 </style>
 </head>
 <body>
@@ -305,41 +350,37 @@
       <button class="btn-redondo">♡</button>
     </div>
     <div class="detalhe-fundo">
-      <div class="cat-tag">Restaurante · Cozinha mineira contemporânea</div>
-      <h2>Casa do <em>Ouvidor</em></h2>
-      <div class="detalhe-quick"><span class="stars">★ 4,7</span><span>· 487 avaliações</span><span>· R$$$</span></div>
+      <div class="cat-tag" id="det-categoria">—</div>
+      <h2 id="det-nome">—</h2>
+      <div class="detalhe-quick"><span class="stars">★ —</span><span id="det-avaliacoes"></span></div>
     </div>
   </div>
   <div class="frescor-strip">
     <div class="frescor-esq">
       <div class="frescor-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
-      <div class="frescor-info"><div class="lbl">Informação fresca</div><div class="val">Atualizado há 4 horas</div></div>
+      <div class="frescor-info"><div class="lbl">Informação fresca</div><div class="val" id="det-frescor">—</div></div>
     </div>
-    <div class="barra-val"><div class="barra-fill"></div></div>
+    <div class="barra-val"><div class="barra-fill" id="det-barra"></div></div>
   </div>
   <div class="detalhe-corpo">
     <div class="notas-trio">
-      <div class="nota-cel"><div class="lbl">Produto</div><div class="num">4,8<span>/5</span></div></div>
-      <div class="nota-cel"><div class="lbl">Serviço</div><div class="num">4,6<span>/5</span></div></div>
-      <div class="nota-cel"><div class="lbl">Estrutura</div><div class="num">4,5<span>/5</span></div></div>
+      <div class="nota-cel"><div class="lbl">Produto</div><div class="num">—<span>/5</span></div></div>
+      <div class="nota-cel"><div class="lbl">Serviço</div><div class="num">—<span>/5</span></div></div>
+      <div class="nota-cel"><div class="lbl">Estrutura</div><div class="num">—<span>/5</span></div></div>
     </div>
-    <div class="sec-det">
-      <h3>Hoje na casa</h3>
-      <p>"Tutu com lombo e ovo é o prato do dia. Cachaça do Salinas chegou ontem. Mesa do quintal liberada — vista para o Pilar."</p>
+    <div class="sec-det" id="det-descricao-bloco" style="display:none">
+      <h3>Sobre o local</h3>
+      <p id="det-descricao"></p>
     </div>
     <div class="sec-det">
       <div class="info-linhas">
-        <div class="info-linha">
-          <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-          <div class="cnt"><div class="lbl">Aberto agora</div><div class="val">11:30 — 23:00</div></div>
-        </div>
-        <div class="info-linha">
+        <div class="info-linha" id="det-endereco-linha">
           <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/><circle cx="12" cy="10" r="3"/></svg></div>
-          <div class="cnt"><div class="lbl">Endereço</div><div class="val">R. Direita, 42 — Centro Histórico</div><div class="val muted">180m do Largo do Coimbra</div></div>
+          <div class="cnt"><div class="lbl">Endereço</div><div class="val" id="det-endereco">—</div></div>
         </div>
-        <div class="info-linha">
+        <div class="info-linha" id="det-telefone-linha" style="display:none">
           <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg></div>
-          <div class="cnt"><div class="lbl">Contato</div><div class="val">(31) 3551-4242</div></div>
+          <div class="cnt"><div class="lbl">Contato</div><div class="val" id="det-telefone">—</div></div>
         </div>
       </div>
     </div>
@@ -433,6 +474,69 @@
   </div>
 </div>
 
+<!-- TELA 6: LOGIN LOJISTA -->
+<div id="tela-login" class="tela oculta escura">
+  <div class="login-content">
+    <div style="height:calc(var(--safe-top) + 20px)"></div>
+    <div class="login-eyebrow">Área do lojista</div>
+    <h2 class="login-titulo">Entrar no <em>Dica de Ouro</em></h2>
+    <p class="login-sub">Gerencie sua loja e mantenha as informações frescas.</p>
+    <div class="campo-grupo">
+      <label>Email</label>
+      <input id="login-email" type="email" placeholder="seu@email.com">
+    </div>
+    <div class="campo-grupo">
+      <label>Senha</label>
+      <input id="login-senha" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+    <div class="login-erro" id="login-erro"></div>
+    <div class="login-voltar">
+      <button onclick="voltarPara('tela-home')">← Voltar para o app</button>
+    </div>
+  </div>
+</div>
+
+<!-- TELA 7: PAINEL DO LOJISTA -->
+<div id="tela-painel" class="tela oculta">
+  <div class="painel-topo">
+    <div class="painel-eyebrow">Painel do lojista</div>
+    <h2>Olá, <em id="painel-nome-lojista">—</em></h2>
+    <div class="sub" id="painel-nome-loja">—</div>
+  </div>
+  <div class="painel-corpo">
+
+    <div class="validade-card">
+      <div class="validade-row">
+        <div class="lbl">Suas informações expiram em</div>
+        <div class="count" id="painel-expira">—</div>
+      </div>
+      <div class="validade-barra"><div class="fill" id="painel-barra-val" style="width:50%"></div></div>
+      <div class="validade-msg">Após o prazo, sua loja some das buscas. Manter fresco é manter visível.</div>
+    </div>
+
+    <div class="painel-sec">
+      <h3>Atualizar informações</h3>
+      <div class="campo-editar">
+        <label>Descrição / novidade de hoje</label>
+        <textarea id="painel-descricao" rows="3" placeholder="O que tem de especial hoje?"></textarea>
+      </div>
+      <div class="campo-editar">
+        <label>Horário de hoje</label>
+        <input id="painel-horario" type="text" placeholder="ex: 11h às 23h — fechado às 2ª">
+      </div>
+      <div class="campo-editar">
+        <label>Telefone / WhatsApp</label>
+        <input id="painel-telefone" type="text" placeholder="(31) 9 9999-9999">
+      </div>
+      <button class="btn-salvar" onclick="salvarLoja()">Salvar e renovar prazo</button>
+      <div class="salvo-msg" id="salvo-msg"></div>
+    </div>
+
+    <button class="btn-sair" onclick="fazerLogout()">Sair da conta</button>
+  </div>
+</div>
+
 <!-- TAB BAR -->
 <nav class="tabbar" id="tabbar" style="display:none">
   <button class="tab ativo" id="tab-inicio" onclick="irTab('tela-home','tab-inicio')">
@@ -447,9 +551,9 @@
     <div class="tab-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg></div>
     Explorar
   </button>
-  <button class="tab" id="tab-eu" onclick="irTab('tela-home','tab-eu')">
+  <button class="tab" id="tab-eu" onclick="abrirAreaLojista()">
     <div class="tab-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 22c0-4 4-7 8-7s8 3 8 7"/></svg></div>
-    Eu
+    Lojista
   </button>
 </nav>
 
@@ -483,6 +587,59 @@
     return `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${s}" stroke-width="1.5"><path d="M6 2h12l1 7H5zm0 7v11h12V9"/></svg>`;
   }
 
+  function abrirLoja(loja, tc) {
+    // Preenche nome
+    const nomeEl = document.getElementById('det-nome');
+    const partes = loja.nome.split(' ');
+    const ultima = partes.pop();
+    nomeEl.innerHTML = partes.join(' ') + (partes.length ? ' <em>' + ultima + '</em>' : ultima);
+
+    // Categoria, endereço, telefone, frescor
+    document.getElementById('det-categoria').textContent = loja.categoria || 'Local';
+    document.getElementById('det-endereco').textContent = loja.endereco || 'Endereço não informado';
+    document.getElementById('det-avaliacoes').textContent = '';
+
+    // Descrição
+    const descBloco = document.getElementById('det-descricao-bloco');
+    const descEl = document.getElementById('det-descricao');
+    if (loja.descricao) {
+      descEl.textContent = loja.descricao;
+      descBloco.style.display = 'block';
+    } else {
+      descBloco.style.display = 'none';
+    }
+
+    // Telefone
+    const telLinha = document.getElementById('det-telefone-linha');
+    if (loja.telefone) {
+      document.getElementById('det-telefone').textContent = loja.telefone;
+      telLinha.style.display = 'flex';
+    } else {
+      telLinha.style.display = 'none';
+    }
+
+    // Frescor
+    const frescorEl = document.getElementById('det-frescor');
+    const barraEl = document.getElementById('det-barra');
+    if (loja.atualizado_em) {
+      const h = (new Date() - new Date(loja.atualizado_em)) / 3600000;
+      frescorEl.textContent = 'Atualizado ' + tempoAtras(loja.atualizado_em).toLowerCase();
+      // Barra: 100% = 0h, 0% = 72h
+      const pct = Math.max(0, Math.min(100, 100 - (h / 72 * 100)));
+      barraEl.style.width = pct + '%';
+      barraEl.style.background = h < 12
+        ? 'linear-gradient(90deg,#6db96d,#b8893a)'
+        : h < 48
+          ? 'linear-gradient(90deg,#b8893a,#d4a04a)'
+          : 'linear-gradient(90deg,#8a3a1f,#c46b48)';
+    } else {
+      frescorEl.textContent = 'Sem data de atualização';
+      barraEl.style.width = '0%';
+    }
+
+    irPara('tela-detalhe');
+  }
+
   async function carregarLojas() {
     const el = document.getElementById('lista-lojas');
     try {
@@ -493,7 +650,7 @@
       if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
       el.innerHTML = lojas.map((l,i) => {
         const tc = ['t1','t2','t3'][i%3];
-        return `<div class="lugar" onclick="irPara('tela-detalhe')">
+        return `<div class="lugar" onclick="abrirLoja(${JSON.stringify(l).replace(/'/g, "&#39;")},'${tc}')">
           <div class="lugar-thumb ${tc}">${svgIcone(l.categoria,tc)}</div>
           <div class="lugar-info">
             <div class="cat-tag">${l.categoria||'Local'}</div>
@@ -576,6 +733,145 @@
       });
     });
   });
+
+  // AUTENTICAÇÃO
+  const SUPA_AUTH = SUPA_URL + '/auth/v1';
+
+  async function fazerLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const senha = document.getElementById('login-senha').value;
+    const erroEl = document.getElementById('login-erro');
+    erroEl.textContent = '';
+
+    if (!email || !senha) { erroEl.textContent = 'Preencha email e senha.'; return; }
+
+    try {
+      const r = await fetch(`${SUPA_AUTH}/token?grant_type=password`, {
+        method: 'POST',
+        headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha })
+      });
+      const data = await r.json();
+      if (data.error) { erroEl.textContent = 'Email ou senha incorretos.'; return; }
+
+      // Salva sessão
+      localStorage.setItem('dica_token', data.access_token);
+      localStorage.setItem('dica_uid', data.user.id);
+      localStorage.setItem('dica_email', data.user.email);
+
+      await abrirPainel(data.user.id, data.user.email, data.access_token);
+    } catch(e) {
+      erroEl.textContent = 'Erro de conexão. Tente novamente.';
+    }
+  }
+
+  async function abrirAreaLojista() {
+    const token = localStorage.getItem('dica_token');
+    const uid = localStorage.getItem('dica_uid');
+    const email = localStorage.getItem('dica_email');
+    if (token && uid) {
+      await abrirPainel(uid, email, token);
+    } else {
+      irPara('tela-login');
+    }
+  }
+
+  async function abrirPainel(uid, email, token) {
+    // Busca a loja do lojista
+    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*`, {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${token}` }
+    });
+    const lojas = await r.json();
+
+    if (!lojas.length) {
+      alert('Nenhuma loja associada a esse email. Fale com o administrador.');
+      return;
+    }
+
+    const loja = lojas[0];
+    const nomeExibido = email.split('@')[0];
+
+    // Preenche o painel
+    document.getElementById('painel-nome-lojista').textContent = nomeExibido;
+    document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || '—';
+    document.getElementById('painel-descricao').value = loja['DESCRIÇÃO'] || loja.descricao || '';
+    document.getElementById('painel-telefone').value = loja['TELEFONE'] || loja.telefone || '';
+
+    // Calcula validade (72h após atualizado_em)
+    const atualizado = loja.atualizado_em ? new Date(loja.atualizado_em) : null;
+    const expira = atualizado ? new Date(atualizado.getTime() + 72 * 3600000) : null;
+    const agora = new Date();
+
+    if (expira) {
+      const diffMs = expira - agora;
+      if (diffMs > 0) {
+        const h = Math.floor(diffMs / 3600000);
+        const m = Math.floor((diffMs % 3600000) / 60000);
+        document.getElementById('painel-expira').textContent = `${h}h ${m}min`;
+        const pct = Math.min(100, (diffMs / (72 * 3600000)) * 100);
+        document.getElementById('painel-barra-val').style.width = pct + '%';
+      } else {
+        document.getElementById('painel-expira').textContent = 'Expirado';
+        document.getElementById('painel-barra-val').style.width = '0%';
+      }
+    } else {
+      document.getElementById('painel-expira').textContent = 'Nunca atualizado';
+      document.getElementById('painel-barra-val').style.width = '0%';
+    }
+
+    // Guarda id da loja para salvar depois
+    localStorage.setItem('dica_loja_id', loja.id);
+    irPara('tela-painel');
+  }
+
+  async function salvarLoja() {
+    const token = localStorage.getItem('dica_token');
+    const lojaId = localStorage.getItem('dica_loja_id');
+    const msgEl = document.getElementById('salvo-msg');
+    msgEl.textContent = '';
+
+    const descricao = document.getElementById('painel-descricao').value;
+    const telefone = document.getElementById('painel-telefone').value;
+    const agora = new Date().toISOString();
+
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/lojas?id=eq.${lojaId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          'DESCRIÇÃO': descricao,
+          'TELEFONE': telefone,
+          atualizado_em: agora
+        })
+      });
+
+      if (r.ok) {
+        msgEl.textContent = '✓ Salvo! Prazo renovado por 72 horas.';
+        setTimeout(() => msgEl.textContent = '', 4000);
+        // Atualiza o contador
+        const h = 72;
+        document.getElementById('painel-expira').textContent = `${h}h 0min`;
+        document.getElementById('painel-barra-val').style.width = '100%';
+      } else {
+        msgEl.textContent = 'Erro ao salvar. Tente novamente.';
+      }
+    } catch(e) {
+      msgEl.textContent = 'Erro de conexão.';
+    }
+  }
+
+  function fazerLogout() {
+    localStorage.removeItem('dica_token');
+    localStorage.removeItem('dica_uid');
+    localStorage.removeItem('dica_email');
+    localStorage.removeItem('dica_loja_id');
+    voltarPara('tela-home');
+  }
 
   // INIT
   carregarLojas();
