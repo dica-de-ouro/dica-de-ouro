@@ -395,7 +395,7 @@
 <div id="tela-avaliar" class="tela oculta">
   <div class="aval-header">
     <button class="btn-redondo" onclick="voltarPara('tela-detalhe')">←</button>
-    <div><h2>Casa do Ouvidor</h2><div class="sub">Sua impressão importa</div></div>
+    <div><h2 id="aval-nome-loja">—</h2><div class="sub">Sua impressão importa</div></div>
   </div>
   <div class="aval-corpo">
     <div class="aval-intro">Nota separada para produto, serviço e estrutura. Outros viajantes leem antes de cruzar a praça.</div>
@@ -431,9 +431,10 @@
     </div>
     <div class="aval-bloco">
       <h4 style="margin-bottom:12px;">Conte algo a quem chegar amanhã</h4>
-      <textarea class="caixa-comentario" placeholder="O tutu veio sequinho, o garçom soube indicar a melhor cachaça…"></textarea>
+      <textarea class="caixa-comentario" id="aval-comentario" placeholder="O tutu veio sequinho, o garçom soube indicar a melhor cachaça…"></textarea>
     </div>
-    <button class="btn-enviar">Enviar avaliação</button>
+    <button class="btn-enviar" onclick="enviarAvaliacao()">Enviar avaliação</button>
+    <div class="salvo-msg" id="aval-msg"></div>
   </div>
 </div>
 
@@ -637,6 +638,12 @@
       barraEl.style.width = '0%';
     }
 
+    // Guarda dados da loja atual para a avaliação
+    localStorage.setItem('aval_loja_id', loja.id);
+    localStorage.setItem('aval_loja_nome', loja.nome || loja['NOME'] || '—');
+    // Preenche header da tela de avaliação
+    const avalNome = document.getElementById('aval-nome-loja');
+    if (avalNome) avalNome.textContent = loja.nome || loja['NOME'] || '—';
     irPara('tela-detalhe');
   }
 
@@ -871,6 +878,75 @@
     localStorage.removeItem('dica_email');
     localStorage.removeItem('dica_loja_id');
     voltarPara('tela-home');
+  }
+
+  async function enviarAvaliacao() {
+    const msgEl = document.getElementById('aval-msg');
+    msgEl.textContent = '';
+
+    const lojaId = localStorage.getItem('aval_loja_id');
+    if (!lojaId) { msgEl.textContent = 'Erro: loja não identificada.'; return; }
+
+    // Pega as notas dos displays
+    const vp = document.getElementById('vp').textContent.trim();
+    const vs = document.getElementById('vs').textContent.trim();
+    const ve = document.getElementById('ve').textContent.trim();
+    const notaProduto = parseInt(vp);
+    const notaServico = parseInt(vs);
+    const notaEstrutura = parseInt(ve);
+    const comentario = document.getElementById('aval-comentario').value.trim();
+
+    if (isNaN(notaProduto) || isNaN(notaServico) || isNaN(notaEstrutura)) {
+      msgEl.style.color = '#ff6b6b';
+      msgEl.textContent = 'Dê uma nota para os 3 itens antes de enviar.';
+      return;
+    }
+
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/avaliacoes`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          loja_id: parseInt(lojaId),
+          nota_produto: notaProduto,
+          nota_servico: notaServico,
+          nota_estrutura: notaEstrutura,
+          comentario: comentario || null
+        })
+      });
+
+      if (r.ok || r.status === 201) {
+        msgEl.style.color = '#9dd49d';
+        msgEl.textContent = '✓ Avaliação enviada. Obrigado!';
+        // Limpa as estrelas e comentário
+        document.getElementById('aval-comentario').value = '';
+        document.getElementById('vp').innerHTML = '—<span>/5</span>';
+        document.getElementById('vs').innerHTML = '—<span>/5</span>';
+        document.getElementById('ve').innerHTML = '—<span>/5</span>';
+        document.querySelectorAll('.estrelas-input button').forEach(b => {
+          b.classList.remove('acesa');
+          const svg = b.querySelector('svg');
+          svg.setAttribute('fill','none');
+          svg.setAttribute('stroke','currentColor');
+        });
+        // Volta para o detalhe após 2s
+        setTimeout(() => {
+          msgEl.textContent = '';
+          voltarPara('tela-detalhe');
+        }, 2000);
+      } else {
+        msgEl.style.color = '#ff6b6b';
+        msgEl.textContent = 'Erro ao enviar. Tente novamente.';
+      }
+    } catch(e) {
+      msgEl.style.color = '#ff6b6b';
+      msgEl.textContent = 'Erro de conexão.';
+    }
   }
 
   // INIT
