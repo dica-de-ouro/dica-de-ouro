@@ -223,6 +223,15 @@
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
 
+  /* CADASTRO */
+  #tela-cadastro { background:linear-gradient(180deg,#1a1410,#2c2218); display:flex; flex-direction:column; padding-bottom:40px; overflow-y:auto; }
+  .cadastro-content { flex:1; display:flex; flex-direction:column; padding:calc(var(--safe-top) + 24px) 32px 40px; color:var(--cal); }
+  .cadastro-eyebrow { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px; }
+  .cadastro-titulo { font-family:'Fraunces',serif; font-weight:300; font-size:1.9rem; line-height:1.05; letter-spacing:-0.02em; margin-bottom:4px; }
+  .cadastro-titulo em { font-style:italic; color:var(--gold-bright); }
+  .cadastro-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.92rem; opacity:0.6; margin-bottom:28px; }
+  .cadastro-secao { font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold-bright); opacity:0.7; margin:18px 0 10px; }
+
   /* LOGIN */
   #tela-login { background:linear-gradient(180deg,#1a1410,#2c2218); display:flex; flex-direction:column; padding-bottom:0; }
   .login-content { flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 32px; color:var(--cal); }
@@ -475,7 +484,50 @@
   </div>
 </div>
 
-<!-- TELA 6: LOGIN LOJISTA -->
+<!-- TELA 6: CADASTRO LOJISTA -->
+<div id="tela-cadastro" class="tela oculta escura">
+  <div class="cadastro-content">
+    <div class="cadastro-eyebrow">Área do lojista</div>
+    <h2 class="cadastro-titulo">Cadastrar no <em>Dica de Ouro</em></h2>
+    <p class="cadastro-sub">Crie sua conta e coloque sua loja no mapa de Ouro Preto.</p>
+
+    <div class="cadastro-secao">Sua conta</div>
+    <div class="campo-grupo">
+      <label>Email</label>
+      <input id="cad-email" type="email" placeholder="seu@email.com">
+    </div>
+    <div class="campo-grupo">
+      <label>Senha (mínimo 6 caracteres)</label>
+      <input id="cad-senha" type="password" placeholder="••••••••">
+    </div>
+
+    <div class="cadastro-secao">Sua loja</div>
+    <div class="campo-grupo">
+      <label>Nome da loja</label>
+      <input id="cad-nome" type="text" placeholder="ex: Café das Pedras">
+    </div>
+    <div class="campo-grupo">
+      <label>Categoria</label>
+      <input id="cad-categoria" type="text" placeholder="ex: Restaurante · Comida mineira">
+    </div>
+    <div class="campo-grupo">
+      <label>Endereço</label>
+      <input id="cad-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro">
+    </div>
+    <div class="campo-grupo">
+      <label>Telefone / WhatsApp (opcional)</label>
+      <input id="cad-telefone" type="text" placeholder="(31) 9 9999-9999">
+    </div>
+
+    <button class="btn-login" onclick="fazerCadastro()">Criar conta e entrar</button>
+    <div class="login-erro" id="cad-erro"></div>
+    <div class="login-voltar" style="margin-top:16px;">
+      <button onclick="irPara('tela-login')">Já tenho conta — fazer login</button>
+    </div>
+  </div>
+</div>
+
+<!-- TELA 7: LOGIN LOJISTA -->
 <div id="tela-login" class="tela oculta escura">
   <div class="login-content">
     <div style="height:calc(var(--safe-top) + 20px)"></div>
@@ -492,7 +544,8 @@
     </div>
     <button class="btn-login" onclick="fazerLogin()">Entrar</button>
     <div class="login-erro" id="login-erro"></div>
-    <div class="login-voltar">
+    <div class="login-voltar" style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+      <button onclick="irPara('tela-cadastro')" style="color:var(--gold-bright);opacity:1;border-bottom-color:var(--gold-bright);">Não tenho conta — cadastrar</button>
       <button onclick="voltarPara('tela-home')">← Voltar para o app</button>
     </div>
   </div>
@@ -789,6 +842,95 @@
 
   // AUTENTICAÇÃO
   const SUPA_AUTH = SUPA_URL + '/auth/v1';
+
+  async function fazerCadastro() {
+    const erroEl = document.getElementById('cad-erro');
+    erroEl.textContent = '';
+    erroEl.style.color = '#ff6b6b';
+
+    const email     = document.getElementById('cad-email').value.trim();
+    const senha     = document.getElementById('cad-senha').value;
+    const nome      = document.getElementById('cad-nome').value.trim();
+    const categoria = document.getElementById('cad-categoria').value.trim();
+    const endereco  = document.getElementById('cad-endereco').value.trim();
+    const telefone  = document.getElementById('cad-telefone').value.trim();
+
+    if (!email || !senha || !nome || !categoria || !endereco) {
+      erroEl.textContent = 'Preencha todos os campos obrigatórios.'; return;
+    }
+    if (senha.length < 6) {
+      erroEl.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; return;
+    }
+
+    erroEl.style.color = 'var(--gold-bright)';
+    erroEl.textContent = 'Criando sua conta…';
+
+    try {
+      // Passo 1: cria usuário no Auth
+      const rAuth = await fetch(`${SUPA_AUTH}/signup`, {
+        method: 'POST',
+        headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha })
+      });
+      const dataAuth = await rAuth.json();
+
+      if (dataAuth.error) {
+        erroEl.style.color = '#ff6b6b';
+        erroEl.textContent = dataAuth.error.message.includes('already registered')
+          ? 'Este email já está cadastrado. Faça login.'
+          : dataAuth.error.message || 'Erro ao criar conta.';
+        return;
+      }
+
+      const uid   = dataAuth.user?.id;
+      const token = dataAuth.access_token;
+
+      if (!uid || !token) {
+        erroEl.style.color = '#ff6b6b';
+        erroEl.textContent = 'Verifique seu email para confirmar o cadastro, depois faça login.';
+        return;
+      }
+
+      erroEl.style.color = 'var(--gold-bright)';
+      erroEl.textContent = 'Conta criada! Cadastrando sua loja…';
+
+      // Passo 2: cria a loja no banco
+      const rLoja = await fetch(`${SUPA_URL}/rest/v1/lojas`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          'NOME': nome,
+          'CATEGORIA': categoria,
+          'ENDEREÇO': endereco,
+          'TELEFONE': telefone || null,
+          'lojista_id': uid
+        })
+      });
+
+      if (!rLoja.ok) {
+        erroEl.style.color = '#ff6b6b';
+        erroEl.textContent = 'Conta criada, mas erro ao cadastrar loja. Fale com o suporte.';
+        return;
+      }
+
+      // Passo 3: salva sessão e abre painel
+      localStorage.setItem('dica_token', token);
+      localStorage.setItem('dica_uid', uid);
+      localStorage.setItem('dica_email', email);
+
+      erroEl.textContent = '';
+      await abrirPainel(uid, email, token);
+
+    } catch(e) {
+      erroEl.style.color = '#ff6b6b';
+      erroEl.textContent = 'Erro de conexão. Tente novamente.';
+    }
+  }
 
   async function fazerLogin() {
     const email = document.getElementById('login-email').value.trim();
