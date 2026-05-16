@@ -924,6 +924,28 @@
 
   let _eventoAtual = null;
 
+  async function abrirEventoCompleto(id) {
+    // Se já tem o evento completo em memória, abre direto
+    const ev = (window._eventos || {})[id];
+    if (ev && ev.descricao !== undefined) {
+      abrirEvento(id);
+      return;
+    }
+    // Senão busca do banco com todos os campos
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/eventos?id=eq.${id}&select=*`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const dados = await r.json();
+      if (dados.length) {
+        window._eventos = window._eventos || {};
+        window._eventos[id] = dados[0];
+        abrirEvento(id);
+      }
+    } catch(e) {}
+  }
+
   function abrirEvento(id) {
     const ev = (window._eventos || {})[id];
     if (!ev) return;
@@ -1787,11 +1809,15 @@
         lista.innerHTML = '<div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Nenhum evento cadastrado.</div>';
         return;
       }
+      // Guarda em memória para o clique funcionar
+      window._eventos = window._eventos || {};
+      eventos.forEach(ev => window._eventos[ev.id] = ev);
+
       lista.innerHTML = eventos.map(ev => {
         const data = new Date(ev.data_evento + 'T12:00:00');
         const dia = data.getDate();
         const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
-        return `<div class="ev-row" style="cursor:pointer;" onclick="abrirEvento('${ev.id}')">
+        return `<div class="ev-row" style="cursor:pointer;" onclick="abrirEventoCompleto('${ev.id}')">
           <div class="ev-data"><div class="d">${dia}</div><div class="m">${mes}</div></div>
           <div class="ev-texto">
             <div class="nome">${ev.nome}</div>
