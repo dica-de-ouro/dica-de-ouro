@@ -1701,53 +1701,15 @@
               </div>
             </div>
 
-            <!-- Lista de lugares -->
+            <!-- Lista de lugares — carregada do Supabase -->
             <div class="section-head">
               <h2>Atualizados <em>hoje</em></h2>
               <a href="#">Ver tudo</a>
             </div>
-            <div class="places">
-              <div class="place">
-                <div class="place-thumb t1">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a1410" stroke-width="1.5"><path d="M3 12h18M5 12v8h14v-8M7 12V8a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <div class="place-info">
-                  <div class="cat-tag">Restaurante · Comida mineira</div>
-                  <h4>Casa do Ouvidor</h4>
-                  <div class="where">R. Direita, 42 · Centro Histórico</div>
-                  <div class="meta">
-                    <div class="stars">★ 4,7</div>
-                    <div class="freshness"><span class="fresh-dot"></span> Há 4h</div>
-                  </div>
-                </div>
-              </div>
-              <div class="place">
-                <div class="place-thumb t2">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#faf6ec" stroke-width="1.5"><path d="M12 2 L4 7v6c0 5 4 8 8 9 4-1 8-4 8-9V7z"/></svg>
-                </div>
-                <div class="place-info">
-                  <div class="cat-tag">Museu · Patrimônio</div>
-                  <h4>Museu da Inconfidência</h4>
-                  <div class="where">Praça Tiradentes · s/n</div>
-                  <div class="meta">
-                    <div class="stars">★ 4,9</div>
-                    <div class="freshness"><span class="fresh-dot warn"></span> Há 1 dia</div>
-                  </div>
-                </div>
-              </div>
-              <div class="place">
-                <div class="place-thumb t3">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#faf6ec" stroke-width="1.5"><path d="M6 2h12l-2 8a4 4 0 0 1-8 0z M12 14v6 M8 22h8"/></svg>
-                </div>
-                <div class="place-info">
-                  <div class="cat-tag">Bar · Cachaça artesanal</div>
-                  <h4>Bar do Beco</h4>
-                  <div class="where">Tv. do Pilar, 17 · Pilar</div>
-                  <div class="meta">
-                    <div class="stars">★ 4,5</div>
-                    <div class="freshness"><span class="fresh-dot"></span> Há 30min</div>
-                  </div>
-                </div>
+            <div class="places" id="lista-lojas">
+              <!-- carregando... -->
+              <div style="text-align:center;padding:32px 0;opacity:0.5;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;">
+                Carregando lojas…
               </div>
             </div>
           </div>
@@ -2231,6 +2193,123 @@
 </div>
 
 <script>
+  // ============================================
+  // CONEXÃO COM O SUPABASE
+  // ============================================
+  const SUPABASE_URL = 'https://qwwncqvdzpzmgntxkulu.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3d25jcXZkenB6bWdudHhrdWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTAyNDYsImV4cCI6MjA5NDQ4NjI0Nn0.V40f-Zq76GFgwYlC-7gkAzft2tnCCWOxc_fAR4j80UA';
+
+  // Função que calcula "há quanto tempo" foi atualizado
+  function tempoAtras(dataString) {
+    if (!dataString) return 'sem data';
+    const agora = new Date();
+    const data = new Date(dataString);
+    const diffMs = agora - data;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffH = Math.floor(diffMin / 60);
+    const diffD = Math.floor(diffH / 24);
+    if (diffMin < 60) return `Há ${diffMin}min`;
+    if (diffH < 24) return `Há ${diffH}h`;
+    return `Há ${diffD} dia${diffD > 1 ? 's' : ''}`;
+  }
+
+  // Escolhe a cor do indicador de frescor
+  function corFrescor(dataString) {
+    if (!dataString) return 'stale';
+    const diffH = (new Date() - new Date(dataString)) / 3600000;
+    if (diffH < 12) return '';        // verde
+    if (diffH < 48) return 'warn';   // amarelo
+    return 'stale';                   // vermelho
+  }
+
+  // Escolhe a cor de fundo do thumb
+  function thumbClass(index) {
+    return ['t1', 't2', 't3'][index % 3];
+  }
+
+  // Ícone SVG por categoria
+  function iconeCategoria(categoria, thumbClass) {
+    const stroke = thumbClass === 't1' ? '#1a1410' : '#faf6ec';
+    const cat = (categoria || '').toLowerCase();
+    if (cat.includes('restaurante') || cat.includes('comida'))
+      return `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="1.5"><path d="M3 12h18M5 12v8h14v-8M7 12V8a5 5 0 0 1 10 0v4"/></svg>`;
+    if (cat.includes('museu') || cat.includes('patrimônio') || cat.includes('patrimonio'))
+      return `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="1.5"><path d="M12 2 L4 7v6c0 5 4 8 8 9 4-1 8-4 8-9V7z"/></svg>`;
+    if (cat.includes('bar') || cat.includes('cachaça') || cat.includes('cachaca') || cat.includes('cerveja'))
+      return `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="1.5"><path d="M6 2h12l-2 8a4 4 0 0 1-8 0z M12 14v6 M8 22h8"/></svg>`;
+    if (cat.includes('loja') || cat.includes('artesanato') || cat.includes('compra'))
+      return `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="1.5"><path d="M6 2h12l1 7H5zm0 7v11h12V9"/></svg>`;
+    // ícone genérico
+    return `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="1.5"><circle cx="12" cy="10" r="4"/><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/></svg>`;
+  }
+
+  // Monta o HTML de um card de loja
+  function cardLoja(loja, index) {
+    const tc = thumbClass(index);
+    const tempo = tempoAtras(loja.atualizado_em);
+    const cor = corFrescor(loja.atualizado_em);
+    const icone = iconeCategoria(loja.categoria, tc);
+    return `
+      <div class="place">
+        <div class="place-thumb ${tc}">${icone}</div>
+        <div class="place-info">
+          <div class="cat-tag">${loja.categoria || 'Local'}</div>
+          <h4>${loja.nome}</h4>
+          <div class="where">${loja.endereco || ''}</div>
+          <div class="meta">
+            <div class="stars">★ —</div>
+            <div class="freshness">
+              <span class="fresh-dot ${cor}"></span> ${tempo}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // Busca as lojas no Supabase e renderiza na lista
+  async function carregarLojas() {
+    const container = document.getElementById('lista-lojas');
+    try {
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/lojas?select=*&order=atualizado_em.desc`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+
+      if (!resp.ok) throw new Error('Erro ao buscar lojas');
+
+      const lojas = await resp.json();
+
+      if (lojas.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:32px 0;opacity:0.5;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;">
+            Nenhuma loja cadastrada ainda.
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = lojas.map((loja, i) => cardLoja(loja, i)).join('');
+
+    } catch (err) {
+      container.innerHTML = `
+        <div style="text-align:center;padding:32px 0;opacity:0.5;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;">
+          Erro ao carregar lojas. Tente novamente.
+        </div>`;
+      console.error('Supabase erro:', err);
+    }
+  }
+
+  // Roda assim que a página carrega
+  carregarLojas();
+
+  // ============================================
+  // INTERAÇÕES EXISTENTES
+  // ============================================
+
   // Estrelas interativas
   document.querySelectorAll('.stars-input').forEach(group => {
     const buttons = group.querySelectorAll('button');
