@@ -335,14 +335,14 @@
       <div class="cat" onclick="filtrarLojas('Serviços',this)">🔧 Serviços</div>
       <div class="cat" onclick="filtrarLojas('Saúde',this)">🏥 Saúde</div>
     </div>
-    <div class="destaque" onclick="irPara('tela-detalhe')">
-      <div class="destaque-img"><div class="destaque-badge">Dica do dia</div></div>
+    <div class="destaque" id="card-destaque" onclick="abrirDestaque()">
+      <div class="destaque-img" id="destaque-img"><div class="destaque-badge">Dica do dia</div></div>
       <div class="destaque-corpo">
-        <h3>Pouso do <em>Chico Rey</em></h3>
-        <p>"Cervejaria com vista para o Pilar — atualizou o cardápio há 2 horas."</p>
+        <h3 id="destaque-nome">Carregando…</h3>
+        <p id="destaque-desc" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;opacity:0.68;margin-bottom:12px;line-height:1.4;"></p>
         <div class="destaque-meta">
-          <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> 4,8 · 312</div>
-          <div class="fresco"><span class="dot verde"></span> Há 2h</div>
+          <div class="rating" id="destaque-rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> —</div>
+          <div class="fresco" id="destaque-fresco"><span class="dot verde"></span> —</div>
         </div>
       </div>
     </div>
@@ -808,6 +808,11 @@
     document.querySelectorAll('#cats-home .cat').forEach(c => c.classList.remove('ativo'));
     el.classList.add('ativo');
     const container = document.getElementById('lista-lojas');
+
+    if (cat === 'Visitar') {
+      carregarEventos();
+      return;
+    }
     if (cat === 'Tudo') {
       renderLojas(_todasLojas);
       return;
@@ -820,6 +825,45 @@
       container.innerHTML = '<div class="carregando">Nenhuma loja nessa categoria ainda.</div>';
     } else {
       renderLojas(filtradas);
+    }
+  }
+
+  async function carregarEventos() {
+    const container = document.getElementById('lista-lojas');
+    container.innerHTML = '<div class="carregando">Carregando eventos…</div>';
+    try {
+      const hoje = new Date().toISOString().split('T')[0];
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hoje}&order=data_evento.asc&select=*`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const eventos = await r.json();
+      if (!eventos.length) {
+        container.innerHTML = '<div class="carregando">Nenhum evento cadastrado ainda.</div>';
+        return;
+      }
+      container.innerHTML = eventos.map(ev => {
+        const data = new Date(ev.data_evento + 'T12:00:00');
+        const dia = data.getDate();
+        const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
+        const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
+        return `<div class="lugar" style="align-items:flex-start;gap:16px;">
+          <div style="width:58px;height:68px;border-radius:13px;background:linear-gradient(135deg,#2c2218,#1a1410);flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--cal);">
+            <div style="font-family:'Fraunces',serif;font-size:1.4rem;line-height:1;color:var(--gold-bright);">${dia}</div>
+            <div style="font-size:0.55rem;letter-spacing:0.1em;opacity:0.7;margin-top:2px;">${mes}</div>
+            <div style="font-size:0.5rem;letter-spacing:0.08em;opacity:0.5;">${semana}</div>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div class="cat-tag">${ev.fonte || 'Ouro Preto'}</div>
+            <h4 style="font-family:'Fraunces',serif;font-weight:500;font-size:1rem;line-height:1.2;margin-bottom:3px;">${ev.nome}</h4>
+            ${ev.horario ? `<div class="onde">⏰ ${ev.horario}</div>` : ''}
+            ${ev.local ? `<div class="onde">📍 ${ev.local}</div>` : ''}
+            ${ev.descricao ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;opacity:0.65;margin-top:4px;line-height:1.4;">${ev.descricao}</div>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      container.innerHTML = '<div class="carregando">Erro ao carregar eventos.</div>';
     }
   }
 
@@ -922,6 +966,71 @@
     }
   }
 
+  let _lojaDestaque = null;
+
+  async function carregarDestaque(lojas) {
+    if (!lojas.length) return;
+    // Pega a mais acessada que tenha informação fresca (menos de 72h)
+    const frescas = lojas.filter(l => {
+      const at = l['ATUALIZADO_EM'] || l.atualizado_em;
+      if (!at) return false;
+      return (new Date() - new Date(at)) < 72 * 3600000;
+    });
+    const pool = frescas.length ? frescas : lojas;
+    // Ordena por acessos
+    pool.sort((a, b) => ((b['ACESSOS']||b.acessos||0) - (a['ACESSOS']||a.acessos||0)));
+    const loja = pool[0];
+    _lojaDestaque = loja;
+
+    const nome = loja['NOME'] || loja.nome || '—';
+    const desc = loja['DESCRIÇÃO'] || loja.descricao || '';
+    const foto = loja['FOTO'] || loja.foto || '';
+    const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em || null;
+
+    // Preenche o card
+    const partes = nome.split(' ');
+    const ultima = partes.pop();
+    document.getElementById('destaque-nome').innerHTML =
+      partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : nome;
+    document.getElementById('destaque-desc').textContent = desc
+      ? '"' + desc.substring(0, 80) + (desc.length > 80 ? '…"' : '"')
+      : '';
+
+    // Foto de fundo
+    const imgEl = document.getElementById('destaque-img');
+    if (foto) imgEl.style.backgroundImage = `url('${foto}')`;
+
+    // Frescor
+    const frescoEl = document.getElementById('destaque-fresco');
+    if (atualizado) {
+      const h = (new Date() - new Date(atualizado)) / 3600000;
+      const dot = h < 12 ? 'verde' : h < 48 ? 'warn' : 'stale';
+      frescoEl.innerHTML = `<span class="dot ${dot}"></span> ${tempoAtras(atualizado)}`;
+    }
+
+    // Busca nota média
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/avaliacoes?loja_id=eq.${loja.id}&select=nota_geral`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const avals = await r.json();
+      if (avals.length) {
+        const media = (avals.reduce((s,a) => s + parseFloat(a.nota_geral||0), 0) / avals.length).toFixed(1);
+        document.getElementById('destaque-rating').innerHTML =
+          `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> ${media} · ${avals.length}`;
+      }
+    } catch(e) {}
+  }
+
+  function abrirDestaque() {
+    if (!_lojaDestaque) return;
+    const tc = 't1';
+    window._lojas = window._lojas || {};
+    window._lojas[_lojaDestaque.id] = _lojaDestaque;
+    abrirLoja(_lojaDestaque, tc);
+  }
+
   function abrirMaps() {
     const end = localStorage.getItem('det_endereco') || '';
     const query = encodeURIComponent(end + ' Ouro Preto MG');
@@ -931,6 +1040,12 @@
   async function abrirLojaPorId(id, tc) {
     const loja = (window._lojas || {})[id];
     if (!loja) { alert('Loja não encontrada. Recarregue o app.'); return; }
+    // Registra acesso
+    fetch(`${SUPA_URL}/rest/v1/rpc/incrementar_acessos`, {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ loja_id: id })
+    }).catch(() => {});
     await abrirLoja(loja, tc);
   }
 
@@ -1051,6 +1166,7 @@
       if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
       _todasLojas = lojas;
       await renderLojas(lojas);
+      carregarDestaque(lojas);
     } catch(e) {
       el.innerHTML = '<div class="carregando">Erro ao carregar. Tente novamente.</div>';
     }
