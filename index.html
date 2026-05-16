@@ -699,23 +699,35 @@
 
   async function uploadFoto(file, uid) {
     if (!file) return null;
-    const ext = file.name.split('.').pop();
-    const path = `${uid}/${Date.now()}.${ext}`;
-    const r = await fetch(
-      `${SUPA_URL}/storage/v1/object/fotos-lojas/${path}`,
-      {
-        method: 'POST',
-        headers: {
-          'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
-          'Content-Type': file.type,
-          'x-upsert': 'true'
-        },
-        body: file
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `loja-${uid}-${Date.now()}.${ext}`;
+    const token = localStorage.getItem('dica_token') || SUPA_KEY;
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/storage/v1/object/fotos-lojas/${path}`,
+        {
+          method: 'POST',
+          headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': file.type || 'image/jpeg',
+            'x-upsert': 'true'
+          },
+          body: file
+        }
+      );
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        console.error('Upload erro:', r.status, err);
+        return null;
       }
-    );
-    if (!r.ok) return null;
-    return `${SUPA_URL}/storage/v1/object/public/fotos-lojas/${path}`;
+      const publicUrl = `${SUPA_URL}/storage/v1/object/public/fotos-lojas/${path}`;
+      console.log('Upload OK:', publicUrl);
+      return publicUrl;
+    } catch(e) {
+      console.error('Upload exception:', e);
+      return null;
+    }
   }
 
   function abrirMaps() {
