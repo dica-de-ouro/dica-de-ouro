@@ -225,6 +225,8 @@
   .ev-card .local-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; opacity:0.6; padding-top:9px; border-top:1px solid var(--line); }
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
+  .btn-fav.curtido { background:#ff4d6d; border-color:#ff4d6d; color:#fff; }
+  .btn-fav-home.curtido { background:#ff4d6d20; border-color:#ff4d6d; color:#ff4d6d; }
 
   /* CADASTRO */
   #tela-cadastro { background:linear-gradient(180deg,#1a1410,#2c2218); display:flex; flex-direction:column; padding-bottom:40px; overflow-y:auto; }
@@ -303,7 +305,7 @@
     <h1 class="splash-titulo">Dica de <em>Ouro</em></h1>
     <p class="splash-tagline">A cidade colonial, atualizada hoje. Pelas mãos de quem vive ela.</p>
     <button class="btn-primario" onclick="irPara('tela-home','tab-inicio')">Explorar Ouro Preto</button>
-    <button class="splash-link">Sou lojista — quero entrar</button>
+
   </div>
   <div class="splash-rodape">— Vila Rica · MG · est. 1711 —</div>
 </div>
@@ -313,7 +315,7 @@
   <div class="hero">
     <div class="hero-topo">
       <div class="marca">Dica de <b>Ouro</b></div>
-      <button style="width:36px;height:36px;background:#ffffff12;border:1px solid #ffffff20;border-radius:50%;color:var(--cal);cursor:pointer;font-size:1rem;">♡</button>
+      <button id="btn-favoritos" class="btn-fav-home" onclick="abrirFavoritos()" style="width:36px;height:36px;background:#ffffff12;border:1px solid #ffffff20;border-radius:50%;color:var(--cal);cursor:pointer;font-size:1rem;" title="Meus favoritos">♡</button>
     </div>
     <div class="hero-saudacao">Bom dia, viajante.</div>
     <h1 class="hero-titulo">Descubra o que está <em>aberto e quente</em> agora.</h1>
@@ -365,7 +367,7 @@
     <div class="detalhe-hero-foto" id="det-foto"></div>
     <div class="detalhe-nav">
       <button class="btn-redondo" onclick="voltarPara('tela-home')">←</button>
-      <button class="btn-redondo">♡</button>
+      <button class="btn-redondo btn-fav" id="btn-fav-detalhe" onclick="toggleFavorito()" title="Salvar nos favoritos">♡</button>
     </div>
     <div class="detalhe-fundo">
       <div class="cat-tag" id="det-categoria">—</div>
@@ -821,6 +823,105 @@
     }
   }
 
+  // FAVORITOS — guardados no localStorage
+  function getFavoritos() {
+    try { return JSON.parse(localStorage.getItem('dica_favoritos') || '[]'); }
+    catch(e) { return []; }
+  }
+  function setFavoritos(favs) {
+    localStorage.setItem('dica_favoritos', JSON.stringify(favs));
+  }
+
+  function toggleFavorito() {
+    const lojaId = localStorage.getItem('aval_loja_id');
+    const lojaNome = localStorage.getItem('aval_loja_nome');
+    if (!lojaId) return;
+    const favs = getFavoritos();
+    const idx = favs.findIndex(f => f.id == lojaId);
+    const btn = document.getElementById('btn-fav-detalhe');
+    if (idx >= 0) {
+      // Remove
+      favs.splice(idx, 1);
+      if (btn) { btn.textContent = '♡'; btn.classList.remove('curtido'); }
+    } else {
+      // Adiciona
+      const loja = (window._lojas || {})[lojaId] || {};
+      favs.push({
+        id: lojaId,
+        nome: lojaNome || loja['NOME'] || '—',
+        cat: loja['CATEGORIA'] || '—',
+        end: loja['ENDEREÇO'] || '—',
+        foto: loja['FOTO'] || null
+      });
+      if (btn) { btn.textContent = '♥'; btn.classList.add('curtido'); }
+    }
+    setFavoritos(favs);
+  }
+
+  function atualizarBtnFavorito() {
+    const lojaId = localStorage.getItem('aval_loja_id');
+    if (!lojaId) return;
+    const favs = getFavoritos();
+    const btn = document.getElementById('btn-fav-detalhe');
+    if (!btn) return;
+    if (favs.find(f => f.id == lojaId)) {
+      btn.textContent = '♥'; btn.classList.add('curtido');
+    } else {
+      btn.textContent = '♡'; btn.classList.remove('curtido');
+    }
+  }
+
+  function abrirFavoritos() {
+    const favs = getFavoritos();
+    const el = document.getElementById('lista-lojas');
+    const catBtn = document.getElementById('btn-favoritos');
+
+    // Toggle: se já está mostrando favoritos, volta para tudo
+    if (catBtn && catBtn.dataset.mostrando === 'favs') {
+      catBtn.dataset.mostrando = '';
+      catBtn.style.background = '#ffffff12';
+      catBtn.style.color = 'var(--cal)';
+      renderLojas(_todasLojas);
+      return;
+    }
+
+    if (catBtn) {
+      catBtn.dataset.mostrando = 'favs';
+      catBtn.style.background = '#ff4d6d30';
+      catBtn.style.color = '#ff4d6d';
+    }
+
+    // Desmarca filtros de categoria
+    document.querySelectorAll('#cats-home .cat').forEach(c => c.classList.remove('ativo'));
+
+    if (!favs.length) {
+      el.innerHTML = '<div class="carregando">Nenhum favorito ainda.<br>Toque em ♡ dentro de uma loja.</div>';
+      return;
+    }
+
+    // Filtra as lojas da memória pelos ids favoritos
+    const favIds = favs.map(f => String(f.id));
+    const lojasFavs = _todasLojas.filter(l => favIds.includes(String(l.id)));
+    if (lojasFavs.length) {
+      renderLojas(lojasFavs);
+    } else {
+      // Monta cards mínimos com dados do localStorage
+      el.innerHTML = favs.map((f, i) => {
+        const tc = ['t1','t2','t3'][i%3];
+        const thumbStyle = f.foto ? `style="background-image:url('${f.foto}');background-size:cover;background-position:center;"` : '';
+        return `<div class="lugar" onclick="abrirLojaPorId(${f.id},'${tc}')">
+          <div class="lugar-thumb ${f.foto?'':tc}" ${thumbStyle}></div>
+          <div class="lugar-info">
+            <div class="cat-tag">${f.cat}</div>
+            <h4>${f.nome}</h4>
+            <div class="onde">${f.end}</div>
+            <div class="meta-row"><span class="stars">♥ Favorito</span></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
   function abrirMaps() {
     const end = localStorage.getItem('det_endereco') || '';
     const query = encodeURIComponent(end + ' Ouro Preto MG');
@@ -903,6 +1004,7 @@
 
     // Navega primeiro — carrega notas em paralelo
     irPara('tela-detalhe');
+    atualizarBtnFavorito();
 
     // Busca notas médias do banco
     try {
