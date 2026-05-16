@@ -913,8 +913,9 @@
       });
 
       if (!rLoja.ok) {
+        const erroLoja = await rLoja.json().catch(() => ({}));
         erroEl.style.color = '#ff6b6b';
-        erroEl.textContent = 'Conta criada, mas erro ao cadastrar loja. Fale com o suporte.';
+        erroEl.textContent = 'Erro: ' + (erroLoja.message || erroLoja.hint || rLoja.status);
         return;
       }
 
