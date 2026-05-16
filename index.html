@@ -254,6 +254,12 @@
   .evento-info-row .cnt .lbl { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; opacity:0.5; margin-bottom:2px; }
   .evento-info-row .cnt .val { font-size:0.88rem; }
   .evento-desc { font-family:'Cormorant Garamond',serif; font-size:1.05rem; line-height:1.5; color:var(--ink-soft); margin-bottom:24px; }
+  .comentario-card { background:var(--cal); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:10px; }
+  .comentario-card .com-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .comentario-card .com-nome { font-weight:600; font-size:0.88rem; }
+  .comentario-card .com-nota { font-family:'Fraunces',serif; font-size:1rem; color:var(--gold-deep); }
+  .comentario-card .com-texto { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.95rem; line-height:1.4; color:var(--ink-soft); }
+  .comentario-card .com-data { font-size:0.65rem; opacity:0.45; margin-top:6px; }
   .cta-evento { position:fixed; bottom:0; left:0; right:0; background:#faf6ecf2; backdrop-filter:blur(16px); border-top:1px solid var(--line); padding:14px 20px calc(14px + var(--safe-bottom)); display:flex; gap:10px; z-index:90; }
   .btn-site { flex:1; height:52px; border-radius:13px; background:var(--ink); color:var(--gold-bright); border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:600; font-size:0.86rem; letter-spacing:0.06em; text-transform:uppercase; transition:all 0.2s; }
   .btn-site:active { transform:scale(0.98); }
@@ -426,9 +432,15 @@
   </div>
   <div class="detalhe-corpo">
     <div class="notas-trio">
-      <div class="nota-cel"><div class="lbl">Produto</div><div class="num">—<span>/5</span></div></div>
-      <div class="nota-cel"><div class="lbl">Serviço</div><div class="num">—<span>/5</span></div></div>
-      <div class="nota-cel"><div class="lbl">Estrutura</div><div class="num">—<span>/5</span></div></div>
+      <div class="nota-cel"><div class="lbl">Produto</div><div class="num" id="det-nota-produto">—<span>/5</span></div></div>
+      <div class="nota-cel"><div class="lbl">Serviço</div><div class="num" id="det-nota-servico">—<span>/5</span></div></div>
+      <div class="nota-cel"><div class="lbl">Estrutura</div><div class="num" id="det-nota-estrutura">—<span>/5</span></div></div>
+    </div>
+
+    <!-- Comentários -->
+    <div class="sec-det" id="det-comentarios-sec" style="display:none;">
+      <h3>O que disseram</h3>
+      <div id="det-comentarios"></div>
     </div>
     <div class="sec-det" id="det-descricao-bloco" style="display:none">
       <h3>Sobre o local</h3>
@@ -461,6 +473,12 @@
   </div>
   <div class="aval-corpo">
     <div class="aval-intro">Nota separada para produto, serviço e estrutura. Outros viajantes leem antes de cruzar a praça.</div>
+
+    <div class="aval-bloco">
+      <div class="lbl-row"><div><h4>Seu nome</h4><div class="hint">Para identificar sua avaliação.</div></div></div>
+      <input id="aval-nome" type="text" placeholder="Como você se chama?" style="width:100%;padding:13px 15px;background:var(--cal);border:1px solid var(--line);border-radius:13px;font-family:'Inter',sans-serif;font-size:0.88rem;color:var(--ink);outline:none;">
+    </div>
+
     <div class="aval-bloco">
       <div class="lbl-row"><div><h4>Produto</h4><div class="hint">A comida, a bebida, o que comprou.</div></div><div class="valor" id="vp">—<span>/5</span></div></div>
       <div class="estrelas-input" data-alvo="vp">
@@ -1465,16 +1483,17 @@
     irPara('tela-detalhe');
     atualizarBtnFavorito();
 
-    // Busca notas médias do banco
+    // Busca avaliações completas (notas + comentários)
     try {
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/avaliacoes?loja_id=eq.${loja.id}&select=nota_produto,nota_servico,nota_estrutura,nota_geral`,
+        `${SUPA_URL}/rest/v1/avaliacoes?loja_id=eq.${loja.id}&select=*&order=created_at.desc`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
       const avals = await r.json();
 
-      if (avals.length === 0) {
+      if (!avals.length) {
         document.getElementById('det-avaliacoes').textContent = '· Sem avaliações ainda';
+        document.getElementById('det-comentarios-sec').style.display = 'none';
         return;
       }
 
@@ -1489,11 +1508,33 @@
       document.querySelector('#tela-detalhe .stars').textContent = '★ ' + mediaGeral;
       document.getElementById('det-avaliacoes').textContent = `· ${total} avaliação${total > 1 ? 'ões' : ''}`;
 
-      // Atualiza as 3 notas no trio
-      const notaCels = document.querySelectorAll('#tela-detalhe .nota-cel .num');
-      if (notaCels[0]) notaCels[0].innerHTML = mediaProd  + '<span>/5</span>';
-      if (notaCels[1]) notaCels[1].innerHTML = mediaSrv   + '<span>/5</span>';
-      if (notaCels[2]) notaCels[2].innerHTML = mediaEstr  + '<span>/5</span>';
+      // Atualiza as 3 notas com IDs
+      document.getElementById('det-nota-produto').innerHTML  = mediaProd  + '<span>/5</span>';
+      document.getElementById('det-nota-servico').innerHTML  = mediaSrv   + '<span>/5</span>';
+      document.getElementById('det-nota-estrutura').innerHTML = mediaEstr + '<span>/5</span>';
+
+      // Exibe comentários
+      const comComTexto = avals.filter(a => a.comentario && a.comentario.trim());
+      const secCom = document.getElementById('det-comentarios-sec');
+      const elCom = document.getElementById('det-comentarios');
+      if (comComTexto.length) {
+        secCom.style.display = 'block';
+        elCom.innerHTML = comComTexto.slice(0, 5).map(a => {
+          const data = new Date(a.created_at).toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+          const nota = parseFloat(a.nota_geral||0).toFixed(1);
+          const nome = a.nome_avaliador || 'Anônimo';
+          return `<div class="comentario-card">
+            <div class="com-header">
+              <span class="com-nome">${nome}</span>
+              <span class="com-nota">★ ${nota}</span>
+            </div>
+            <div class="com-texto">"${a.comentario}"</div>
+            <div class="com-data">${data}</div>
+          </div>`;
+        }).join('');
+      } else {
+        secCom.style.display = 'none';
+      }
 
     } catch(e) {
       document.getElementById('det-avaliacoes').textContent = '';
@@ -1973,13 +2014,23 @@
     const lojaId = localStorage.getItem('aval_loja_id');
     if (!lojaId) { msgEl.textContent = 'Erro: loja não identificada.'; return; }
 
-    // Pega as notas dos displays
-    const vp = document.getElementById('vp').textContent.trim();
-    const vs = document.getElementById('vs').textContent.trim();
-    const ve = document.getElementById('ve').textContent.trim();
-    const notaProduto = parseInt(vp);
-    const notaServico = parseInt(vs);
-    const notaEstrutura = parseInt(ve);
+    // Valida nome
+    const nome = (document.getElementById('aval-nome')?.value || '').trim();
+    if (!nome) {
+      msgEl.style.color = '#ff6b6b';
+      msgEl.textContent = 'Digite seu nome antes de enviar.';
+      return;
+    }
+    if (nome.length < 2) {
+      msgEl.style.color = '#ff6b6b';
+      msgEl.textContent = 'Nome muito curto.';
+      return;
+    }
+
+    // Pega as notas
+    const notaProduto = parseInt(document.getElementById('vp').textContent);
+    const notaServico = parseInt(document.getElementById('vs').textContent);
+    const notaEstrutura = parseInt(document.getElementById('ve').textContent);
     const comentario = document.getElementById('aval-comentario').value.trim();
 
     if (isNaN(notaProduto) || isNaN(notaServico) || isNaN(notaEstrutura)) {
@@ -1987,6 +2038,9 @@
       msgEl.textContent = 'Dê uma nota para os 3 itens antes de enviar.';
       return;
     }
+
+    msgEl.style.color = 'var(--gold-bright)';
+    msgEl.textContent = 'Enviando…';
 
     try {
       const r = await fetch(`${SUPA_URL}/rest/v1/avaliacoes`, {
@@ -2002,14 +2056,16 @@
           nota_produto: notaProduto,
           nota_servico: notaServico,
           nota_estrutura: notaEstrutura,
-          comentario: comentario || null
+          comentario: comentario || null,
+          nome_avaliador: nome
         })
       });
 
       if (r.ok || r.status === 201) {
         msgEl.style.color = '#9dd49d';
-        msgEl.textContent = '✓ Avaliação enviada. Obrigado!';
-        // Limpa as estrelas e comentário
+        msgEl.textContent = '✓ Avaliação enviada. Obrigado, ' + nome + '!';
+        // Limpa tudo
+        document.getElementById('aval-nome').value = '';
         document.getElementById('aval-comentario').value = '';
         document.getElementById('vp').innerHTML = '—<span>/5</span>';
         document.getElementById('vs').innerHTML = '—<span>/5</span>';
@@ -2020,14 +2076,14 @@
           svg.setAttribute('fill','none');
           svg.setAttribute('stroke','currentColor');
         });
-        // Volta para o detalhe após 2s
         setTimeout(() => {
           msgEl.textContent = '';
           voltarPara('tela-detalhe');
         }, 2000);
       } else {
+        const err = await r.json().catch(()=>({}));
         msgEl.style.color = '#ff6b6b';
-        msgEl.textContent = 'Erro ao enviar. Tente novamente.';
+        msgEl.textContent = 'Erro ao enviar: ' + (err.message || r.status);
       }
     } catch(e) {
       msgEl.style.color = '#ff6b6b';
