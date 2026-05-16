@@ -588,13 +588,13 @@
     return `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${s}" stroke-width="1.5"><path d="M6 2h12l1 7H5zm0 7v11h12V9"/></svg>`;
   }
 
-  function abrirLojaPorId(id, tc) {
+  async function abrirLojaPorId(id, tc) {
     const loja = (window._lojas || {})[id];
     if (!loja) { alert('Loja não encontrada. Recarregue o app.'); return; }
-    abrirLoja(loja, tc);
+    await abrirLoja(loja, tc);
   }
 
-  function abrirLoja(loja, tc) {
+  async function abrirLoja(loja, tc) {
     // Normaliza campos (maiúsculo ou minúsculo)
     const nome     = loja['NOME']      || loja.nome      || '—';
     const cat      = loja['CATEGORIA'] || loja.categoria || 'Local';
@@ -612,7 +612,6 @@
     // Categoria e endereço
     document.getElementById('det-categoria').textContent = cat;
     document.getElementById('det-endereco').textContent = end;
-    document.getElementById('det-avaliacoes').textContent = '';
 
     // Descrição
     const descBloco = document.getElementById('det-descricao-bloco');
@@ -649,7 +648,42 @@
     const avalNome = document.getElementById('aval-nome-loja');
     if (avalNome) avalNome.textContent = nome;
 
+    // Navega primeiro — carrega notas em paralelo
     irPara('tela-detalhe');
+
+    // Busca notas médias do banco
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/avaliacoes?loja_id=eq.${loja.id}&select=nota_produto,nota_servico,nota_estrutura,nota_geral`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const avals = await r.json();
+
+      if (avals.length === 0) {
+        document.getElementById('det-avaliacoes').textContent = '· Sem avaliações ainda';
+        return;
+      }
+
+      // Calcula médias
+      const total = avals.length;
+      const mediaGeral = (avals.reduce((s,a) => s + parseFloat(a.nota_geral||0), 0) / total).toFixed(1);
+      const mediaProd  = (avals.reduce((s,a) => s + (a.nota_produto||0), 0) / total).toFixed(1);
+      const mediaSrv   = (avals.reduce((s,a) => s + (a.nota_servico||0), 0) / total).toFixed(1);
+      const mediaEstr  = (avals.reduce((s,a) => s + (a.nota_estrutura||0), 0) / total).toFixed(1);
+
+      // Atualiza nota geral no hero
+      document.querySelector('#tela-detalhe .stars').textContent = '★ ' + mediaGeral;
+      document.getElementById('det-avaliacoes').textContent = `· ${total} avaliação${total > 1 ? 'ões' : ''}`;
+
+      // Atualiza as 3 notas no trio
+      const notaCels = document.querySelectorAll('#tela-detalhe .nota-cel .num');
+      if (notaCels[0]) notaCels[0].innerHTML = mediaProd  + '<span>/5</span>';
+      if (notaCels[1]) notaCels[1].innerHTML = mediaSrv   + '<span>/5</span>';
+      if (notaCels[2]) notaCels[2].innerHTML = mediaEstr  + '<span>/5</span>';
+
+    } catch(e) {
+      document.getElementById('det-avaliacoes').textContent = '';
+    }
   }
 
   async function carregarLojas() {
