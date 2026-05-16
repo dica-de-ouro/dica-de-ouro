@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Dica de Ouro" />
-<meta name="theme-color" content="#1a1410" />qwwncqvdzpzmgntxkulu.supabase.co/rest/v1/lojas?select=*&order=atualizado_em.desc:1  Failed to load resource: the server responded with a status of 400 ()
+<meta name="theme-color" content="#1a1410" />
 <title>Dica de Ouro — Ouro Preto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -649,7 +649,7 @@
   async function carregarLojas() {
     const el = document.getElementById('lista-lojas');
     try {
-      const r = await fetch(`${SUPA_URL}/rest/v1/lojas?select=*&order=atualizado_em.desc`, {
+      const r = await fetch(`${SUPA_URL}/rest/v1/lojas?select=*&order=created_at.desc`, {
         headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
       });
       const lojas = await r.json();
