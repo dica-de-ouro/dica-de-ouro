@@ -588,6 +588,12 @@
     return `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${s}" stroke-width="1.5"><path d="M6 2h12l1 7H5zm0 7v11h12V9"/></svg>`;
   }
 
+  function abrirLojaPorId(id, tc) {
+    const loja = (window._lojas || {})[id];
+    if (!loja) { alert('Loja não encontrada. Recarregue o app.'); return; }
+    abrirLoja(loja, tc);
+  }
+
   function abrirLoja(loja, tc) {
     // Normaliza campos (maiúsculo ou minúsculo)
     const nome     = loja['NOME']      || loja.nome      || '—';
@@ -660,7 +666,10 @@
         const cat = l['CATEGORIA'] || l.categoria || 'Local';
         const end = l['ENDEREÇO'] || l.endereco || '';
         const atualizado = l['ATUALIZADO_EM'] || l.atualizado_em || null;
-        return `<div class="lugar" onclick="abrirLoja(${JSON.stringify(l).replace(/'/g, "&#39;")},'${tc}')">
+        // Guarda loja em memória indexada pelo id
+        window._lojas = window._lojas || {};
+        window._lojas[l.id] = l;
+        return `<div class="lugar" onclick="abrirLojaPorId(${l.id},'${tc}')">
           <div class="lugar-thumb ${tc}">${svgIcone(cat,tc)}</div>
           <div class="lugar-info">
             <div class="cat-tag">${cat}</div>
