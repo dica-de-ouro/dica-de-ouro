@@ -228,6 +228,29 @@
   .btn-fav.curtido { background:#ff4d6d; border-color:#ff4d6d; color:#fff; }
   .btn-fav-home.curtido { background:#ff4d6d20; border-color:#ff4d6d; color:#ff4d6d; }
 
+  /* DETALHE EVENTO */
+  #tela-evento { background:var(--paper); }
+  .evento-hero { min-height:260px; background:linear-gradient(180deg,transparent 30%,#1a141095 100%), linear-gradient(135deg,#2c2218,#1a1410); color:var(--cal); padding:calc(var(--safe-top) + 12px) 22px 24px; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  .evento-hero-foto { position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; }
+  .evento-hero-foto::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,#1a141060 0%,#1a1410cc 100%); }
+  .evento-hero .detalhe-nav, .evento-hero .evento-fundo { position:relative; z-index:1; }
+  .evento-fundo { margin-top:auto; }
+  .evento-fundo .data-chip { display:inline-flex; align-items:center; gap:8px; background:var(--gold-bright); color:var(--ink); padding:5px 12px; border-radius:999px; font-size:0.7rem; font-weight:600; letter-spacing:0.06em; margin-bottom:10px; }
+  .evento-fundo h2 { font-family:'Fraunces',serif; font-weight:300; font-size:clamp(1.6rem,6vw,2rem); line-height:1; letter-spacing:-0.02em; margin-bottom:8px; }
+  .evento-fundo h2 em { font-style:italic; color:var(--gold-bright); }
+  .evento-fonte { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; opacity:0.55; }
+  .evento-corpo { padding:24px 22px 120px; }
+  .evento-info-row { display:flex; align-items:flex-start; gap:13px; padding:13px 0; border-bottom:1px solid var(--line); }
+  .evento-info-row:last-child { border-bottom:none; }
+  .evento-info-row .ic { width:30px; height:30px; border-radius:50%; background:var(--cal-warm); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--gold-deep); font-size:0.9rem; }
+  .evento-info-row .cnt .lbl { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; opacity:0.5; margin-bottom:2px; }
+  .evento-info-row .cnt .val { font-size:0.88rem; }
+  .evento-desc { font-family:'Cormorant Garamond',serif; font-size:1.05rem; line-height:1.5; color:var(--ink-soft); margin-bottom:24px; }
+  .cta-evento { position:fixed; bottom:0; left:0; right:0; background:#faf6ecf2; backdrop-filter:blur(16px); border-top:1px solid var(--line); padding:14px 20px calc(14px + var(--safe-bottom)); display:flex; gap:10px; z-index:90; }
+  .btn-site { flex:1; height:52px; border-radius:13px; background:var(--ink); color:var(--gold-bright); border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:600; font-size:0.86rem; letter-spacing:0.06em; text-transform:uppercase; transition:all 0.2s; }
+  .btn-site:active { transform:scale(0.98); }
+  .btn-site.sem-link { background:var(--cal-warm); color:var(--ink-soft); cursor:default; opacity:0.6; }
+
   /* CADASTRO */
   #tela-cadastro { background:linear-gradient(180deg,#1a1410,#2c2218); display:flex; flex-direction:column; padding-bottom:40px; overflow-y:auto; }
   .cadastro-content { flex:1; display:flex; flex-direction:column; padding:calc(var(--safe-top) + 24px) 32px 40px; color:var(--cal); }
@@ -455,6 +478,31 @@
     </div>
     <button class="btn-enviar" onclick="enviarAvaliacao()">Enviar avaliação</button>
     <div class="salvo-msg" id="aval-msg"></div>
+  </div>
+</div>
+
+<!-- TELA 4.5: DETALHE DO EVENTO -->
+<div id="tela-evento" class="tela oculta">
+  <div class="evento-hero" id="evento-hero">
+    <div class="evento-hero-foto" id="evento-foto"></div>
+    <div class="detalhe-nav">
+      <button class="btn-redondo" onclick="voltarPara('tela-home')">←</button>
+    </div>
+    <div class="evento-fundo">
+      <div class="data-chip" id="evento-data-chip">📅 —</div>
+      <h2 id="evento-nome">—</h2>
+      <div class="evento-fonte" id="evento-fonte">—</div>
+    </div>
+  </div>
+  <div class="evento-corpo">
+    <p class="evento-desc" id="evento-desc"></p>
+    <div id="evento-infos"></div>
+  </div>
+  <div class="cta-evento">
+    <button class="btn-mapa" onclick="abrirMapsEvento()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/><circle cx="12" cy="10" r="3"/></svg>
+    </button>
+    <button class="btn-site" id="btn-site-evento" onclick="abrirSiteEvento()">Ver site do evento</button>
   </div>
 </div>
 
@@ -842,29 +890,105 @@
         container.innerHTML = '<div class="carregando">Nenhum evento cadastrado ainda.</div>';
         return;
       }
+      // Guarda eventos em memória
+      window._eventos = {};
+      eventos.forEach(ev => window._eventos[ev.id] = ev);
+
       container.innerHTML = eventos.map(ev => {
         const data = new Date(ev.data_evento + 'T12:00:00');
         const dia = data.getDate();
         const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
         const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
-        return `<div class="lugar" style="align-items:flex-start;gap:16px;">
-          <div style="width:58px;height:68px;border-radius:13px;background:linear-gradient(135deg,#2c2218,#1a1410);flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--cal);">
-            <div style="font-family:'Fraunces',serif;font-size:1.4rem;line-height:1;color:var(--gold-bright);">${dia}</div>
-            <div style="font-size:0.55rem;letter-spacing:0.1em;opacity:0.7;margin-top:2px;">${mes}</div>
-            <div style="font-size:0.5rem;letter-spacing:0.08em;opacity:0.5;">${semana}</div>
+        const thumbStyle = ev.foto
+          ? `style="background-image:url('${ev.foto}');background-size:cover;background-position:center;"`
+          : '';
+        return `<div class="lugar" style="align-items:flex-start;gap:16px;cursor:pointer;" onclick="abrirEvento('${ev.id}')">
+          <div style="width:58px;height:68px;border-radius:13px;flex-shrink:0;overflow:hidden;" ${ev.foto ? thumbStyle : ''}>
+            ${!ev.foto ? `<div style="width:100%;height:100%;background:linear-gradient(135deg,#2c2218,#1a1410);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--cal);">
+              <div style="font-family:'Fraunces',serif;font-size:1.4rem;line-height:1;color:var(--gold-bright);">${dia}</div>
+              <div style="font-size:0.55rem;letter-spacing:0.1em;opacity:0.7;margin-top:2px;">${mes}</div>
+              <div style="font-size:0.5rem;letter-spacing:0.08em;opacity:0.5;">${semana}</div>
+            </div>` : ''}
           </div>
           <div style="flex:1;min-width:0;">
-            <div class="cat-tag">${ev.fonte || 'Ouro Preto'}</div>
+            <div class="cat-tag">${ev.fonte || 'Ouro Preto'} · ${semana} ${dia}/${mes}</div>
             <h4 style="font-family:'Fraunces',serif;font-weight:500;font-size:1rem;line-height:1.2;margin-bottom:3px;">${ev.nome}</h4>
             ${ev.horario ? `<div class="onde">⏰ ${ev.horario}</div>` : ''}
             ${ev.local ? `<div class="onde">📍 ${ev.local}</div>` : ''}
-            ${ev.descricao ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;opacity:0.65;margin-top:4px;line-height:1.4;">${ev.descricao}</div>` : ''}
+            ${ev.descricao ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;opacity:0.65;margin-top:4px;line-height:1.4;">${ev.descricao.substring(0,80)}${ev.descricao.length>80?'…':''}</div>` : ''}
           </div>
         </div>`;
       }).join('');
     } catch(e) {
       container.innerHTML = '<div class="carregando">Erro ao carregar eventos.</div>';
     }
+  }
+
+  let _eventoAtual = null;
+
+  function abrirEvento(id) {
+    const ev = (window._eventos || {})[id];
+    if (!ev) return;
+    _eventoAtual = ev;
+
+    // Foto
+    const fotoEl = document.getElementById('evento-foto');
+    if (ev.foto) {
+      fotoEl.style.backgroundImage = `url('${ev.foto}')`;
+      fotoEl.style.display = 'block';
+    } else {
+      fotoEl.style.backgroundImage = '';
+      fotoEl.style.display = 'none';
+    }
+
+    // Data formatada
+    const data = new Date(ev.data_evento + 'T12:00:00');
+    const dataStr = data.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+    document.getElementById('evento-data-chip').textContent = '📅 ' + dataStr;
+
+    // Nome
+    const partes = ev.nome.split(' ');
+    const ultima = partes.pop();
+    document.getElementById('evento-nome').innerHTML =
+      partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : ev.nome;
+
+    // Fonte
+    document.getElementById('evento-fonte').textContent = ev.fonte || 'Dica de Ouro';
+
+    // Descrição
+    document.getElementById('evento-desc').textContent = ev.descricao || '';
+
+    // Infos
+    let infos = '';
+    if (ev.horario) infos += `<div class="evento-info-row"><div class="ic">⏰</div><div class="cnt"><div class="lbl">Horário</div><div class="val">${ev.horario}</div></div></div>`;
+    if (ev.local)   infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Local</div><div class="val">${ev.local}</div></div></div>`;
+    if (ev.link)    infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);">${ev.link}</div></div></div>`;
+    document.getElementById('evento-infos').innerHTML = infos;
+
+    // Botão de site
+    const btnSite = document.getElementById('btn-site-evento');
+    if (ev.link) {
+      btnSite.textContent = 'Ver site do evento';
+      btnSite.classList.remove('sem-link');
+    } else {
+      btnSite.textContent = 'Sem site cadastrado';
+      btnSite.classList.add('sem-link');
+    }
+
+    irPara('tela-evento');
+  }
+
+  function abrirMapsEvento() {
+    if (!_eventoAtual || !_eventoAtual.local) return;
+    const query = encodeURIComponent(_eventoAtual.local + ' Ouro Preto MG');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+  }
+
+  function abrirSiteEvento() {
+    if (!_eventoAtual || !_eventoAtual.link) return;
+    let url = _eventoAtual.link;
+    if (!url.startsWith('http')) url = 'https://' + url;
+    window.open(url, '_blank');
   }
 
   // FAVORITOS — guardados no localStorage
