@@ -90,7 +90,7 @@
 
   /* Destaque */
   .destaque { background:var(--ink); color:var(--cal); border-radius:22px; overflow:hidden; margin-bottom:28px; box-shadow:0 20px 40px -12px #1a141035; cursor:pointer; }
-  .destaque-img { height:175px; background:linear-gradient(180deg,transparent 35%,#1a1410cc 100%),linear-gradient(135deg,#b8893a,#8a6428); position:relative; }
+  .destaque-img { height:175px; background:linear-gradient(180deg,transparent 35%,#1a1410cc 100%),linear-gradient(135deg,#b8893a,#8a6428); position:relative; overflow:hidden; background-size:cover; background-position:center; }
   .destaque-badge { position:absolute; top:14px; left:14px; background:var(--paper); color:var(--ink); padding:5px 11px; border-radius:999px; font-size:0.66rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; display:flex; align-items:center; gap:6px; }
   .destaque-badge::before { content:''; width:6px; height:6px; background:var(--rust); border-radius:50%; animation:pulsar 2s infinite; }
   .destaque-corpo { padding:16px 20px 20px; }
@@ -126,7 +126,7 @@
   .lugares { display:flex; flex-direction:column; gap:12px; margin-bottom:32px; }
   .lugar { background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:13px; display:flex; gap:13px; cursor:pointer; transition:all 0.2s; }
   .lugar:active { transform:scale(0.98); }
-  .lugar-thumb { width:68px; height:68px; border-radius:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .lugar-thumb { width:68px; height:68px; border-radius:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; background-size:cover !important; background-position:center !important; }
   .lugar-thumb.t1 { background:linear-gradient(135deg,#8a6428,#d4a04a); }
   .lugar-thumb.t2 { background:linear-gradient(135deg,#4a5c4a,#6d8a6d); }
   .lugar-thumb.t3 { background:linear-gradient(135deg,#8a3a1f,#c46b48); }
@@ -140,7 +140,7 @@
   /* DETALHE */
   #tela-detalhe { background:var(--paper); }
   .detalhe-hero { min-height:290px; background:linear-gradient(180deg,transparent 35%,#1a141090 100%),linear-gradient(135deg,#8a6428 0%,#d4a04a 45%,#8a3a1f 100%); color:var(--cal); padding:calc(var(--safe-top) + 12px) 22px 24px; display:flex; flex-direction:column; position:relative; overflow:hidden; }
-  .detalhe-hero-foto { position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; }
+  .detalhe-hero-foto { position:absolute; inset:0; background-size:cover !important; background-position:center top !important; z-index:0; }
   .detalhe-hero-foto::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,#1a141060 0%,#1a1410cc 100%); }
   .detalhe-hero .detalhe-nav, .detalhe-hero .detalhe-fundo { position:relative; z-index:1; }
   .detalhe-nav { display:flex; justify-content:space-between; }
@@ -227,7 +227,7 @@
   .ev-card .local-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; opacity:0.6; padding-top:9px; border-top:1px solid var(--line); }
   .lugar-card { background:var(--paper); border:1px solid var(--line); border-radius:17px; overflow:hidden; margin-bottom:13px; box-shadow:0 4px 12px -4px #1a141015; cursor:pointer; transition:all 0.2s; }
   .lugar-card:active { transform:scale(0.98); }
-  .lugar-card-hero { height:120px; background:linear-gradient(135deg,#2c2218,#3d2e1f); background-size:cover; background-position:center; position:relative; }
+  .lugar-card-hero { height:120px; background:linear-gradient(135deg,#2c2218,#3d2e1f); background-size:cover !important; background-position:center !important; position:relative; overflow:hidden; }
   .lugar-card-hero::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,#1a141080 100%); }
   .lugar-card-cat { position:absolute; top:10px; left:12px; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-bright); font-weight:600; z-index:1; }
   .lugar-card-body { padding:14px 16px; }
@@ -367,7 +367,7 @@
     </g>
   </svg>
   <div class="splash-content">
-    <img src="https://dica-de-ouro.github.io/dica-de-ouro/logo.png"
+    <img src="https://dica-de-ouro.github.io/dica-de-ouro/logo.png?v=2"
          alt="Dica de Ouro"
          style="width:88%;max-width:360px;margin-bottom:40px;filter:drop-shadow(0 12px 32px rgba(0,0,0,0.7));"
          onerror="this.style.display='none';document.getElementById('splash-fallback').style.display='flex'"/>
@@ -1560,7 +1560,11 @@
 
     // Foto de fundo
     const imgEl = document.getElementById('destaque-img');
-    if (foto) imgEl.style.backgroundImage = `url('${foto}')`;
+    if (foto) {
+      imgEl.style.backgroundImage = `linear-gradient(180deg,transparent 35%,#1a1410cc 100%), url('${foto}')`;
+      imgEl.style.backgroundSize = 'cover';
+      imgEl.style.backgroundPosition = 'center';
+    }
 
     // Frescor
     const frescoEl = document.getElementById('destaque-fresco');
