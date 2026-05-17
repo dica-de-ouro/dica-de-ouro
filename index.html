@@ -427,7 +427,7 @@
   .login-voltar { text-align:center; margin-top:20px; }
   .login-voltar button { background:none; border:none; color:var(--cal); opacity:0.5; font-size:0.82rem; cursor:pointer; font-family:'Inter',sans-serif; border-bottom:1px solid currentColor; padding-bottom:2px; }
 
-  /* PAINEL LOJISTA */
+  /* PAINEL ANUNCIANTE */
   #tela-painel { background:var(--ink); color:var(--cal); }
   .painel-topo { padding:calc(var(--safe-top) + 14px) 22px 20px; border-bottom:1px solid #ffffff10; }
   .painel-eyebrow { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:6px; }
@@ -725,10 +725,10 @@
   </div>
 </div>
 
-<!-- TELA 6: CADASTRO LOJISTA -->
+<!-- TELA 6: CADASTRO ANUNCIANTE -->
 <div id="tela-cadastro" class="tela oculta escura">
   <div class="cadastro-content">
-    <div class="cadastro-eyebrow">Área do lojista</div>
+    <div class="cadastro-eyebrow">Área do anunciante</div>
     <h2 class="cadastro-titulo">Cadastrar no <em>Dica de Ouro</em></h2>
     <p class="cadastro-sub">Crie sua conta e coloque seu espaço no mapa de Ouro Preto.</p>
 
@@ -877,11 +877,11 @@
   </div>
 </div>
 
-<!-- TELA 7: LOGIN LOJISTA -->
+<!-- TELA 7: LOGIN ANUNCIANTE -->
 <div id="tela-login" class="tela oculta escura">
   <div class="login-content">
     <div style="height:calc(var(--safe-top) + 20px)"></div>
-    <div class="login-eyebrow">Área do lojista</div>
+    <div class="login-eyebrow">Área do anunciante</div>
     <h2 class="login-titulo">Entrar no <em>Dica de Ouro</em></h2>
     <p class="login-sub">Gerencie sua loja e mantenha as informações frescas.</p>
     <div class="campo-grupo">
@@ -901,11 +901,11 @@
   </div>
 </div>
 
-<!-- TELA 7: PAINEL DO LOJISTA -->
+<!-- TELA 7: PAINEL DO ANUNCIANTE -->
 <div id="tela-painel" class="tela oculta">
   <div class="painel-topo">
-    <div class="painel-eyebrow">Painel do lojista</div>
-    <h2>Olá, <em id="painel-nome-lojista">—</em></h2>
+    <div class="painel-eyebrow">Painel do anunciante</div>
+    <h2>Olá, <em id="painel-nome-anunciante">—</em></h2>
     <div class="sub" id="painel-nome-loja">—</div>
   </div>
   <div class="painel-corpo">
@@ -1040,9 +1040,9 @@
     <div class="tab-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg></div>
     Explorar
   </button>
-  <button class="tab" id="tab-eu" onclick="abrirAreaLojista()">
+  <button class="tab" id="tab-eu" onclick="abrirAreaAnunciante()">
     <div class="tab-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 22c0-4 4-7 8-7s8 3 8 7"/></svg></div>
-    Lojista
+    Anunciante
   </button>
 </nav>
 
@@ -2562,7 +2562,7 @@
           'ENDEREÇO': endereco,
           'TELEFONE': telefone || null,
           'FOTO': fotoUrl,
-          'lojista_id': uid
+          'anunciante_id': uid
         })
       });
 
@@ -2615,7 +2615,7 @@
     }
   }
 
-  async function abrirAreaLojista() {
+  async function abrirAreaAnunciante() {
     const token = localStorage.getItem('dica_token');
     const uid = localStorage.getItem('dica_uid');
     const email = localStorage.getItem('dica_email');
@@ -2632,8 +2632,8 @@
   }
 
   async function abrirPainel(uid, email, token) {
-    // Busca todas as lojas do lojista
-    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, {
+    // Busca todas as lojas do anunciante
+    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?anunciante_id=eq.${uid}&select=*&order=created_at.asc`, {
       headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${token}` }
     });
     const lojas = await r.json();
@@ -2645,7 +2645,7 @@
     }
 
     const nomeExibido = email.split('@')[0];
-    document.getElementById('painel-nome-lojista').textContent = nomeExibido;
+    document.getElementById('painel-nome-anunciante').textContent = nomeExibido;
 
     // Se tem mais de uma loja, mostra o seletor
     const selectorDiv = document.getElementById('painel-loja-selector');
@@ -2670,7 +2670,7 @@
     }
 
     // Guarda todas as lojas em memória
-    window._lojasDoLojista = lojas;
+    window._lojasDoAnunciante = lojas;
 
     // Preenche com a primeira loja
     preencherFormularioLoja(lojas[0]);
@@ -2683,7 +2683,7 @@
     document.querySelectorAll('.loja-btn').forEach(b => b.classList.remove('ativa'));
     btn.classList.add('ativa');
     // Preenche o formulário com os dados da loja selecionada
-    const loja = (window._lojasDoLojista || []).find(l => l.id === lojaId);
+    const loja = (window._lojasDoAnunciante || []).find(l => l.id === lojaId);
     if (!loja) return;
     preencherFormularioLoja(loja);
   }
@@ -3205,7 +3205,7 @@
     } catch(e) {}
   }
 
-  // STATS DO LOJISTA
+  // STATS DO ANUNCIANTE
   async function carregarStatsPainel() {
     const lojaId = localStorage.getItem('dica_loja_id');
     if (!lojaId) return;
@@ -3249,18 +3249,18 @@
     try {
       // Busca tudo em paralelo
       const [rLojas, rAvals, rAcessos, rEventos, rUsuarios] = await Promise.all([
-        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,ATUALIZADO_EM,ACESSOS,lojista_id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,ATUALIZADO_EM,ACESSOS,anunciante_id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/avaliacoes?select=id,nota_geral,created_at,loja_id&order=created_at.desc&limit=10`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/acessos?select=tipo,referencia_id,referencia_nome,created_at&order=created_at.desc&limit=500`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/eventos?select=id,nome,data_evento,ativo&order=data_evento.asc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
-        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,lojista_id&lojista_id=not.is.null`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,anunciante_id&anunciante_id=not.is.null`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
       ]);
 
       const lojas = await rLojas.json();
       const avals = await rAvals.json();
       const acessos = await rAcessos.json();
       const eventos = await rEventos.json();
-      const lojistas = await rUsuarios.json();
+      const anunciantes = await rUsuarios.json();
 
       // Calcular stats
       const agora = new Date();
