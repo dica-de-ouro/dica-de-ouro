@@ -2663,26 +2663,30 @@
   }
 
   async function abrirPainel(uid, email, token) {
-    // Busca todas as lojas do anunciante
-    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, {
-      headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${token}` }
-    });
-    const lojas = await r.json();
-
-    // Admin pode entrar mesmo sem loja
     const isAdmin = email === 'thp.bio@gmail.com';
-    if (lojas.error) {
-      localStorage.clear();
-      irPara('tela-login');
-      return;
-    }
-    if (!lojas.length && !isAdmin) {
-      localStorage.clear();
-      irPara('tela-login');
-      return;
-    }
-    if (!lojas.length && isAdmin) {
-      // Admin sem loja — vai direto para o painel admin
+    const headers = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` };
+
+    // Busca anúncios em todas as tabelas em paralelo
+    const [rLojas, rReps, rUfop] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, { headers }),
+      fetch(`${SUPA_URL}/rest/v1/republicas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, { headers }),
+      fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?select=*&order=created_at.asc&limit=50`, { headers }),
+    ]);
+
+    const lojas = await rLojas.json();
+    const reps  = (await rReps.json()).map(r => ({ ...r, _tabela: 'republica', 'NOME': r.nome, 'CATEGORIA': 'República', 'FOTO': r.foto }));
+    const ufops = (await rUfop.json()).map(u => ({ ...u, _tabela: 'ufop', 'NOME': u.titulo, 'CATEGORIA': 'UFOP · ' + u.subcategoria, 'FOTO': u.foto }));
+
+    // Junta tudo
+    const todos = [
+      ...lojas.map(l => ({ ...l, _tabela: 'loja' })),
+      ...reps,
+      ...ufops
+    ];
+
+    if (lojas.error) { localStorage.clear(); irPara('tela-login'); return; }
+    if (!todos.length && !isAdmin) { localStorage.clear(); irPara('tela-login'); return; }
+    if (!todos.length && isAdmin) {
       document.getElementById('painel-nome-anunciante').textContent = 'Admin';
       irPara('tela-painel');
       return;
@@ -2691,35 +2695,61 @@
     const nomeExibido = email.split('@')[0];
     document.getElementById('painel-nome-anunciante').textContent = nomeExibido;
 
-    // Se tem mais de uma loja, mostra o seletor
+    // Seletor de anúncios (sempre mostra se tiver mais de 1)
     const selectorDiv = document.getElementById('painel-loja-selector');
-    if (lojas.length > 1) {
+    if (todos.length > 1) {
       selectorDiv.style.display = 'block';
       const listaEl = document.getElementById('lista-lojas-painel');
-      listaEl.innerHTML = lojas.map((l, i) => {
-        const nome = l['NOME'] || l.nome || '—';
-        const cat = l['CATEGORIA'] || l.categoria || '';
+      listaEl.innerHTML = todos.map((l, i) => {
+        const nome = l['NOME'] || '—';
+        const cat  = l['CATEGORIA'] || '';
         const foto = l['FOTO'] || l.foto || '';
         const thumbStyle = foto ? `style="background-image:url('${foto}');"` : '';
-        return `<div class="loja-btn ${i===0?'ativa':''}" onclick="trocarLoja(${l.id}, this)">
+        const emoji = l._tabela === 'republica' ? '🏠 ' : l._tabela === 'ufop' ? '🎓 ' : '';
+        return `<div class="loja-btn ${i===0?'ativa':''}" onclick="trocarAnuncio('${l.id}','${l._tabela}',this)">
           <div class="loja-thumb-mini" ${thumbStyle}></div>
           <div class="loja-info-mini">
-            <div class="nome">${nome}</div>
+            <div class="nome">${emoji}${nome}</div>
             <div class="cat">${cat}</div>
           </div>
         </div>`;
       }).join('');
+
+      // Botão de novo anúncio
+      const listaEl2 = document.getElementById('lista-lojas-painel');
+      listaEl2.insertAdjacentHTML('afterend',
+        `<button class="btn-nova-loja" onclick="irPara('tela-cadastro')">+ Cadastrar novo anúncio</button>`
+      );
     } else {
-      selectorDiv.style.display = 'none';
+      selectorDiv.style.display = todos.length === 1 ? 'block' : 'none';
+      if (todos.length === 1) {
+        const listaEl = document.getElementById('lista-lojas-painel');
+        listaEl.innerHTML = '';
+        listaEl.insertAdjacentHTML('afterend',
+          `<button class="btn-nova-loja" onclick="irPara('tela-cadastro')">+ Cadastrar novo anúncio</button>`
+        );
+      }
     }
 
-    // Guarda todas as lojas em memória
-    window._lojasDoAnunciante = lojas;
-
-    // Preenche com a primeira loja
-    preencherFormularioLoja(lojas[0]);
+    window._lojasDoAnunciante = todos;
+    preencherFormularioAnuncio(todos[0]);
     irPara('tela-painel');
     carregarStatsPainel();
+  }
+
+  function trocarAnuncio(id, tabela, btn) {
+    document.querySelectorAll('.loja-btn').forEach(b => b.classList.remove('ativa'));
+    btn.classList.add('ativa');
+    const item = (window._lojasDoAnunciante || []).find(l => String(l.id) === String(id));
+    if (!item) return;
+    preencherFormularioAnuncio(item);
+  }
+
+  function preencherFormularioAnuncio(item) {
+    if (!item) return;
+    localStorage.setItem('dica_loja_id', item.id);
+    localStorage.setItem('dica_loja_tabela', item._tabela || 'loja');
+    preencherFormularioLoja(item);
   }
 
   function trocarLoja(lojaId, btn) {
