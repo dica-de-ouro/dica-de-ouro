@@ -372,10 +372,10 @@
   <div class="home-corpo">
     <div class="cats" id="cats-home">
       <div class="cat ativo" onclick="filtrarLojas('Tudo',this)">Tudo</div>
+      <div class="cat" onclick="filtrarLojas('Descubra',this)">🔍 Descubra</div>
       <div class="cat" onclick="filtrarLojas('Comer',this)">🍽 Comer</div>
       <div class="cat" onclick="filtrarLojas('Beber',this)">🍺 Beber</div>
       <div class="cat" onclick="filtrarLojas('Hospedar',this)">🛏 Hospedar</div>
-      <div class="cat" onclick="filtrarLojas('Descubra',this)">🔍 Descubra</div>
       <div class="cat" onclick="filtrarLojas('Comprar',this)">🛍 Comprar</div>
       <div class="cat" onclick="filtrarLojas('Serviços',this)">🔧 Serviços</div>
       <div class="cat" onclick="filtrarLojas('Saúde',this)">🏥 Saúde</div>
@@ -971,22 +971,23 @@
   }
 
   async function abrirLugaresPorCat(cat) {
-    // Navega para tela de lista de lugares (reutiliza tela-agenda mas sem trocar de aba)
     const tabelaMap = {
       'Igrejas': 'igrejas',
       'Museus': 'museus',
       'Minas': 'minas',
-      'Parques e Cachoeiras': 'parques_cachoeiras'
+      'Parques e Cachoeiras': 'parques_cachoeiras',
+      'Parques': 'parques_cachoeiras'
     };
     const emojisMap = { 'Igrejas':'⛪','Museus':'🏛','Minas':'⛏','Parques e Cachoeiras':'🌿' };
     const tabela = tabelaMap[cat];
     const emoji = emojisMap[cat] || '📍';
 
-    // Atualiza cabeçalho da agenda e vai para ela
+    // Atualiza cabeçalho
     document.querySelector('.agenda-hero h2').innerHTML = `${emoji} <em>${cat}</em>`;
     document.querySelector('.agenda-hero .sub').textContent = 'Toque em qualquer item para saber mais.';
 
-    // Desmarca filtros e vai para a tela
+    // Esconde filtros de eventos (não faz sentido aqui)
+    document.getElementById('filtros-agenda').style.display = 'none';
     document.querySelectorAll('#filtros-agenda .filtro').forEach(f => f.classList.remove('ativo'));
     irPara('tela-agenda');
 
@@ -1000,13 +1001,22 @@
       );
       const lugares = await r.json();
       window._lugares = window._lugares || {};
-      lugares.forEach(l => { l.categoria = cat; window._lugares[l.id] = l; });
+      window._lugaresArr = window._lugaresArr || [];
+      lugares.forEach(l => {
+        l.categoria = cat;
+        window._lugares[l.id] = l;
+        // Também indexa por posição para evitar problemas com uuid no onclick
+        const idx = window._lugaresArr.findIndex(x => x.id === l.id);
+        if (idx === -1) window._lugaresArr.push(l);
+      });
       if (!lugares.length) { feed.innerHTML = '<div class="carregando">Nenhum local encontrado.</div>'; return; }
-      feed.innerHTML = lugares.map(l => {
+      feed.innerHTML = lugares.map((l, i) => {
         const fotoStyle = (l.foto && l.foto.startsWith('http'))
           ? `background-image:url('${l.foto}');background-size:cover;background-position:center;` : '';
         const horario = l.horario_funcionamento || 'Confirmar horário';
-        return `<div class="lugar-card" onclick="abrirLugar('${l.id}')">
+        // Usa índice no array em vez do uuid para evitar problemas no onclick
+        const arrIdx = window._lugaresArr.findIndex(x => x.id === l.id);
+        return `<div class="lugar-card" onclick="abrirLugarIdx(${arrIdx})">
           <div class="lugar-card-hero" style="${fotoStyle}">
             <div class="lugar-card-cat">${emoji} ${cat}</div>
           </div>
@@ -1179,6 +1189,8 @@
   }
 
   async function filtrarAgenda(cat, el) {
+    // Garante que filtros estão visíveis
+    document.getElementById('filtros-agenda').style.display = 'flex';
     document.querySelectorAll('#filtros-agenda .filtro').forEach(f => f.classList.remove('ativo'));
     el.classList.add('ativo');
     const feed = document.getElementById('agenda-feed');
@@ -1254,7 +1266,8 @@
       'Igrejas': 'igrejas',
       'Museus': 'museus',
       'Minas': 'minas',
-      'Parques e Cachoeiras': 'parques_cachoeiras'
+      'Parques e Cachoeiras': 'parques_cachoeiras',
+      'Parques': 'parques_cachoeiras'
     };
     const emojisMap = { 'Igrejas':'⛪','Museus':'🏛','Minas':'⛏','Parques e Cachoeiras':'🌿' };
     const tabela = tabelaMap[cat];
@@ -1291,6 +1304,12 @@
     } catch(e) {
       feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
     }
+  }
+
+  function abrirLugarIdx(idx) {
+    const l = (window._lugaresArr || [])[idx];
+    if (!l) return;
+    abrirLugar(l.id);
   }
 
   function abrirLugar(id) {
@@ -1772,8 +1791,16 @@
     document.getElementById(tabId).classList.add('ativo');
     // Carrega agenda automaticamente ao entrar
     if (telaId === 'tela-agenda') {
+      // Mostra filtros de eventos ao entrar pela tab bar
+      document.getElementById('filtros-agenda').style.display = 'flex';
+      document.querySelector('.agenda-hero h2').innerHTML = 'Agenda de <em>eventos</em>';
+      document.querySelector('.agenda-hero .sub').textContent = 'O que acontece na cidade, semana a semana.';
       const filtroAtivo = document.querySelector('#filtros-agenda .filtro.ativo');
       if (filtroAtivo) filtrarAgenda('semana', filtroAtivo);
+      else {
+        const primeiro = document.querySelector('#filtros-agenda .filtro');
+        if (primeiro) filtrarAgenda('semana', primeiro);
+      }
     }
     if (telaId === 'tela-home') {
       // Desmarca filtro ativo se estava em Descubra
