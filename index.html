@@ -2851,7 +2851,7 @@
       const [rLojas, rAvals, rAcessos, rEventos, rUsuarios] = await Promise.all([
         fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,ATUALIZADO_EM,ACESSOS,lojista_id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/avaliacoes?select=id,nota_geral,created_at,loja_id&order=created_at.desc&limit=10`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
-        fetch(`${SUPA_URL}/rest/v1/acessos?select=tipo,created_at&order=created_at.desc&limit=100`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/acessos?select=tipo,referencia_id,referencia_nome,created_at&order=created_at.desc&limit=500`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/eventos?select=id,nome,data_evento,ativo&order=data_evento.asc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/lojas?select=id,lojista_id&lojista_id=not.is.null`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
       ]);
@@ -2876,14 +2876,24 @@
       const acessosHoje = acessos.filter(a => new Date(a.created_at) >= hoje);
       const proxEventos = eventos.filter(e => e.ativo && new Date(e.data_evento + 'T12:00:00') >= agora);
 
+      // Calcular visitantes únicos
+      const sessoesHoje = acessos.filter(a => a.tipo === 'sessao' && new Date(a.created_at) >= hoje);
+      const visitantesHoje = new Set(sessoesHoje.map(a => a.referencia_id)).size;
+      const todasSessoes = acessos.filter(a => a.tipo === 'sessao');
+      const visitantesTotais = new Set(todasSessoes.map(a => a.referencia_id)).size;
+      const mobile = todasSessoes.filter(a => a.referencia_nome === 'mobile').length;
+      const desktop = todasSessoes.filter(a => a.referencia_nome === 'desktop').length;
+      const acessosConteudo = acessos.filter(a => a.tipo !== 'sessao');
+      const acessosConteudoHoje = acessosHoje.filter(a => a.tipo !== 'sessao');
+
       corpo.innerHTML = `
         <div class="admin-grid">
-          <div class="admin-stat"><div class="lbl">Lojas cadastradas</div><div class="val">${lojas.length}</div><div class="trend">${lojistas.length} com lojista</div></div>
-          <div class="admin-stat"><div class="lbl">Acessos hoje</div><div class="val">${acessosHoje.length}</div><div class="trend">${acessos.length} no total</div></div>
-          <div class="admin-stat"><div class="lbl">Infos frescas</div><div class="val" style="color:#9dd49d">${ativas.length}</div><div class="trend">nos últimos 3 dias</div></div>
-          <div class="admin-stat"><div class="lbl">Info vencida</div><div class="val" style="color:#c47a5a">${vencidas.length}</div><div class="trend">precisam atualizar</div></div>
-          <div class="admin-stat"><div class="lbl">Avaliações</div><div class="val">${avals.length}</div><div class="trend">últimas 10 exibidas</div></div>
-          <div class="admin-stat"><div class="lbl">Próx. eventos</div><div class="val">${proxEventos.length}</div><div class="trend">cadastrados</div></div>
+          <div class="admin-stat"><div class="lbl">Visitantes hoje</div><div class="val" style="color:#9dd49d">${visitantesHoje}</div><div class="trend">${visitantesTotais} únicos no total</div></div>
+          <div class="admin-stat"><div class="lbl">Acessos hoje</div><div class="val">${acessosConteudoHoje.length}</div><div class="trend">${acessosConteudo.length} no total</div></div>
+          <div class="admin-stat"><div class="lbl">📱 Mobile</div><div class="val">${mobile}</div><div class="trend">sessões mobile</div></div>
+          <div class="admin-stat"><div class="lbl">💻 Desktop</div><div class="val">${desktop}</div><div class="trend">sessões desktop</div></div>
+          <div class="admin-stat"><div class="lbl">Lojas ativas</div><div class="val" style="color:#9dd49d">${ativas.length}</div><div class="trend">${vencidas.length} vencidas</div></div>
+          <div class="admin-stat"><div class="lbl">Avaliações</div><div class="val">${avals.length}</div><div class="trend">${proxEventos.length} eventos cadastrados</div></div>
         </div>
 
         <div class="admin-sec">
@@ -2939,13 +2949,49 @@
   (function() {
     const token = localStorage.getItem('dica_token');
     const uid = localStorage.getItem('dica_uid');
-    // Se tem token mas não tem uid (ou vice-versa), limpa tudo
     if ((token && !uid) || (!token && uid)) {
       localStorage.clear();
     }
   })();
+
+  // Gera ou recupera ID anônimo do visitante
+  function getVisitorId() {
+    let vid = localStorage.getItem('dica_visitor_id');
+    if (!vid) {
+      vid = 'v_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+      localStorage.setItem('dica_visitor_id', vid);
+    }
+    return vid;
+  }
+
+  // Registra sessão do dia (uma por dia por visitante)
+  async function registrarSessao() {
+    const vid = getVisitorId();
+    const hoje = new Date().toISOString().split('T')[0];
+    const chave = `dica_sessao_${hoje}`;
+    if (localStorage.getItem(chave)) return; // já registrou hoje
+    localStorage.setItem(chave, '1');
+    try {
+      await fetch(`${SUPA_URL}/rest/v1/acessos`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          tipo: 'sessao',
+          referencia_id: vid,
+          referencia_nome: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop'
+        })
+      });
+    } catch(e) {}
+  }
+
   carregarLojas();
   carregarCardEventos();
+  registrarSessao();
 </script>
 <!-- TELA ADMIN -->
 <div id="tela-admin" class="tela oculta">
