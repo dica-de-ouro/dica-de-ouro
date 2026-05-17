@@ -732,7 +732,7 @@
   <div class="cadastro-content">
     <div class="cadastro-eyebrow">Área do lojista</div>
     <h2 class="cadastro-titulo">Cadastrar no <em>Dica de Ouro</em></h2>
-    <p class="cadastro-sub">Crie sua conta e coloque sua loja no mapa de Ouro Preto.</p>
+    <p class="cadastro-sub">Crie sua conta e coloque seu espaço no mapa de Ouro Preto.</p>
 
     <div class="cadastro-secao">Sua conta</div>
     <div class="campo-grupo">
@@ -744,45 +744,129 @@
       <input id="cad-senha" type="password" placeholder="••••••••">
     </div>
 
-    <div class="cadastro-secao">Sua loja</div>
+    <div class="cadastro-secao">Tipo de cadastro</div>
     <div class="campo-grupo">
-      <label>Nome da loja</label>
-      <input id="cad-nome" type="text" placeholder="ex: Café das Pedras">
-    </div>
-    <div class="campo-grupo">
-      <label>Categoria</label>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;" id="cad-cat-selector">
-        <div onclick="selecionarCatCad(this)" data-cat="Comer" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🍽 Comer</div>
-        <div onclick="selecionarCatCad(this)" data-cat="Beber" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🍺 Beber</div>
-        <div onclick="selecionarCatCad(this)" data-cat="Hospedar" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🛏 Hospedar</div>
-        <div onclick="selecionarCatCad(this)" data-cat="Comprar" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🛍 Comprar</div>
-        <div onclick="selecionarCatCad(this)" data-cat="Serviços" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🔧 Serviços</div>
-        <div onclick="selecionarCatCad(this)" data-cat="Saúde" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🏥 Saúde</div>
-        <div onclick="selecionarCatCad(this)" data-cat="Republicas" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🏠 República</div>
+      <label>O que você quer cadastrar?</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;" id="cad-tipo-selector">
+        <div onclick="selecionarTipoCad('loja',this)" style="padding:10px 16px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🏪 Loja / Serviço</div>
+        <div onclick="selecionarTipoCad('republica',this)" style="padding:10px 16px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🏠 República</div>
+        <div onclick="selecionarTipoCad('ufop',this)" style="padding:10px 16px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🎓 UFOP</div>
       </div>
-      <input id="cad-categoria" type="hidden">
-      <input id="cad-subcategoria" type="text" placeholder="Detalhe opcional: ex. Cachaça artesanal" style="width:100%;padding:12px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:13px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.88rem;outline:none;">
+      <input type="hidden" id="cad-tipo" value="loja">
     </div>
-    <div class="campo-grupo">
-      <label>Endereço</label>
-      <input id="cad-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro">
+
+    <!-- CAMPOS LOJA (padrão) -->
+    <div id="cad-campos-loja">
+      <div class="campo-grupo">
+        <label>Nome da loja</label>
+        <input id="cad-nome" type="text" placeholder="ex: Café das Pedras">
+      </div>
+      <div class="campo-grupo">
+        <label>Categoria</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;" id="cad-cat-selector">
+          <div onclick="selecionarCatCad(this)" data-cat="Comer" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🍽 Comer</div>
+          <div onclick="selecionarCatCad(this)" data-cat="Beber" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🍺 Beber</div>
+          <div onclick="selecionarCatCad(this)" data-cat="Hospedar" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🛏 Hospedar</div>
+          <div onclick="selecionarCatCad(this)" data-cat="Comprar" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🛍 Comprar</div>
+          <div onclick="selecionarCatCad(this)" data-cat="Serviços" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🔧 Serviços</div>
+          <div onclick="selecionarCatCad(this)" data-cat="Saúde" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🏥 Saúde</div>
+        </div>
+        <input id="cad-categoria" type="hidden">
+        <input id="cad-subcategoria" type="text" placeholder="Detalhe: ex. Cachaça artesanal" style="width:100%;padding:12px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:13px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.88rem;outline:none;">
+      </div>
+      <div class="campo-grupo">
+        <label>Breve descrição</label>
+        <textarea id="cad-descricao" rows="2" placeholder="Descreva seu estabelecimento em uma frase..." style="width:100%;padding:12px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:13px;color:var(--cal);font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;resize:none;line-height:1.4;"></textarea>
+      </div>
+      <div class="campo-grupo">
+        <label>Endereço</label>
+        <input id="cad-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro">
+      </div>
+      <div class="campo-grupo">
+        <label>Telefone / WhatsApp (opcional)</label>
+        <input id="cad-telefone" type="text" placeholder="(31) 9 9999-9999">
+      </div>
+      <div class="campo-grupo">
+        <label>Site (opcional)</label>
+        <input id="cad-site" type="url" placeholder="https://www.seusite.com.br">
+      </div>
     </div>
-    <div class="campo-grupo">
-      <label>Telefone / WhatsApp (opcional)</label>
-      <input id="cad-telefone" type="text" placeholder="(31) 9 9999-9999">
+
+    <!-- CAMPOS REPÚBLICA -->
+    <div id="cad-campos-republica" style="display:none;">
+      <div class="campo-grupo">
+        <label>Nome da república</label>
+        <input id="cad-rep-nome" type="text" placeholder="ex: República dos Pinheiros">
+      </div>
+      <div class="campo-grupo">
+        <label>Breve descrição</label>
+        <textarea id="cad-rep-descricao" rows="2" placeholder="Ex: República mista fundada em 1987, 12 moradores..." style="width:100%;padding:12px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:13px;color:var(--cal);font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;resize:none;line-height:1.4;"></textarea>
+      </div>
+      <div class="campo-grupo">
+        <label>O que você vai publicar?</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="cad-rep-subcat-selector">
+          <div onclick="selecionarSubcatRep(this)" data-sub="eventos" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">📅 Eventos</div>
+          <div onclick="selecionarSubcatRep(this)" data-sub="vagas" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🛏 Vagas</div>
+          <div onclick="selecionarSubcatRep(this)" data-sub="ambos" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">✅ Ambos</div>
+        </div>
+        <input type="hidden" id="cad-rep-subcat" value="">
+      </div>
+      <div class="campo-grupo">
+        <label>Endereço</label>
+        <input id="cad-rep-endereco" type="text" placeholder="ex: R. das Flores, 10 — Centro">
+      </div>
+      <div class="campo-grupo">
+        <label>Telefone / WhatsApp (opcional)</label>
+        <input id="cad-rep-telefone" type="text" placeholder="(31) 9 9999-9999">
+      </div>
+      <div class="campo-grupo">
+        <label>Site ou Instagram (opcional)</label>
+        <input id="cad-rep-site" type="text" placeholder="https://instagram.com/republica...">
+      </div>
     </div>
-    <div class="campo-grupo">
-      <label>Site do estabelecimento (opcional)</label>
-      <input id="cad-site" type="url" placeholder="https://www.seusite.com.br">
+
+    <!-- CAMPOS UFOP -->
+    <div id="cad-campos-ufop" style="display:none;">
+      <div class="campo-grupo">
+        <label>Título da oportunidade / conteúdo</label>
+        <input id="cad-ufop-titulo" type="text" placeholder="ex: Vaga de IC em Química Analítica">
+      </div>
+      <div class="campo-grupo">
+        <label>Subcategoria</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="cad-ufop-subcat-selector">
+          <div onclick="selecionarSubcatUFOP(this)" data-sub="laboratorios" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🔬 Laboratórios</div>
+          <div onclick="selecionarSubcatUFOP(this)" data-sub="extensao" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🌱 Extensão</div>
+          <div onclick="selecionarSubcatUFOP(this)" data-sub="vagas" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">💼 Vagas</div>
+          <div onclick="selecionarSubcatUFOP(this)" data-sub="iniciacao" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🧪 Iniciação Científica</div>
+          <div onclick="selecionarSubcatUFOP(this)" data-sub="estagio" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">📋 Estágio</div>
+          <div onclick="selecionarSubcatUFOP(this)" data-sub="pos_graduacao" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">🎓 Pós-graduação</div>
+          <div onclick="selecionarSubcatUFOP(this)" data-sub="concursos" style="padding:8px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:999px;font-size:0.78rem;color:var(--cal);cursor:pointer;opacity:0.65;">📣 Concursos</div>
+        </div>
+        <input type="hidden" id="cad-ufop-subcat" value="">
+      </div>
+      <div class="campo-grupo">
+        <label>Descrição</label>
+        <textarea id="cad-ufop-descricao" rows="3" placeholder="Descreva a oportunidade..." style="width:100%;padding:12px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:13px;color:var(--cal);font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;resize:none;line-height:1.4;"></textarea>
+      </div>
+      <div class="campo-grupo">
+        <label>Link (opcional)</label>
+        <input id="cad-ufop-link" type="url" placeholder="https://ufop.br/...">
+      </div>
+      <div class="campo-grupo">
+        <label>Data de encerramento (opcional)</label>
+        <input id="cad-ufop-encerramento" type="date" style="width:100%;padding:12px 14px;background:#ffffff08;border:1px solid #ffffff20;border-radius:13px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.88rem;outline:none;">
+      </div>
     </div>
-    <div class="campo-grupo">
-      <label>Foto do estabelecimento (opcional)</label>
+
+    <!-- FOTO (todos os tipos) -->
+    <div class="campo-grupo" id="cad-campo-foto">
+      <label>Foto (opcional)</label>
       <div id="cad-foto-preview" style="width:100%;height:140px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff20;margin-bottom:8px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;">
         <span style="opacity:0.3;font-size:0.8rem;" id="cad-foto-label">Nenhuma foto selecionada</span>
       </div>
       <input type="file" id="cad-foto-input" accept="image/*" style="display:none" onchange="previewFotoCad(this)">
       <button type="button" onclick="document.getElementById('cad-foto-input').click()" style="width:100%;padding:11px;background:#ffffff08;border:1px dashed #ffffff25;border-radius:12px;color:var(--cal);font-family:'Inter',sans-serif;font-size:0.82rem;cursor:pointer;">
-        📷 Escolher foto do celular
+        📷 Escolher foto
       </button>
       <input type="hidden" id="cad-foto" value="">
     </div>
@@ -1065,6 +1149,37 @@
   }
 
   // Categoria no cadastro
+  function selecionarTipoCad(tipo, el) {
+    document.querySelectorAll('#cad-tipo-selector div').forEach(o => {
+      o.style.background='#ffffff08'; o.style.borderColor='#ffffff20';
+      o.style.opacity='0.65'; o.style.fontWeight='normal'; o.style.color='var(--cal)';
+    });
+    el.style.background='var(--gold-bright)'; el.style.borderColor='var(--gold-bright)';
+    el.style.opacity='1'; el.style.fontWeight='600'; el.style.color='var(--ink)';
+    document.getElementById('cad-tipo').value = tipo;
+    document.getElementById('cad-campos-loja').style.display = tipo==='loja' ? 'block' : 'none';
+    document.getElementById('cad-campos-republica').style.display = tipo==='republica' ? 'block' : 'none';
+    document.getElementById('cad-campos-ufop').style.display = tipo==='ufop' ? 'block' : 'none';
+  }
+
+  function selecionarSubcatRep(el) {
+    document.querySelectorAll('#cad-rep-subcat-selector div').forEach(o => {
+      o.style.background='#ffffff08'; o.style.borderColor='#ffffff20'; o.style.opacity='0.65'; o.style.fontWeight='normal'; o.style.color='var(--cal)';
+    });
+    el.style.background='var(--gold-bright)'; el.style.borderColor='var(--gold-bright)';
+    el.style.opacity='1'; el.style.fontWeight='600'; el.style.color='var(--ink)';
+    document.getElementById('cad-rep-subcat').value = el.dataset.sub;
+  }
+
+  function selecionarSubcatUFOP(el) {
+    document.querySelectorAll('#cad-ufop-subcat-selector div').forEach(o => {
+      o.style.background='#ffffff08'; o.style.borderColor='#ffffff20'; o.style.opacity='0.65'; o.style.fontWeight='normal'; o.style.color='var(--cal)';
+    });
+    el.style.background='var(--gold-bright)'; el.style.borderColor='var(--gold-bright)';
+    el.style.opacity='1'; el.style.fontWeight='600'; el.style.color='var(--ink)';
+    document.getElementById('cad-ufop-subcat').value = el.dataset.sub;
+  }
+
   function selecionarCatCad(el) {
     document.querySelectorAll('#cad-cat-selector div').forEach(o => {
       o.style.background = '#ffffff08';
@@ -2345,15 +2460,34 @@
     erroEl.textContent = '';
     erroEl.style.color = '#ff6b6b';
 
-    const email     = document.getElementById('cad-email').value.trim();
-    const senha     = document.getElementById('cad-senha').value;
-    const nome      = document.getElementById('cad-nome').value.trim();
-    const categoria = document.getElementById('cad-categoria').value.trim();
-    const endereco  = document.getElementById('cad-endereco').value.trim();
-    const telefone  = document.getElementById('cad-telefone').value.trim();
+    const email = document.getElementById('cad-email').value.trim();
+    const senha = document.getElementById('cad-senha').value;
+    const tipo  = document.getElementById('cad-tipo').value || 'loja';
 
-    if (!email || !senha || !nome || !categoria || !endereco) {
-      erroEl.textContent = 'Preencha todos os campos obrigatórios.'; return;
+    // Validações por tipo
+    let nome = '', categoria = '', endereco = '', telefone = '';
+    if (tipo === 'loja') {
+      nome      = document.getElementById('cad-nome').value.trim();
+      categoria = document.getElementById('cad-categoria').value.trim();
+      endereco  = document.getElementById('cad-endereco').value.trim();
+      telefone  = document.getElementById('cad-telefone').value.trim();
+      if (!email || !senha || !nome || !categoria || !endereco) {
+        erroEl.textContent = 'Preencha todos os campos obrigatórios.'; return;
+      }
+    } else if (tipo === 'republica') {
+      nome     = document.getElementById('cad-rep-nome').value.trim();
+      endereco = document.getElementById('cad-rep-endereco').value.trim();
+      telefone = document.getElementById('cad-rep-telefone').value.trim();
+      if (!email || !senha || !nome) {
+        erroEl.textContent = 'Preencha nome, email e senha.'; return;
+      }
+      categoria = 'Republicas';
+    } else if (tipo === 'ufop') {
+      nome = document.getElementById('cad-ufop-titulo').value.trim();
+      if (!email || !senha || !nome || !document.getElementById('cad-ufop-subcat').value) {
+        erroEl.textContent = 'Preencha título, subcategoria, email e senha.'; return;
+      }
+      categoria = 'UFOP';
     }
     if (senha.length < 6) {
       erroEl.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; return;
