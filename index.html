@@ -279,6 +279,31 @@
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
 
+  /* TELA DE PAGAMENTO */
+  #tela-pagamento { background:var(--ink); color:var(--cal); }
+  .pag-content { padding:calc(var(--safe-top) + 24px) 22px 80px; max-width:520px; margin:0 auto; }
+  .pag-eyebrow { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:8px; }
+  .pag-titulo { font-family:'Fraunces',serif; font-weight:300; font-size:1.8rem; letter-spacing:-0.02em; margin-bottom:8px; }
+  .pag-titulo em { font-style:italic; color:var(--gold-bright); }
+  .pag-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1rem; opacity:0.7; margin-bottom:24px; }
+  .pag-card { background:#ffffff06; border:1px solid #ffffff15; border-radius:18px; padding:22px; margin-bottom:18px; }
+  .pag-card-title { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px; }
+  .pag-valor { font-family:'Fraunces',serif; font-size:2.4rem; color:var(--gold-bright); line-height:1; margin-bottom:6px; }
+  .pag-valor small { font-size:1rem; opacity:0.6; font-weight:300; }
+  .pag-info-row { padding:12px 0; border-bottom:1px solid #ffffff10; display:flex; justify-content:space-between; align-items:center; }
+  .pag-info-row:last-child { border-bottom:none; }
+  .pag-info-row .lbl { font-size:0.78rem; opacity:0.6; }
+  .pag-info-row .val { font-size:0.88rem; font-weight:500; color:var(--cal); }
+  .pag-chave-pix { font-family:'Courier New',monospace; font-size:1.05rem; color:var(--gold-bright); padding:14px; background:#0a0805; border:1px dashed #d4a04a55; border-radius:10px; text-align:center; margin:10px 0; word-break:break-all; cursor:pointer; }
+  .pag-instr { font-size:0.85rem; line-height:1.5; opacity:0.8; margin-bottom:8px; }
+  .pag-instr strong { color:var(--gold-bright); font-weight:600; }
+  .pag-passo { display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .pag-passo-num { width:28px; height:28px; border-radius:50%; background:var(--gold-bright); color:var(--ink); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; flex-shrink:0; }
+  .pag-passo-texto { flex:1; font-size:0.88rem; line-height:1.5; opacity:0.9; }
+  .pag-passo-texto strong { color:var(--gold-bright); }
+  .btn-copiar { background:#d4a04a25; border:1px solid #d4a04a55; color:var(--gold-bright); padding:8px 14px; border-radius:8px; font-size:0.75rem; cursor:pointer; }
+  .btn-pag-pronto { width:100%; padding:15px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:13px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.88rem; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; margin-top:18px; }
+
   /* PAINEL ADMIN */
   #tela-admin { background:var(--ink); color:var(--cal); }
   .admin-header { padding:calc(var(--safe-top)+16px) 22px 20px; border-bottom:1px solid #ffffff10; }
@@ -2623,6 +2648,22 @@
         return;
       }
 
+      // Salva sessão
+      localStorage.setItem('dica_token', token);
+      localStorage.setItem('dica_uid', uid);
+      localStorage.setItem('dica_email', email);
+
+      // Se for loja, manda para tela de pagamento
+      if (tipo === 'loja') {
+        localStorage.setItem('dica_nome_loja_pendente', nome);
+        irPara('tela-pagamento');
+        return;
+      }
+
+      // Republicas e UFOP — gratuitos, vai direto para o painel
+      await abrirPainel(uid, email, token);
+      return;
+
       // Passo 3: salva sessão e abre painel
       localStorage.setItem('dica_token', token);
       localStorage.setItem('dica_uid', uid);
@@ -3501,6 +3542,40 @@
     }
   }
 
+  // PAGAMENTO PIX
+  function copiarPix() {
+    const chave = 'thp.bio@gmail.com';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(chave).then(() => {
+        const btn = event?.target;
+        if (btn && btn.tagName === 'BUTTON') {
+          const original = btn.textContent;
+          btn.textContent = '✓ Copiado!';
+          setTimeout(() => { btn.textContent = original; }, 2000);
+        }
+      });
+    } else {
+      const tmp = document.createElement('input');
+      tmp.value = chave;
+      document.body.appendChild(tmp);
+      tmp.select();
+      document.execCommand('copy');
+      document.body.removeChild(tmp);
+      alert('Chave PIX copiada: ' + chave);
+    }
+  }
+
+  function confirmarEnvioPix() {
+    const nomeLoja = localStorage.getItem('dica_nome_loja_pendente') || 'seu anúncio';
+    const subject = encodeURIComponent(nomeLoja);
+    const body = encodeURIComponent(`Olá,\n\nSegue em anexo o comprovante do PIX no valor de R$ 100,00 referente à mensalidade do anúncio "${nomeLoja}" no Dica de Ouro.\n\nAguardo a ativação.\n\nObrigado.`);
+    window.location.href = `mailto:thp.bio@gmail.com?subject=${subject}&body=${body}`;
+    setTimeout(() => {
+      alert('Após enviar o comprovante por email, seu anúncio será ativado em até 24h.');
+      irPara('tela-painel');
+    }, 1000);
+  }
+
   // INIT — limpa sessão corrompida se necessário
   (function() {
     const token = localStorage.getItem('dica_token');
@@ -3549,6 +3624,58 @@
   carregarCardEventos();
   registrarSessao();
 </script>
+<!-- TELA DE PAGAMENTO -->
+<div id="tela-pagamento" class="tela oculta">
+  <div class="pag-content">
+    <div class="pag-eyebrow">Anúncio criado com sucesso</div>
+    <h2 class="pag-titulo">Ativar seu <em>anúncio</em></h2>
+    <p class="pag-sub">Para que seu estabelecimento apareça no Dica de Ouro, é necessário o pagamento mensal de manutenção.</p>
+
+    <div class="pag-card">
+      <div class="pag-card-title">Valor mensal</div>
+      <div class="pag-valor">R$ 100<small>,00 / mês</small></div>
+      <div style="font-size:0.78rem;opacity:0.55;line-height:1.45;">Cobrança mensal recorrente para manter o anúncio ativo no aplicativo. Inclui exibição na home, mapa, busca e painel de estatísticas.</div>
+    </div>
+
+    <div class="pag-card">
+      <div class="pag-card-title">Como pagar</div>
+
+      <div class="pag-passo">
+        <div class="pag-passo-num">1</div>
+        <div class="pag-passo-texto">Abra o app do seu banco e faça um <strong>PIX de R$ 100,00</strong> para a chave abaixo:</div>
+      </div>
+
+      <div class="pag-chave-pix" id="chave-pix" onclick="copiarPix()">thp.bio@gmail.com</div>
+      <button class="btn-copiar" onclick="copiarPix()" style="width:100%;margin-bottom:18px;">📋 Copiar chave PIX</button>
+
+      <div class="pag-passo">
+        <div class="pag-passo-num">2</div>
+        <div class="pag-passo-texto">Tire um print do comprovante.</div>
+      </div>
+
+      <div class="pag-passo">
+        <div class="pag-passo-num">3</div>
+        <div class="pag-passo-texto">Envie o comprovante por email para <strong>thp.bio@gmail.com</strong> com o <strong>nome da loja no assunto</strong>.</div>
+      </div>
+
+      <div class="pag-passo">
+        <div class="pag-passo-num">4</div>
+        <div class="pag-passo-texto">Em até 24h seu anúncio será ativado e ficará visível no aplicativo.</div>
+      </div>
+    </div>
+
+    <div class="pag-card" style="background:#d4a04a10;border-color:#d4a04a30;">
+      <div style="font-size:0.82rem;line-height:1.5;opacity:0.85;">
+        <strong style="color:var(--gold-bright);">⏰ Validade de 72 horas</strong><br>
+        Lembre-se: para que seu anúncio continue visível, atualize as informações pelo menos a cada 3 dias. Anúncios desatualizados perdem destaque na home.
+      </div>
+    </div>
+
+    <button class="btn-pag-pronto" onclick="confirmarEnvioPix()">Já enviei o comprovante</button>
+    <button class="btn-sair" style="margin-top:8px;" onclick="irPara('tela-painel')">Ir para o painel</button>
+  </div>
+</div>
+
 <!-- TELA ADMIN -->
 <div id="tela-admin" class="tela oculta">
   <div class="admin-header">
