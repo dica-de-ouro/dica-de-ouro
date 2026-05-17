@@ -279,6 +279,31 @@
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
 
+  /* PAINEL ADMIN */
+  #tela-admin { background:var(--ink); color:var(--cal); }
+  .admin-header { padding:calc(var(--safe-top)+16px) 22px 20px; border-bottom:1px solid #ffffff10; }
+  .admin-header .eyebrow { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:6px; }
+  .admin-header h2 { font-family:'Fraunces',serif; font-weight:300; font-size:1.7rem; letter-spacing:-0.02em; }
+  .admin-header h2 em { font-style:italic; color:var(--gold-bright); }
+  .admin-corpo { padding:20px 22px; }
+  .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+  .admin-stat { background:#ffffff06; border:1px solid #ffffff10; border-radius:14px; padding:16px; }
+  .admin-stat .lbl { font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; opacity:0.5; margin-bottom:8px; }
+  .admin-stat .val { font-family:'Fraunces',serif; font-size:1.9rem; color:var(--gold-bright); line-height:1; }
+  .admin-stat .trend { font-size:0.7rem; opacity:0.5; margin-top:4px; }
+  .admin-sec { margin-bottom:24px; }
+  .admin-sec h3 { font-family:'Fraunces',serif; font-weight:400; font-size:1rem; color:var(--gold-bright); margin-bottom:14px; }
+  .admin-row { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid #ffffff08; }
+  .admin-row:last-child { border-bottom:none; }
+  .admin-row .nome { flex:1; font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .admin-row .val-sm { font-family:'Fraunces',serif; font-size:1.1rem; color:var(--gold-bright); flex-shrink:0; }
+  .admin-row .badge { font-size:0.62rem; padding:3px 8px; border-radius:999px; flex-shrink:0; }
+  .badge-verde { background:#6db96d25; color:#9dd49d; }
+  .badge-vermelho { background:#8a3a1f25; color:#c47a5a; }
+  .badge-amarelo { background:#d4a04a25; color:#d4a04a; }
+  .btn-sair-admin { width:100%; padding:13px; background:transparent; color:var(--cal); border:1px solid #ffffff20; border-radius:13px; font-family:'Inter',sans-serif; font-size:0.82rem; cursor:pointer; margin-top:8px; opacity:0.55; }
+  .btn-atualizar { background:#ffffff08; border:1px solid #ffffff15; color:var(--cal); padding:7px 14px; border-radius:999px; font-size:0.72rem; cursor:pointer; float:right; }
+
   /* VISUALIZADOR DE IMAGEM */
   #img-viewer {
     display:none;
@@ -881,7 +906,18 @@
       <div class="salvo-msg" id="salvo-msg"></div>
     </div>
 
+    <div class="painel-sec" id="painel-stats-sec">
+      <h3>Suas estatísticas <button class="btn-atualizar" onclick="carregarStatsPainel()">↺ Atualizar</button></h3>
+      <div class="stats-grid" id="painel-stats-grid">
+        <div class="stat-cell"><div class="lbl">Visualizações</div><div class="val" id="stat-views">—</div></div>
+        <div class="stat-cell"><div class="lbl">Avaliações</div><div class="val" id="stat-avals">—</div></div>
+        <div class="stat-cell"><div class="lbl">Nota geral</div><div class="val" id="stat-nota">—</div></div>
+        <div class="stat-cell"><div class="lbl">Última avaliação</div><div class="val" id="stat-ultima" style="font-size:0.9rem;">—</div></div>
+      </div>
+    </div>
+
     <button class="btn-sair" onclick="fazerLogout()">Sair da conta</button>
+    <button class="btn-sair" style="margin-top:6px;color:var(--gold-bright);border-color:var(--gold-bright);opacity:0.8;" onclick="abrirAdmin()">⚙ Painel admin</button>
   </div>
 </div>
 
@@ -1222,6 +1258,7 @@
   let _eventoAtual = null;
 
   async function abrirEventoCompleto(id) {
+    registrarAcesso('evento', id, (window._eventos||{})[id]?.nome || '');
     // Se já tem o evento completo em memória, abre direto
     const ev = (window._eventos || {})[id];
     if (ev && ev.descricao !== undefined) {
@@ -1449,6 +1486,7 @@
   function abrirLugarIdx(idx) {
     const l = (window._lugaresArr || [])[idx];
     if (!l) return;
+    registrarAcesso('lugar', l.id, l.nome);
     abrirLugar(l.id);
   }
 
@@ -1717,6 +1755,8 @@
     const loja = (window._lojas || {})[id];
     if (!loja) { alert('Loja não encontrada. Recarregue o app.'); return; }
     // Registra acesso
+    const nome = loja['NOME'] || loja.nome || '';
+    registrarAcesso('loja', id, nome);
     fetch(`${SUPA_URL}/rest/v1/rpc/incrementar_acessos`, {
       method: 'POST',
       headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json' },
@@ -2235,6 +2275,7 @@
     // Preenche com a primeira loja
     preencherFormularioLoja(lojas[0]);
     irPara('tela-painel');
+    carregarStatsPainel();
   }
 
   function trocarLoja(lojaId, btn) {
@@ -2753,6 +2794,147 @@
     if (e.key === 'Escape') fecharViewer({ target: document.getElementById('img-viewer') });
   });
 
+  // REGISTRAR ACESSO
+  async function registrarAcesso(tipo, id, nome) {
+    try {
+      await fetch(`${SUPA_URL}/rest/v1/acessos`, {
+        method: 'POST',
+        headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ tipo, referencia_id: String(id), referencia_nome: nome || null })
+      });
+    } catch(e) {}
+  }
+
+  // STATS DO LOJISTA
+  async function carregarStatsPainel() {
+    const lojaId = localStorage.getItem('dica_loja_id');
+    if (!lojaId) return;
+    try {
+      // Acessos
+      const rAc = await fetch(`${SUPA_URL}/rest/v1/acessos?tipo=eq.loja&referencia_id=eq.${lojaId}&select=id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } });
+      const acessos = await rAc.json();
+      document.getElementById('stat-views').textContent = acessos.length || 0;
+
+      // Avaliações
+      const rAv = await fetch(`${SUPA_URL}/rest/v1/avaliacoes?loja_id=eq.${lojaId}&select=nota_geral,created_at&order=created_at.desc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } });
+      const avals = await rAv.json();
+      document.getElementById('stat-avals').textContent = avals.length || 0;
+      if (avals.length) {
+        const media = (avals.reduce((s,a) => s + parseFloat(a.nota_geral||0), 0) / avals.length).toFixed(1);
+        document.getElementById('stat-nota').textContent = '★ ' + media;
+        const dt = new Date(avals[0].created_at);
+        document.getElementById('stat-ultima').textContent = dt.toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+      }
+    } catch(e) {}
+  }
+
+  // ADMIN
+  const ADMIN_EMAIL = 'thp.bio@gmail.com'; // seu email de admin
+
+  async function abrirAdmin() {
+    const email = localStorage.getItem('dica_email');
+    if (email !== ADMIN_EMAIL) {
+      alert('Acesso restrito ao administrador.');
+      return;
+    }
+    irPara('tela-admin');
+    await carregarAdmin();
+  }
+
+  async function carregarAdmin() {
+    const corpo = document.getElementById('admin-corpo');
+    const atualizado = document.getElementById('admin-atualizado');
+    atualizado.textContent = 'Atualizado agora · ' + new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+
+    try {
+      // Busca tudo em paralelo
+      const [rLojas, rAvals, rAcessos, rEventos, rUsuarios] = await Promise.all([
+        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,ATUALIZADO_EM,ACESSOS,lojista_id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/avaliacoes?select=id,nota_geral,created_at,loja_id&order=created_at.desc&limit=10`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/acessos?select=tipo,created_at&order=created_at.desc&limit=100`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/eventos?select=id,nome,data_evento,ativo&order=data_evento.asc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,lojista_id&lojista_id=not.is.null`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+      ]);
+
+      const lojas = await rLojas.json();
+      const avals = await rAvals.json();
+      const acessos = await rAcessos.json();
+      const eventos = await rEventos.json();
+      const lojistas = await rUsuarios.json();
+
+      // Calcular stats
+      const agora = new Date();
+      const ativas = lojas.filter(l => {
+        const at = l['ATUALIZADO_EM'];
+        return at && (agora - new Date(at)) < 72 * 3600000;
+      });
+      const vencidas = lojas.filter(l => {
+        const at = l['ATUALIZADO_EM'];
+        return !at || (agora - new Date(at)) >= 72 * 3600000;
+      });
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const acessosHoje = acessos.filter(a => new Date(a.created_at) >= hoje);
+      const proxEventos = eventos.filter(e => e.ativo && new Date(e.data_evento + 'T12:00:00') >= agora);
+
+      corpo.innerHTML = `
+        <div class="admin-grid">
+          <div class="admin-stat"><div class="lbl">Lojas cadastradas</div><div class="val">${lojas.length}</div><div class="trend">${lojistas.length} com lojista</div></div>
+          <div class="admin-stat"><div class="lbl">Acessos hoje</div><div class="val">${acessosHoje.length}</div><div class="trend">${acessos.length} no total</div></div>
+          <div class="admin-stat"><div class="lbl">Infos frescas</div><div class="val" style="color:#9dd49d">${ativas.length}</div><div class="trend">nos últimos 3 dias</div></div>
+          <div class="admin-stat"><div class="lbl">Info vencida</div><div class="val" style="color:#c47a5a">${vencidas.length}</div><div class="trend">precisam atualizar</div></div>
+          <div class="admin-stat"><div class="lbl">Avaliações</div><div class="val">${avals.length}</div><div class="trend">últimas 10 exibidas</div></div>
+          <div class="admin-stat"><div class="lbl">Próx. eventos</div><div class="val">${proxEventos.length}</div><div class="trend">cadastrados</div></div>
+        </div>
+
+        <div class="admin-sec">
+          <h3>🏪 Lojas — status de atualização</h3>
+          ${lojas.slice(0,15).map(l => {
+            const at = l['ATUALIZADO_EM'];
+            const h = at ? (agora - new Date(at)) / 3600000 : 999;
+            const badge = h < 24 ? '<span class="badge badge-verde">Fresca</span>' :
+                          h < 72 ? '<span class="badge badge-amarelo">Atenção</span>' :
+                          '<span class="badge badge-vermelho">Vencida</span>';
+            const tempo = at ? tempoAtras(at) : 'Nunca';
+            return `<div class="admin-row">
+              <span class="nome">${l['NOME']||'—'}</span>
+              <span style="font-size:0.72rem;opacity:0.5;">${tempo}</span>
+              ${badge}
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="admin-sec">
+          <h3>⭐ Avaliações recentes</h3>
+          ${avals.length ? avals.map(a => {
+            const dt = new Date(a.created_at).toLocaleDateString('pt-BR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+            const nota = parseFloat(a.nota_geral||0).toFixed(1);
+            return `<div class="admin-row">
+              <span class="nome">Loja #${a.loja_id}</span>
+              <span style="font-size:0.7rem;opacity:0.5;">${dt}</span>
+              <span class="val-sm">★ ${nota}</span>
+            </div>`;
+          }).join('') : '<div style="opacity:0.4;font-size:0.85rem;padding:8px 0;">Nenhuma avaliação ainda.</div>'}
+        </div>
+
+        <div class="admin-sec">
+          <h3>📅 Próximos eventos</h3>
+          ${proxEventos.slice(0,5).map(e => {
+            const dt = new Date(e.data_evento + 'T12:00:00').toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+            return `<div class="admin-row">
+              <span class="nome">${e.nome}</span>
+              <span style="font-size:0.72rem;opacity:0.5;">${dt}</span>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <button class="btn-sair-admin" onclick="voltarPara('tela-painel')">← Voltar ao painel</button>
+        <button class="btn-sair-admin" style="margin-top:6px;" onclick="carregarAdmin()">↺ Atualizar relatório</button>
+      `;
+    } catch(e) {
+      corpo.innerHTML = `<div class="carregando" style="color:var(--cal);">Erro ao carregar. Tente novamente.</div>`;
+    }
+  }
+
   // INIT — limpa sessão corrompida se necessário
   (function() {
     const token = localStorage.getItem('dica_token');
@@ -2765,6 +2947,18 @@
   carregarLojas();
   carregarCardEventos();
 </script>
+<!-- TELA ADMIN -->
+<div id="tela-admin" class="tela oculta">
+  <div class="admin-header">
+    <div class="eyebrow">Painel administrativo</div>
+    <h2>Dica de <em>Ouro</em></h2>
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.88rem;opacity:0.55;margin-top:2px;" id="admin-atualizado">Carregando…</div>
+  </div>
+  <div class="admin-corpo" id="admin-corpo">
+    <div class="carregando" style="color:var(--cal);">Carregando relatório…</div>
+  </div>
+</div>
+
 <!-- VISUALIZADOR DE IMAGEM -->
 <div id="img-viewer" onclick="fecharViewer(event)">
   <button id="img-viewer-fechar" onclick="fecharViewer()">✕</button>
