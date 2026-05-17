@@ -367,13 +367,16 @@
     </g>
   </svg>
   <div class="splash-content">
-    <div class="splash-mark"><span>D</span></div>
-    <h1 class="splash-titulo">Dica de <em>Ouro</em></h1>
-    <p class="splash-tagline">A cidade colonial, atualizada hoje. Pelas mãos de quem vive ela.</p>
+    <img src="https://thalesdepaiva.github.io/dica-de-ouro/logo.png"
+         alt="Dica de Ouro"
+         style="width:88%;max-width:360px;margin-bottom:40px;filter:drop-shadow(0 12px 32px rgba(0,0,0,0.7));"
+         onerror="this.style.display='none';document.getElementById('splash-fallback').style.display='flex'"/>
+    <div id="splash-fallback" style="display:none;flex-direction:column;align-items:center;margin-bottom:32px;">
+      <div class="splash-mark"><span>D</span></div>
+      <h1 class="splash-titulo">Dica de <em>Ouro</em></h1>
+    </div>
     <button class="btn-primario" onclick="irPara('tela-home','tab-inicio')">Explorar Ouro Preto</button>
-
   </div>
-  <div class="splash-rodape">— Vila Rica · MG · est. 1711 —</div>
 </div>
 
 <!-- TELA 2: HOME -->
