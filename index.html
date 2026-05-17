@@ -11,6 +11,8 @@
 <title>Dica de Ouro — Ouro Preto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -233,6 +235,25 @@
   .lugar-card-body .horario { font-size:0.72rem; opacity:0.6; display:flex; align-items:center; gap:5px; }
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
+
+  /* MAPA */
+  #tela-explorar { background:var(--ink); }
+  .mapa-header { padding:calc(var(--safe-top) + 14px) 22px 16px; background:var(--ink); color:var(--cal); }
+  .mapa-header h2 { font-family:'Fraunces',serif; font-weight:300; font-size:1.8rem; letter-spacing:-0.02em; }
+  .mapa-header h2 em { font-style:italic; color:var(--gold-bright); }
+  .mapa-header .sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.9rem; opacity:0.6; margin-top:3px; }
+  .mapa-filtros { display:flex; gap:8px; padding:0 22px 14px; overflow-x:auto; scrollbar-width:none; background:var(--ink); }
+  .mapa-filtros::-webkit-scrollbar { display:none; }
+  .mapa-filtro { flex-shrink:0; padding:6px 14px; background:#ffffff08; border:1px solid #ffffff15; border-radius:999px; font-size:0.72rem; color:var(--cal); white-space:nowrap; cursor:pointer; opacity:0.65; transition:all 0.2s; }
+  .mapa-filtro.ativo { background:var(--gold-bright); color:var(--ink); border-color:var(--gold-bright); opacity:1; font-weight:600; }
+  #mapa-container { width:100%; height:calc(100vh - 200px); position:relative; }
+  .leaflet-popup-content-wrapper { background:var(--ink); color:var(--cal); border:1px solid var(--gold); border-radius:12px; box-shadow:0 8px 24px #00000060; }
+  .leaflet-popup-tip { background:var(--ink); }
+  .popup-inner { padding:4px 2px; }
+  .popup-inner .cat { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:4px; }
+  .popup-inner h4 { font-family:'Fraunces',serif; font-size:1rem; font-weight:500; margin-bottom:4px; color:var(--cal); }
+  .popup-inner .end { font-size:0.75rem; opacity:0.6; margin-bottom:8px; }
+  .popup-inner .btn-pop { width:100%; padding:8px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:8px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.75rem; cursor:pointer; letter-spacing:0.05em; text-transform:uppercase; }
   .btn-fav.curtido { background:#ff4d6d; border-color:#ff4d6d; color:#fff; }
   .btn-fav-home.curtido { background:#ff4d6d20; border-color:#ff4d6d; color:#ff4d6d; }
 
@@ -779,6 +800,24 @@
   </div>
 </div>
 
+<!-- TELA: EXPLORAR (MAPA) -->
+<div id="tela-explorar" class="tela oculta" style="padding-bottom:0;">
+  <div class="mapa-header">
+    <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:4px;">Ouro Preto no mapa</div>
+    <h2>Explorar <em>tudo</em></h2>
+    <div class="sub">Lojas, igrejas, museus, minas e parques.</div>
+  </div>
+  <div class="mapa-filtros" id="mapa-filtros">
+    <div class="mapa-filtro ativo" onclick="filtrarMapa('todos',this)">Tudo</div>
+    <div class="mapa-filtro" onclick="filtrarMapa('lojas',this)">🏪 Lojas</div>
+    <div class="mapa-filtro" onclick="filtrarMapa('Igrejas',this)">⛪ Igrejas</div>
+    <div class="mapa-filtro" onclick="filtrarMapa('Museus',this)">🏛 Museus</div>
+    <div class="mapa-filtro" onclick="filtrarMapa('Minas',this)">⛏ Minas</div>
+    <div class="mapa-filtro" onclick="filtrarMapa('Parques e Cachoeiras',this)">🌿 Parques</div>
+  </div>
+  <div id="mapa-container"></div>
+</div>
+
 <!-- TAB BAR -->
 <nav class="tabbar" id="tabbar" style="display:none">
   <button class="tab ativo" id="tab-inicio" onclick="irTab('tela-home','tab-inicio')">
@@ -789,7 +828,7 @@
     <div class="tab-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
     Agenda
   </button>
-  <button class="tab" id="tab-explorar" onclick="irTab('tela-home','tab-explorar')">
+  <button class="tab" id="tab-explorar" onclick="irTab('tela-explorar','tab-explorar')">
     <div class="tab-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg></div>
     Explorar
   </button>
@@ -1794,7 +1833,7 @@
   }
 
   // NAVEGAÇÃO
-  const TELAS_COM_TAB = ['tela-home','tela-agenda'];
+  const TELAS_COM_TAB = ['tela-home','tela-agenda','tela-explorar'];
   let telaAtual = 'tela-splash';
 
   function irPara(id) {
@@ -1830,6 +1869,9 @@
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
     document.getElementById(tabId).classList.add('ativo');
     // Carrega agenda automaticamente ao entrar
+    if (telaId === 'tela-explorar') {
+      setTimeout(iniciarMapa, 100);
+    }
     if (telaId === 'tela-agenda') {
       // Mostra filtros de eventos ao entrar pela tab bar
       document.getElementById('filtros-agenda').style.display = 'flex';
@@ -2324,6 +2366,173 @@
       }).join('');
     } catch(e) {
       lista.innerHTML = '<div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Erro ao carregar.</div>';
+    }
+  }
+
+  // MAPA
+  let _mapa = null;
+  let _marcadores = [];
+  let _dadosMapa = [];
+  let _mapaCarregado = false;
+
+  const CORES_MAPA = {
+    'lojas': '#d4a04a',
+    'Igrejas': '#e8c878',
+    'Museus': '#a0c0d4',
+    'Minas': '#c4a870',
+    'Parques e Cachoeiras': '#88b888'
+  };
+
+  function criarIcone(tipo) {
+    const cor = CORES_MAPA[tipo] || '#d4a04a';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">
+      <path d="M14 0C6.3 0 0 6.3 0 14c0 9.8 14 22 14 22s14-12.2 14-22C28 6.3 21.7 0 14 0z" fill="${cor}"/>
+      <circle cx="14" cy="14" r="6" fill="#1a1410"/>
+    </svg>`;
+    return L.divIcon({
+      html: svg,
+      className: '',
+      iconSize: [28, 36],
+      iconAnchor: [14, 36],
+      popupAnchor: [0, -36]
+    });
+  }
+
+  async function iniciarMapa() {
+    if (_mapaCarregado) return;
+    _mapaCarregado = true;
+
+    // Aguarda Leaflet carregar
+    if (typeof L === 'undefined') {
+      setTimeout(iniciarMapa, 300); return;
+    }
+
+    // Centro de Ouro Preto
+    _mapa = L.map('mapa-container', { zoomControl: true }).setView([-20.3856, -43.5035], 14);
+
+    // Tiles OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap',
+      maxZoom: 18
+    }).addTo(_mapa);
+
+    // Carrega todos os dados
+    await Promise.all([
+      carregarLojasMapa(),
+      carregarLugaresMapa('igrejas', 'Igrejas'),
+      carregarLugaresMapa('museus', 'Museus'),
+      carregarLugaresMapa('minas', 'Minas'),
+      carregarLugaresMapa('parques_cachoeiras', 'Parques e Cachoeiras')
+    ]);
+  }
+
+  async function carregarLojasMapa() {
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/lojas?select=id,NOME,CATEGORIA,ENDEREÇO,FOTO&order=created_at.asc`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const lojas = await r.json();
+      for (const l of lojas) {
+        const end = l['ENDEREÇO'] || '';
+        if (!end) continue;
+        const item = {
+          id: l.id,
+          nome: l['NOME'] || '—',
+          cat: l['CATEGORIA'] || 'Loja',
+          end: end,
+          foto: l['FOTO'] || null,
+          tipo: 'lojas',
+          tabela: 'lojas'
+        };
+        _dadosMapa.push(item);
+        await geocodificarEAdicionar(item);
+      }
+    } catch(e) {}
+  }
+
+  async function carregarLugaresMapa(tabela, cat) {
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/${tabela}?select=id,nome,descricao,endereco,foto&order=nome.asc`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const lugares = await r.json();
+      for (const l of lugares) {
+        const end = l.endereco || '';
+        if (!end) continue;
+        const item = {
+          id: l.id,
+          nome: l.nome || '—',
+          cat: cat,
+          end: end,
+          foto: l.foto || null,
+          tipo: cat,
+          tabela: tabela
+        };
+        _dadosMapa.push(item);
+        l.categoria = cat;
+        window._lugares = window._lugares || {};
+        window._lugares[l.id] = l;
+        await geocodificarEAdicionar(item);
+      }
+    } catch(e) {}
+  }
+
+  async function geocodificarEAdicionar(item) {
+    try {
+      const query = encodeURIComponent(item.end + ', Ouro Preto, Minas Gerais, Brasil');
+      const r = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`,
+        { headers: { 'Accept-Language': 'pt-BR' } }
+      );
+      const data = await r.json();
+      if (!data.length) return;
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+      adicionarMarcador(item, lat, lng);
+    } catch(e) {}
+  }
+
+  function adicionarMarcador(item, lat, lng) {
+    if (!_mapa) return;
+    const marcador = L.marker([lat, lng], { icon: criarIcone(item.tipo) });
+    marcador.itemData = item;
+
+    const popupHtml = `<div class="popup-inner">
+      <div class="cat">${item.cat}</div>
+      <h4>${item.nome}</h4>
+      <div class="end">${item.end}</div>
+      <button class="btn-pop" onclick="abrirDoMapa('${item.tabela}','${item.id}')">Ver detalhes →</button>
+    </div>`;
+
+    marcador.bindPopup(popupHtml, { maxWidth: 220 });
+    marcador.addTo(_mapa);
+    _marcadores.push({ marcador, tipo: item.tipo });
+  }
+
+  function filtrarMapa(tipo, el) {
+    document.querySelectorAll('.mapa-filtro').forEach(f => f.classList.remove('ativo'));
+    el.classList.add('ativo');
+    _marcadores.forEach(({ marcador, tipo: t }) => {
+      if (tipo === 'todos' || t === tipo) {
+        marcador.addTo(_mapa);
+      } else {
+        _mapa.removeLayer(marcador);
+      }
+    });
+  }
+
+  function abrirDoMapa(tabela, id) {
+    if (tabela === 'lojas') {
+      const loja = (window._lojas || {})[id];
+      if (loja) abrirLoja(loja, 't1');
+    } else {
+      const lugar = (window._lugares || {})[id];
+      if (lugar) abrirLugar(id);
+      else abrirLugarIdx(
+        (window._lugaresArr || []).findIndex(x => String(x.id) === String(id))
+      );
     }
   }
 
