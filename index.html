@@ -375,7 +375,7 @@
       <div class="cat" onclick="filtrarLojas('Comer',this)">🍽 Comer</div>
       <div class="cat" onclick="filtrarLojas('Beber',this)">🍺 Beber</div>
       <div class="cat" onclick="filtrarLojas('Hospedar',this)">🛏 Hospedar</div>
-      <div class="cat" onclick="filtrarLojas('Visitar',this)">🏛 Visitar</div>
+      <div class="cat" onclick="filtrarLojas('Descubra',this)">🔍 Descubra</div>
       <div class="cat" onclick="filtrarLojas('Comprar',this)">🛍 Comprar</div>
       <div class="cat" onclick="filtrarLojas('Serviços',this)">🔧 Serviços</div>
       <div class="cat" onclick="filtrarLojas('Saúde',this)">🏥 Saúde</div>
@@ -570,16 +570,14 @@
 <!-- TELA 5: AGENDA -->
 <div id="tela-agenda" class="tela oculta">
   <div class="agenda-hero">
-    <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-bright);margin-top:calc(var(--safe-top) + 8px);">Explorar Ouro Preto</div>
-    <h2>O que <em>visitar</em></h2>
-    <div class="sub">Igrejas, museus, minas, parques e eventos da semana.</div>
+    <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-bright);margin-top:calc(var(--safe-top) + 8px);">Ouro Preto</div>
+    <h2>Agenda de <em>eventos</em></h2>
+    <div class="sub">O que acontece na cidade, semana a semana.</div>
   </div>
   <div class="filtros" id="filtros-agenda">
     <div class="filtro ativo" onclick="filtrarAgenda('semana',this)">📅 Esta semana</div>
-    <div class="filtro" onclick="filtrarAgenda('Igrejas',this)">⛪ Igrejas</div>
-    <div class="filtro" onclick="filtrarAgenda('Museus',this)">🏛 Museus</div>
-    <div class="filtro" onclick="filtrarAgenda('Minas',this)">⛏ Minas</div>
-    <div class="filtro" onclick="filtrarAgenda('Parques e Cachoeiras',this)">🌿 Parques</div>
+    <div class="filtro" onclick="filtrarAgenda('proximo',this)">📆 Próximos</div>
+    <div class="filtro" onclick="filtrarAgenda('todos',this)">🗓 Todos</div>
   </div>
   <div class="agenda-feed" id="agenda-feed">
     <div class="carregando">Carregando…</div>
@@ -923,9 +921,9 @@
     el.classList.add('ativo');
     const container = document.getElementById('lista-lojas');
 
-    if (cat === 'Visitar') {
+    if (cat === 'Descubra') {
       moverDestaque(true);
-      carregarEventos();
+      abrirDescubra();
       return;
     }
     if (cat === 'Tudo') {
@@ -943,6 +941,44 @@
     } else {
       renderLojas(filtradas);
     }
+  }
+
+  function abrirDescubra() {
+    const container = document.getElementById('lista-lojas');
+    container.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
+        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Igrejas'),100)" style="background:linear-gradient(135deg,#2c2218,#1a1410);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+          <div style="font-size:2rem;margin-bottom:8px;">⛪</div>
+          <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Igrejas</div>
+          <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Barroco mineiro</div>
+        </div>
+        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Museus'),100)" style="background:linear-gradient(135deg,#3d2e1f,#2c2218);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+          <div style="font-size:2rem;margin-bottom:8px;">🏛</div>
+          <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Museus</div>
+          <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">História e arte</div>
+        </div>
+        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Minas'),100)" style="background:linear-gradient(135deg,#1a1410,#2c2218);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+          <div style="font-size:2rem;margin-bottom:8px;">⛏</div>
+          <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Minas</div>
+          <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Ouro e aventura</div>
+        </div>
+        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Parques e Cachoeiras'),100)" style="background:linear-gradient(135deg,#2c3820,#1a2410);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+          <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
+          <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Parques</div>
+          <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Natureza e cachoeiras</div>
+        </div>
+      </div>`;
+  }
+
+  function filtrarAgendaDireto(cat) {
+    // Clica no filtro correto na aba Agenda
+    const filtros = document.querySelectorAll('#filtros-agenda .filtro');
+    const mapa = { 'Igrejas':'⛪ Igrejas', 'Museus':'🏛 Museus', 'Minas':'⛏ Minas', 'Parques e Cachoeiras':'🌿 Parques' };
+    filtros.forEach(f => {
+      if (f.textContent.trim() === mapa[cat]) {
+        f.click();
+      }
+    });
   }
 
   async function carregarEventos() {
@@ -1085,18 +1121,36 @@
   // AGENDA
   let _lugarAtual = null;
 
+  function renderEventoCard(ev) {
+    const data = new Date(ev.data_evento + 'T12:00:00');
+    const dia = data.getDate();
+    const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
+    const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
+    const fotoStyle = ev.foto ? `background-image:url('${ev.foto}');background-size:cover;background-position:center;` : '';
+    return `<div class="lugar-card" onclick="abrirEventoCompleto('${ev.id}')">
+      <div class="lugar-card-hero" style="${fotoStyle}">
+        <div class="lugar-card-cat">📅 ${semana} ${dia}/${mes}</div>
+      </div>
+      <div class="lugar-card-body">
+        <h4>${ev.nome}</h4>
+        <div class="horario">⏰ ${ev.horario || '—'} &nbsp;·&nbsp; 📍 ${ev.local || '—'}</div>
+      </div>
+    </div>`;
+  }
+
   async function filtrarAgenda(cat, el) {
     document.querySelectorAll('#filtros-agenda .filtro').forEach(f => f.classList.remove('ativo'));
     el.classList.add('ativo');
     const feed = document.getElementById('agenda-feed');
     feed.innerHTML = '<div class="carregando">Carregando…</div>';
 
+    const hoje = new Date();
+    const hojeStr = hoje.toISOString().split('T')[0];
+
     if (cat === 'semana') {
-      // Eventos da semana atual
-      const hoje = new Date();
       const fimSemana = new Date(hoje);
       fimSemana.setDate(hoje.getDate() + 7);
-      const inicioStr = hoje.toISOString().split('T')[0];
+      const inicioStr = hojeStr;
       const fimStr = fimSemana.toISOString().split('T')[0];
       try {
         const r = await fetch(
@@ -1110,25 +1164,45 @@
           feed.innerHTML = '<div class="carregando">Nenhum evento esta semana.</div>';
           return;
         }
-        feed.innerHTML = eventos.map(ev => {
-          const data = new Date(ev.data_evento + 'T12:00:00');
-          const dia = data.getDate();
-          const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
-          const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
-          const fotoStyle = ev.foto ? `background-image:url('${ev.foto}');` : '';
-          return `<div class="lugar-card" onclick="abrirEventoCompleto('${ev.id}')">
-            <div class="lugar-card-hero" style="${fotoStyle}">
-              <div class="lugar-card-cat">📅 ${semana} ${dia}/${mes}</div>
-            </div>
-            <div class="lugar-card-body">
-              <h4>${ev.nome}</h4>
-              <div class="horario">⏰ ${ev.horario || '—'} &nbsp;·&nbsp; 📍 ${ev.local || '—'}</div>
-            </div>
-          </div>`;
-        }).join('');
+        feed.innerHTML = eventos.map(ev => renderEventoCard(ev)).join('');
       } catch(e) {
         feed.innerHTML = '<div class="carregando">Erro ao carregar eventos.</div>';
       }
+      return;
+    }
+
+    // Próximos 30 dias
+    if (cat === 'proximo') {
+      const fim30 = new Date(hoje);
+      fim30.setDate(hoje.getDate() + 30);
+      const fimStr = fim30.toISOString().split('T')[0];
+      try {
+        const r = await fetch(
+          `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hojeStr}&data_evento=lte.${fimStr}&order=data_evento.asc&select=*`,
+          { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+        );
+        const eventos = await r.json();
+        window._eventos = window._eventos || {};
+        eventos.forEach(ev => window._eventos[ev.id] = ev);
+        if (!eventos.length) { feed.innerHTML = '<div class="carregando">Nenhum evento nos próximos 30 dias.</div>'; return; }
+        feed.innerHTML = eventos.map(ev => renderEventoCard(ev)).join('');
+      } catch(e) { feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
+      return;
+    }
+
+    // Todos os eventos futuros
+    if (cat === 'todos') {
+      try {
+        const r = await fetch(
+          `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hojeStr}&order=data_evento.asc&select=*`,
+          { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+        );
+        const eventos = await r.json();
+        window._eventos = window._eventos || {};
+        eventos.forEach(ev => window._eventos[ev.id] = ev);
+        if (!eventos.length) { feed.innerHTML = '<div class="carregando">Nenhum evento cadastrado.</div>'; return; }
+        feed.innerHTML = eventos.map(ev => renderEventoCard(ev)).join('');
+      } catch(e) { feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
       return;
     }
 
@@ -1657,6 +1731,11 @@
     if (telaId === 'tela-agenda') {
       const filtroAtivo = document.querySelector('#filtros-agenda .filtro.ativo');
       if (filtroAtivo) filtrarAgenda('semana', filtroAtivo);
+    }
+    if (telaId === 'tela-home') {
+      // Desmarca filtro ativo se estava em Descubra
+      const catAtivo = document.querySelector('#cats-home .cat.ativo');
+      // mantém estado
     }
   }
 
