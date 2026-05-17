@@ -2349,7 +2349,38 @@
     }
   }
 
-  function buscarLojas(termo) {
+  let _todosLugares = null;
+  async function carregarTodosLugares() {
+    if (_todosLugares) return _todosLugares;
+    try {
+      const headers = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` };
+      const [rIg, rMu, rMi, rPa, rRe, rUf] = await Promise.all([
+        fetch(`${SUPA_URL}/rest/v1/igrejas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/museus?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/minas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/parques_cachoeiras?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/republicas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?ativo=eq.true&select=id,titulo,descricao,subcategoria,link,foto&order=created_at.desc`, { headers }),
+      ]);
+      const igrejas = (await rIg.json()).map(x => ({ ...x, _cat: 'Igrejas', _emoji: '⛪', _tab: 'igrejas' }));
+      const museus  = (await rMu.json()).map(x => ({ ...x, _cat: 'Museus', _emoji: '🏛', _tab: 'museus' }));
+      const minas   = (await rMi.json()).map(x => ({ ...x, _cat: 'Minas', _emoji: '⛏', _tab: 'minas' }));
+      const parques = (await rPa.json()).map(x => ({ ...x, _cat: 'Parques', _emoji: '🌿', _tab: 'parques_cachoeiras' }));
+      const reps    = (await rRe.json()).map(x => ({ ...x, _cat: 'República', _emoji: '🏠', _tab: 'republicas' }));
+      const ufops   = (await rUf.json()).map(x => ({ ...x, nome: x.titulo, _cat: 'UFOP', _emoji: '🎓', _tab: 'ufop' }));
+      _todosLugares = [...igrejas, ...museus, ...minas, ...parques, ...reps, ...ufops];
+      // Indexa para abrir depois
+      window._lugares = window._lugares || {};
+      [...igrejas, ...museus, ...minas, ...parques].forEach(l => { l.categoria = l._cat; window._lugares[l.id] = l; });
+      window._republicas = window._republicas || {};
+      reps.forEach(r => { window._republicas[r.id] = r; });
+      window._ufop = window._ufop || {};
+      ufops.forEach(u => { window._ufop[u.id] = u; });
+    } catch(e) { _todosLugares = []; }
+    return _todosLugares;
+  }
+
+  async function buscarLojas(termo) {
     termo = (termo || '').trim().toLowerCase();
 
     if (!termo) {
@@ -2362,8 +2393,10 @@
     }
 
     moverDestaque(true);
+    document.querySelectorAll('.cat').forEach(c => c.classList.remove('ativa'));
 
-    const filtradas = (_todasLojas || []).filter(l => {
+    // Lojas
+    const lojasFiltradas = (_todasLojas || []).filter(l => {
       const nome = (l['NOME'] || l.nome || '').toLowerCase();
       const cat  = (l['CATEGORIA'] || l.categoria || '').toLowerCase();
       const desc = (l['DESCRIÇÃO'] || l.descricao || '').toLowerCase();
@@ -2371,13 +2404,82 @@
       return nome.includes(termo) || cat.includes(termo) || desc.includes(termo) || end.includes(termo);
     });
 
-    document.querySelectorAll('.cat').forEach(c => c.classList.remove('ativa'));
+    // Lugares (igrejas, museus, minas, parques, repúblicas, UFOP)
+    await carregarTodosLugares();
+    const lugaresFiltrados = (_todosLugares || []).filter(l => {
+      const nome = (l.nome || '').toLowerCase();
+      const desc = (l.descricao || '').toLowerCase();
+      const end  = (l.endereco || '').toLowerCase();
+      const cat  = (l._cat || '').toLowerCase();
+      return nome.includes(termo) || desc.includes(termo) || end.includes(termo) || cat.includes(termo);
+    });
 
     const container = document.getElementById('lista-lojas');
-    if (!filtradas.length) {
+    const total = lojasFiltradas.length + lugaresFiltrados.length;
+
+    if (!total) {
       container.innerHTML = `<div class="carregando">Nenhum resultado para "${termo}". Tente outra palavra.</div>`;
-    } else {
-      renderLojas(filtradas);
+      return;
+    }
+
+    // Renderiza tudo num feed unificado
+    let html = `<div style="margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.92rem;opacity:0.6;">${total} resultado${total>1?'s':''} para "${termo}"</div>`;
+
+    // Lugares primeiro
+    lugaresFiltrados.forEach(l => {
+      const foto = l.foto || '';
+      const thumbStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;` : '';
+      const onclickFn = l._cat === 'República' ? `abrirRepublica('${l.id}')` :
+                        l._cat === 'UFOP' ? `abrirUFOPItem('${l.id}')` :
+                        `abrirLugar('${l.id}')`;
+      html += `<div class="lugar" onclick="${onclickFn}">
+        <div class="lugar-thumb" style="${thumbStyle}">${!foto ? `<span style="font-size:1.4rem;">${l._emoji}</span>` : ''}</div>
+        <div class="lugar-info">
+          <div class="cat-tag">${l._emoji} ${l._cat}</div>
+          <h4>${l.nome}</h4>
+          <div class="onde">${l.endereco||''}</div>
+        </div>
+      </div>`;
+    });
+
+    container.innerHTML = html;
+
+    // Depois renderiza lojas (mantém o renderLojas que já tem estilo próprio)
+    if (lojasFiltradas.length) {
+      const tmp = document.createElement('div');
+      tmp.id = 'temp-lojas';
+      container.appendChild(tmp);
+      // Renderiza lojas no temp e move para o container
+      const oldContainer = document.getElementById('lista-lojas');
+      const placeholder = document.createElement('div');
+      placeholder.id = 'lista-lojas-temp-render';
+      // Usa o próprio container mas adiciona em vez de substituir
+      await renderLojasAppend(lojasFiltradas, container);
+    }
+  }
+
+  async function renderLojasAppend(lojas, container) {
+    // Versão simplificada que apenas anexa os cards de lojas
+    for (let i = 0; i < lojas.length; i++) {
+      const l = lojas[i];
+      const nome = l['NOME'] || l.nome || '—';
+      const cat  = l['CATEGORIA'] || l.categoria || '';
+      const end  = l['ENDEREÇO'] || l.endereco || '';
+      const foto = l['FOTO'] || l.foto || '';
+      const tc = ['t1','t2','t3'][i%3];
+      const thumbStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
+      const thumbIcone = !foto ? '<span style="font-size:1.4rem;">🏪</span>' : '';
+      const div = document.createElement('div');
+      div.className = 'lugar';
+      div.onclick = () => abrirLojaPorId(l.id, tc);
+      div.innerHTML = `
+        <div class="lugar-thumb ${foto?'':tc}" style="${thumbStyle}">${thumbIcone}</div>
+        <div class="lugar-info">
+          <div class="cat-tag">${cat}</div>
+          <h4>${nome}</h4>
+          <div class="onde">${end}</div>
+        </div>`;
+      container.appendChild(div);
     }
   }
 
