@@ -67,10 +67,13 @@
     top:0; left:0; right:0;
     display:flex; flex-direction:column;
     align-items:center;
-    padding:calc(var(--safe-top) + 40px) 32px 24px;
+    gap:16px;
+    padding:calc(var(--safe-top) + 32px) 32px 24px;
     z-index:2;
     text-align:center; color:var(--cal);
   }
+  .splash-content img { margin-bottom:0; }
+  .splash-content .btn-primario { margin-top:0; }
   /* Desktop: logo esquerda, botão direita — ambos no centro vertical */
   @media (min-width:640px) {
     .splash-content {
