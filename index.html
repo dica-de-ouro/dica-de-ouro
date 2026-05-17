@@ -54,21 +54,20 @@
     position:absolute;
     bottom:0; left:0; right:0;
     width:100%;
-    height: auto;
-    max-height: 55vh;
-    object-fit: contain;
-    object-position: bottom center;
+    height:auto;
+    max-height:52vh;
+    object-fit:contain;
+    object-position:bottom center;
     pointer-events:none;
-    opacity:0.85;
+    opacity:0.9;
+    z-index:1;
   }
-  @media (min-width: 600px) {
-    .splash-base {
-      max-height: 60vh;
-      object-fit: cover;
-      object-position: top center;
-    }
+  .splash-content { flex:1; display:flex; flex-direction:column; justify-content:flex-start; align-items:center; padding:calc(var(--safe-top) + 32px) 32px 180px; position:relative; z-index:2; text-align:center; color:var(--cal); }
+  @media (min-width:640px) {
+    #tela-splash { flex-direction:row; overflow:hidden; }
+    .splash-content { flex:1; justify-content:center; align-items:center; padding:60px 48px; padding-bottom:60px; }
+    .splash-base { position:relative !important; width:50% !important; max-height:none !important; height:100% !important; object-fit:cover !important; object-position:top center !important; flex-shrink:0; bottom:auto !important; left:auto !important; right:auto !important; }
   }
-  .splash-content { flex:1; display:flex; flex-direction:column; justify-content:flex-start; align-items:center; padding:calc(var(--safe-top) + 40px) 40px 0; position:relative; z-index:2; text-align:center; color:var(--cal); }
   .splash-mark { width:88px; height:88px; border:1.5px solid var(--gold-bright); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:32px; position:relative; animation:girar 60s linear infinite; }
   .splash-mark::before { content:''; position:absolute; inset:8px; border:1px solid var(--gold); border-radius:50%; opacity:0.4; }
   .splash-mark span { font-family:'Fraunces',serif; font-weight:400; font-size:2.4rem; color:var(--gold-bright); font-style:italic; animation:contra-girar 60s linear infinite; }
