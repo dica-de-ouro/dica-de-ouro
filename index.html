@@ -2540,18 +2540,36 @@
         fotoUrl = await uploadFoto(fotoInputCad.files[0], uid);
       }
 
-      erroEl.textContent = 'Cadastrando sua loja…';
+      erroEl.textContent = 'Cadastrando…';
 
-      // Passo 2: cria a loja no banco
-      const rLoja = await fetch(`${SUPA_URL}/rest/v1/lojas`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({
+      // Passo 2: salva na tabela correta conforme o tipo
+      let rLoja, tabela, body;
+
+      if (tipo === 'republica') {
+        tabela = 'republicas';
+        body = {
+          nome: nome,
+          descricao: document.getElementById('cad-rep-descricao')?.value.trim() || null,
+          endereco: document.getElementById('cad-rep-endereco')?.value.trim() || null,
+          telefone: document.getElementById('cad-rep-telefone')?.value.trim() || null,
+          site: document.getElementById('cad-rep-site')?.value.trim() || null,
+          foto: fotoUrl,
+          lojista_id: uid
+        };
+      } else if (tipo === 'ufop') {
+        tabela = 'ufop_conteudo';
+        body = {
+          titulo: nome,
+          descricao: document.getElementById('cad-ufop-descricao')?.value.trim() || null,
+          subcategoria: document.getElementById('cad-ufop-subcat').value,
+          link: document.getElementById('cad-ufop-link')?.value.trim() || null,
+          data_encerramento: document.getElementById('cad-ufop-encerramento')?.value || null,
+          foto: fotoUrl,
+          ativo: true
+        };
+      } else {
+        tabela = 'lojas';
+        body = {
           'NOME': nome,
           'SITE': document.getElementById('cad-site')?.value.trim() || null,
           'CATEGORIA': (() => {
@@ -2559,17 +2577,30 @@
             const sub = document.getElementById('cad-subcategoria').value.trim();
             return sub ? `${base} · ${sub}` : base || categoria;
           })(),
-          'ENDEREÇO': endereco,
+          'DESCRICAO': document.getElementById('cad-descricao')?.value.trim() || null,
+          'ENDERECO': endereco,
           'TELEFONE': telefone || null,
           'FOTO': fotoUrl,
-          'anunciante_id': uid
-        })
+          'lojista_id': uid
+        };
+      }
+
+      rLoja = await fetch(`${SUPA_URL}/rest/v1/${tabela}`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(body)
       });
 
       if (!rLoja.ok) {
         const erroLoja = await rLoja.json().catch(() => ({}));
         erroEl.style.color = '#ff6b6b';
-        erroEl.textContent = 'Erro: ' + (erroLoja.message || erroLoja.hint || rLoja.status);
+        erroEl.textContent = 'Erro ao salvar: ' + (erroLoja.message || erroLoja.hint || rLoja.status);
+        console.error('Erro cadastro:', erroLoja);
         return;
       }
 
