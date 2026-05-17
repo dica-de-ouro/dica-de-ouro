@@ -279,6 +279,52 @@
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
 
+  /* VISUALIZADOR DE IMAGEM */
+  #img-viewer {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.95);
+    z-index:9999;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  #img-viewer.aberto { display:flex; }
+  #img-viewer img {
+    max-width:100%;
+    max-height:85vh;
+    object-fit:contain;
+    border-radius:8px;
+    box-shadow:0 0 60px rgba(0,0,0,0.8);
+  }
+  #img-viewer-fechar {
+    position:absolute;
+    top:calc(var(--safe-top) + 16px);
+    right:20px;
+    width:40px; height:40px;
+    background:#ffffff15;
+    border:1px solid #ffffff25;
+    border-radius:50%;
+    color:#fff;
+    font-size:1.2rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10000;
+  }
+  #img-viewer-legenda {
+    margin-top:14px;
+    color:var(--cal);
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:0.95rem;
+    opacity:0.7;
+    text-align:center;
+  }
+
   /* MAPA */
   #tela-explorar { background:var(--ink); }
   .mapa-header { padding:calc(var(--safe-top) + 14px) 22px 16px; background:var(--ink); color:var(--cal); }
@@ -472,7 +518,7 @@
 <!-- TELA 3: DETALHE -->
 <div id="tela-detalhe" class="tela oculta">
   <div class="detalhe-hero" id="det-hero">
-    <div class="detalhe-hero-foto" id="det-foto"></div>
+    <div class="detalhe-hero-foto" id="det-foto" onclick="abrirViewerDet()" style="cursor:zoom-in;"></div>
     <div class="detalhe-nav">
       <button class="btn-redondo" onclick="voltarPara('tela-home')">←</button>
       <button class="btn-redondo btn-fav" id="btn-fav-detalhe" onclick="toggleFavorito()" title="Salvar nos favoritos">♡</button>
@@ -589,7 +635,7 @@
 <!-- TELA 4.4: DETALHE DO LUGAR -->
 <div id="tela-lugar" class="tela oculta">
   <div class="evento-hero" id="lugar-hero">
-    <div class="evento-hero-foto" id="lugar-foto"></div>
+    <div class="evento-hero-foto" id="lugar-foto" onclick="abrirViewerLugar()" style="cursor:zoom-in;"></div>
     <div class="detalhe-nav">
       <button class="btn-redondo" onclick="voltarPara('tela-agenda')">←</button>
     </div>
@@ -613,7 +659,7 @@
 <!-- TELA 4.5: DETALHE DO EVENTO -->
 <div id="tela-evento" class="tela oculta">
   <div class="evento-hero" id="evento-hero">
-    <div class="evento-hero-foto" id="evento-foto"></div>
+    <div class="evento-hero-foto" id="evento-foto" onclick="abrirViewerEvento()" style="cursor:zoom-in;"></div>
     <div class="detalhe-nav">
       <button class="btn-redondo" onclick="voltarPara('tela-home')">←</button>
     </div>
@@ -1889,7 +1935,7 @@
           : '';
         const thumbIcone = foto ? '' : svgIcone(cat, tc);
         return `<div class="lugar" onclick="abrirLojaPorId(${l.id},'${tc}')">
-          <div class="lugar-thumb ${foto ? '' : tc}" ${thumbStyle}>${thumbIcone}</div>
+          <div class="lugar-thumb ${foto ? '' : tc}" ${thumbStyle} ${foto ? `onclick="event.stopPropagation();abrirViewer('${foto}','${nome}')"  style="cursor:zoom-in;"` : ''}>${thumbIcone}</div>
           <div class="lugar-info">
             <div class="cat-tag">${cat}</div>
             <h4>${nome}</h4>
@@ -2661,6 +2707,52 @@
     }
   }
 
+  // VISUALIZADOR DE IMAGEM
+  function abrirViewer(src, legenda) {
+    if (!src) return;
+    document.getElementById('img-viewer-img').src = src;
+    document.getElementById('img-viewer-legenda').textContent = legenda || '';
+    document.getElementById('img-viewer').classList.add('aberto');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function abrirViewerDet() {
+    const el = document.getElementById('det-foto');
+    if (!el || !el.style.backgroundImage) return;
+    const url = el.style.backgroundImage.replace(/.*url\(['"]?([^'"]+)['"]?\).*/,'$1');
+    const nome = document.getElementById('det-nome')?.textContent || '';
+    abrirViewer(url, nome);
+  }
+
+  function abrirViewerLugar() {
+    const el = document.getElementById('lugar-foto');
+    if (!el || !el.style.backgroundImage) return;
+    const url = el.style.backgroundImage.replace(/.*url\(['"]?([^'"]+)['"]?\).*/,'$1');
+    const nome = document.getElementById('lugar-nome')?.textContent || '';
+    abrirViewer(url, nome);
+  }
+
+  function abrirViewerEvento() {
+    const el = document.getElementById('evento-foto');
+    if (!el || !el.style.backgroundImage) return;
+    const url = el.style.backgroundImage.replace(/.*url\(['"]?([^'"]+)['"]?\).*/,'$1');
+    const nome = document.getElementById('evento-nome')?.textContent || '';
+    abrirViewer(url, nome);
+  }
+
+  function fecharViewer(e) {
+    if (e && e.target !== document.getElementById('img-viewer') &&
+        e.target !== document.getElementById('img-viewer-fechar')) return;
+    document.getElementById('img-viewer').classList.remove('aberto');
+    document.getElementById('img-viewer-img').src = '';
+    document.body.style.overflow = '';
+  }
+
+  // Fecha com ESC no teclado
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') fecharViewer({ target: document.getElementById('img-viewer') });
+  });
+
   // INIT — limpa sessão corrompida se necessário
   (function() {
     const token = localStorage.getItem('dica_token');
@@ -2673,5 +2765,12 @@
   carregarLojas();
   carregarCardEventos();
 </script>
+<!-- VISUALIZADOR DE IMAGEM -->
+<div id="img-viewer" onclick="fecharViewer(event)">
+  <button id="img-viewer-fechar" onclick="fecharViewer()">✕</button>
+  <img id="img-viewer-img" src="" alt=""/>
+  <div id="img-viewer-legenda"></div>
+</div>
+
 </body>
 </html>
