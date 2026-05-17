@@ -2664,14 +2664,27 @@
 
   async function abrirPainel(uid, email, token) {
     // Busca todas as lojas do anunciante
-    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?anunciante_id=eq.${uid}&select=*&order=created_at.asc`, {
+    const r = await fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, {
       headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${token}` }
     });
     const lojas = await r.json();
 
-    if (!lojas.length || lojas.error) {
+    // Admin pode entrar mesmo sem loja
+    const isAdmin = email === 'thp.bio@gmail.com';
+    if (lojas.error) {
       localStorage.clear();
       irPara('tela-login');
+      return;
+    }
+    if (!lojas.length && !isAdmin) {
+      localStorage.clear();
+      irPara('tela-login');
+      return;
+    }
+    if (!lojas.length && isAdmin) {
+      // Admin sem loja — vai direto para o painel admin
+      document.getElementById('painel-nome-anunciante').textContent = 'Admin';
+      irPara('tela-painel');
       return;
     }
 
@@ -3280,11 +3293,11 @@
     try {
       // Busca tudo em paralelo
       const [rLojas, rAvals, rAcessos, rEventos, rUsuarios] = await Promise.all([
-        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,ATUALIZADO_EM,ACESSOS,anunciante_id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,ATUALIZADO_EM,ACESSOS,lojista_id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/avaliacoes?select=id,nota_geral,created_at,loja_id&order=created_at.desc&limit=10`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/acessos?select=tipo,referencia_id,referencia_nome,created_at&order=created_at.desc&limit=500`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/eventos?select=id,nome,data_evento,ativo&order=data_evento.asc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
-        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,anunciante_id&anunciante_id=not.is.null`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,lojista_id&lojista_id=not.is.null`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
       ]);
 
       const lojas = await rLojas.json();
