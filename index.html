@@ -2422,6 +2422,45 @@
       ant.classList.remove('saindo');
     }, 320);
     document.getElementById('tabbar').style.display = TELAS_COM_TAB.includes(id) ? 'flex' : 'none';
+
+    // Adapta cadastro se já logado
+    if (id === 'tela-cadastro') {
+      adaptarCadastro();
+    }
+  }
+
+  function adaptarCadastro() {
+    const logado = localStorage.getItem('dica_uid');
+    const secoes = document.querySelectorAll('#tela-cadastro .cadastro-secao');
+    const grpEmail = document.getElementById('cad-email')?.closest('.campo-grupo');
+    const grpSenha = document.getElementById('cad-senha')?.closest('.campo-grupo');
+    const aceiteBox = document.getElementById('cad-aceite-termos')?.closest('div[style*="margin:20px"]');
+    const titulo = document.querySelector('#tela-cadastro .cadastro-titulo');
+    const sub = document.querySelector('#tela-cadastro .cadastro-sub');
+    const btn = document.querySelector('#tela-cadastro .btn-login');
+    const linkLogin = document.querySelector('#tela-cadastro .login-voltar');
+
+    if (logado) {
+      // Esconde campos de conta
+      if (grpEmail) grpEmail.style.display = 'none';
+      if (grpSenha) grpSenha.style.display = 'none';
+      if (aceiteBox) aceiteBox.style.display = 'none';
+      if (linkLogin) linkLogin.style.display = 'none';
+      secoes.forEach(s => { if (s.textContent.includes('Sua conta')) s.style.display = 'none'; });
+      if (titulo) titulo.innerHTML = 'Novo <em>anúncio</em>';
+      if (sub) sub.textContent = 'Adicione mais um anúncio à sua conta.';
+      if (btn) btn.textContent = 'Cadastrar anúncio';
+    } else {
+      // Mostra tudo
+      if (grpEmail) grpEmail.style.display = '';
+      if (grpSenha) grpSenha.style.display = '';
+      if (aceiteBox) aceiteBox.style.display = '';
+      if (linkLogin) linkLogin.style.display = '';
+      secoes.forEach(s => { s.style.display = ''; });
+      if (titulo) titulo.innerHTML = 'Cadastrar no <em>Dica de Ouro</em>';
+      if (sub) sub.textContent = 'Crie sua conta e coloque seu espaço no mapa de Ouro Preto.';
+      if (btn) btn.textContent = 'Criar conta e entrar';
+    }
   }
 
   function voltarPara(id) {
@@ -2500,6 +2539,12 @@
     const erroEl = document.getElementById('cad-erro');
     erroEl.textContent = '';
     erroEl.style.color = '#ff6b6b';
+
+    // Se o usuário já está logado, pular criação de conta
+    const jaLogado = localStorage.getItem('dica_uid');
+    if (jaLogado) {
+      return adicionarAnuncioExistente();
+    }
 
     // Validar aceite dos termos
     const aceiteTermos = document.getElementById('cad-aceite-termos');
@@ -2937,6 +2982,127 @@
     } catch(e) {
       msgEl.style.color = '#ff6b6b';
       msgEl.textContent = 'Erro de conexão: ' + e.message;
+    }
+  }
+
+  async function adicionarAnuncioExistente() {
+    const erroEl = document.getElementById('cad-erro');
+    erroEl.style.color = '#ff6b6b';
+    erroEl.textContent = '';
+
+    const uid = localStorage.getItem('dica_uid');
+    const token = localStorage.getItem('dica_token');
+    const email = localStorage.getItem('dica_email');
+
+    if (!uid || !token) {
+      erroEl.textContent = 'Sessão expirada. Faça login novamente.';
+      return;
+    }
+
+    const tipo = document.getElementById('cad-tipo').value || 'loja';
+    let nome = '', categoria = '', endereco = '', telefone = '';
+
+    if (tipo === 'loja') {
+      nome = document.getElementById('cad-nome').value.trim();
+      categoria = document.getElementById('cad-categoria').value.trim();
+      endereco = document.getElementById('cad-endereco').value.trim();
+      telefone = document.getElementById('cad-telefone').value.trim();
+      if (!nome || !categoria || !endereco) {
+        erroEl.textContent = 'Preencha nome, categoria e endereço.';
+        return;
+      }
+    } else if (tipo === 'republica') {
+      nome = document.getElementById('cad-rep-nome').value.trim();
+      if (!nome) { erroEl.textContent = 'Preencha o nome da república.'; return; }
+      categoria = 'Republicas';
+    } else if (tipo === 'ufop') {
+      nome = document.getElementById('cad-ufop-titulo').value.trim();
+      if (!nome || !document.getElementById('cad-ufop-subcat').value) {
+        erroEl.textContent = 'Preencha título e subcategoria.';
+        return;
+      }
+      categoria = 'UFOP';
+    }
+
+    erroEl.style.color = 'var(--gold-bright)';
+    erroEl.textContent = 'Salvando anúncio…';
+
+    // Faz upload da foto se houver
+    let fotoUrl = document.getElementById('cad-foto').value || null;
+
+    // Monta o body conforme o tipo
+    let tabela, body;
+    if (tipo === 'republica') {
+      tabela = 'republicas';
+      body = {
+        nome: nome,
+        descricao: document.getElementById('cad-rep-descricao')?.value.trim() || null,
+        endereco: document.getElementById('cad-rep-endereco')?.value.trim() || null,
+        telefone: document.getElementById('cad-rep-telefone')?.value.trim() || null,
+        site: document.getElementById('cad-rep-site')?.value.trim() || null,
+        foto: fotoUrl,
+        lojista_id: uid
+      };
+    } else if (tipo === 'ufop') {
+      tabela = 'ufop_conteudo';
+      body = {
+        titulo: nome,
+        descricao: document.getElementById('cad-ufop-descricao')?.value.trim() || null,
+        subcategoria: document.getElementById('cad-ufop-subcat').value,
+        link: document.getElementById('cad-ufop-link')?.value.trim() || null,
+        data_encerramento: document.getElementById('cad-ufop-encerramento')?.value || null,
+        foto: fotoUrl,
+        ativo: true
+      };
+    } else {
+      tabela = 'lojas';
+      body = {
+        'NOME': nome,
+        'SITE': document.getElementById('cad-site')?.value.trim() || null,
+        'CATEGORIA': (() => {
+          const base = categoria;
+          const sub = document.getElementById('cad-subcategoria').value.trim();
+          return sub ? `${base} · ${sub}` : base;
+        })(),
+        'DESCRICAO': document.getElementById('cad-descricao')?.value.trim() || null,
+        'ENDERECO': endereco,
+        'TELEFONE': telefone || null,
+        'FOTO': fotoUrl,
+        'lojista_id': uid
+      };
+    }
+
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/${tabela}`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        erroEl.style.color = '#ff6b6b';
+        erroEl.textContent = 'Erro: ' + (err.message || err.hint || r.status);
+        return;
+      }
+
+      // Se for loja, vai para pagamento
+      if (tipo === 'loja') {
+        localStorage.setItem('dica_nome_loja_pendente', nome);
+        irPara('tela-pagamento');
+        return;
+      }
+
+      // República/UFOP — recarrega painel
+      await abrirPainel(uid, email, token);
+    } catch(e) {
+      erroEl.style.color = '#ff6b6b';
+      erroEl.textContent = 'Erro de conexão. Tente novamente.';
     }
   }
 
