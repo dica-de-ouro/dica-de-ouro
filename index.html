@@ -522,7 +522,7 @@
     <h1 class="hero-titulo">Descubra o que está <em>aberto e quente</em> agora.</h1>
     <div class="busca">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.45"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
-      <input placeholder="Restaurantes, ateliês, bares…">
+      <input id="input-busca" oninput="buscarLojas(this.value)" placeholder="Restaurantes, ateliês, bares…">
     </div>
   </div>
   <div class="home-corpo">
@@ -2346,6 +2346,38 @@
       carregarDestaque(lojas);
     } catch(e) {
       el.innerHTML = '<div class="carregando">Erro ao carregar. Tente novamente.</div>';
+    }
+  }
+
+  function buscarLojas(termo) {
+    termo = (termo || '').trim().toLowerCase();
+
+    if (!termo) {
+      moverDestaque(false);
+      renderLojas(_todasLojas);
+      document.querySelectorAll('.cat').forEach(c => c.classList.remove('ativa'));
+      const tudo = document.querySelector('.cat[onclick*="Tudo"]');
+      if (tudo) tudo.classList.add('ativa');
+      return;
+    }
+
+    moverDestaque(true);
+
+    const filtradas = (_todasLojas || []).filter(l => {
+      const nome = (l['NOME'] || l.nome || '').toLowerCase();
+      const cat  = (l['CATEGORIA'] || l.categoria || '').toLowerCase();
+      const desc = (l['DESCRIÇÃO'] || l.descricao || '').toLowerCase();
+      const end  = (l['ENDEREÇO'] || l.endereco || '').toLowerCase();
+      return nome.includes(termo) || cat.includes(termo) || desc.includes(termo) || end.includes(termo);
+    });
+
+    document.querySelectorAll('.cat').forEach(c => c.classList.remove('ativa'));
+
+    const container = document.getElementById('lista-lojas');
+    if (!filtradas.length) {
+      container.innerHTML = `<div class="carregando">Nenhum resultado para "${termo}". Tente outra palavra.</div>`;
+    } else {
+      renderLojas(filtradas);
     }
   }
 
