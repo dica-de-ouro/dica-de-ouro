@@ -510,6 +510,8 @@
       <div class="cat" onclick="filtrarLojas('Comprar',this)">🛍 Comprar</div>
       <div class="cat" onclick="filtrarLojas('Serviços',this)">🔧 Serviços</div>
       <div class="cat" onclick="filtrarLojas('Saúde',this)">🏥 Saúde</div>
+      <div class="cat" onclick="filtrarLojas('Republicas',this)">🏠 Repúblicas</div>
+      <div class="cat" onclick="filtrarLojas('UFOP',this)">🎓 UFOP</div>
     </div>
 
     <!-- Seção principal — reordenável -->
@@ -717,6 +719,8 @@
     <div class="filtro ativo" onclick="filtrarAgenda('semana',this)">📅 Esta semana</div>
     <div class="filtro" onclick="filtrarAgenda('proximo',this)">📆 Próximos</div>
     <div class="filtro" onclick="filtrarAgenda('todos',this)">🗓 Todos</div>
+    <div class="filtro" onclick="filtrarAgenda('republicas',this)">🏠 Repúblicas</div>
+    <div class="filtro" onclick="filtrarAgenda('ufop',this)">🎓 UFOP</div>
   </div>
   <div class="agenda-feed" id="agenda-feed">
     <div class="carregando">Carregando…</div>
@@ -1092,6 +1096,237 @@
     }
   }
 
+  // REPÚBLICAS
+  async function abrirRepublicas() {
+    moverDestaque(true);
+    const container = document.getElementById('lista-lojas');
+    container.innerHTML = '<div class="carregando">Carregando repúblicas…</div>';
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/republicas?order=nome.asc&select=*`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const reps = await r.json();
+      window._republicas = {};
+      reps.forEach(r => window._republicas[r.id] = r);
+      if (!reps.length) {
+        container.innerHTML = '<div class="carregando">Nenhuma república cadastrada ainda.</div>';
+        return;
+      }
+      container.innerHTML = reps.map((r, i) => {
+        const tc = ['t1','t2','t3'][i%3];
+        const foto = r.foto || '';
+        const thumbStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;` : '';
+        return `<div class="lugar" onclick="abrirRepublica('${r.id}')">
+          <div class="lugar-thumb ${foto?'':tc}" style="${thumbStyle}">
+            ${!foto ? '<span style="font-size:1.4rem;">🏠</span>' : ''}
+          </div>
+          <div class="lugar-info">
+            <div class="cat-tag">🏠 República</div>
+            <h4>${r.nome}</h4>
+            <div class="onde">${r.endereco||''}</div>
+            <div class="meta-row"><span class="stars">Vagas e eventos</span></div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      container.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+    }
+  }
+
+  function abrirRepublica(id) {
+    const r = (window._republicas||{})[id];
+    if (!r) return;
+    registrarAcesso('republica', id, r.nome);
+    // Reutiliza tela de detalhe de lugar
+    window._lugarAtual = { ...r, categoria: 'República', horario_funcionamento: r.horario||'' };
+    const fotoEl = document.getElementById('lugar-foto');
+    if (r.foto) { fotoEl.style.backgroundImage=`url('${r.foto}')`; fotoEl.style.display='block'; }
+    else { fotoEl.style.backgroundImage=''; fotoEl.style.display='none'; }
+    const partes = r.nome.split(' '); const ultima = partes.pop();
+    document.getElementById('lugar-nome').innerHTML = partes.length ? partes.join(' ')+' <em>'+ultima+'</em>' : r.nome;
+    document.getElementById('lugar-cat-chip').textContent = '🏠 República';
+    document.getElementById('lugar-desc').textContent = r.descricao||'';
+    let infos = '';
+    if (r.endereco) infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Endereço</div><div class="val">${r.endereco}</div></div></div>`;
+    if (r.telefone) infos += `<div class="evento-info-row"><div class="ic">📞</div><div class="cnt"><div class="lbl">Contato</div><div class="val">${r.telefone}</div></div></div>`;
+    if (r.site) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);">${r.site}</div></div></div>`;
+    document.getElementById('lugar-infos').innerHTML = infos;
+    const btnSite = document.getElementById('btn-site-lugar');
+    if (r.site) { btnSite.textContent='Ver site'; btnSite.classList.remove('sem-link'); btnSite.onclick=()=>{ let u=r.site; if(!u.startsWith('http'))u='https://'+u; window.open(u,'_blank'); }; }
+    else { btnSite.textContent='Sem site'; btnSite.classList.add('sem-link'); }
+    irPara('tela-lugar');
+  }
+
+  async function carregarRepublicasAgenda() {
+    const feed = document.getElementById('agenda-feed');
+    feed.innerHTML = '<div class="carregando">Carregando repúblicas…</div>';
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/republicas?order=nome.asc&select=id,nome,descricao,endereco,foto`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const reps = await r.json();
+      window._republicas = window._republicas || {};
+      reps.forEach(r => window._republicas[r.id] = r);
+      if (!reps.length) { feed.innerHTML='<div class="carregando">Nenhuma república cadastrada.</div>'; return; }
+      feed.innerHTML = reps.map(r => {
+        const fotoStyle = r.foto ? `background-image:url('${r.foto}');background-size:cover;background-position:center top;` : '';
+        return `<div class="lugar-card" onclick="abrirRepublica('${r.id}')">
+          <div class="lugar-card-hero" style="${fotoStyle}">
+            <div class="lugar-card-cat">🏠 República</div>
+          </div>
+          <div class="lugar-card-body">
+            <h4>${r.nome}</h4>
+            <div class="horario">📍 ${r.endereco||'Ouro Preto'}</div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) { feed.innerHTML='<div class="carregando">Erro ao carregar.</div>'; }
+  }
+
+  // UFOP
+  const UFOP_SUBCATS = [
+    { key:'laboratorios', emoji:'🔬', label:'Laboratórios' },
+    { key:'extensao', emoji:'🌱', label:'Extensão' },
+    { key:'vagas', emoji:'💼', label:'Vagas' },
+    { key:'iniciacao', emoji:'🧪', label:'Iniciação Científica' },
+    { key:'estagio', emoji:'📋', label:'Estágio' },
+    { key:'pos_graduacao', emoji:'🎓', label:'Pós-graduação' },
+    { key:'concursos', emoji:'📣', label:'Concursos' },
+  ];
+
+  function abrirUFOP() {
+    moverDestaque(true);
+    const container = document.getElementById('lista-lojas');
+    container.innerHTML = `
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'Fraunces',serif;font-size:1.2rem;margin-bottom:4px;">🎓 <em>UFOP</em></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;opacity:0.6;">Laboratórios, projetos, oportunidades e muito mais.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        ${UFOP_SUBCATS.map(s => `
+          <div onclick="abrirUFOPSubcat('${s.key}','${s.label}')"
+               style="background:linear-gradient(135deg,#0d1b2a,#1a2040);border:1px solid #ffffff10;border-radius:16px;padding:20px 14px;text-align:center;cursor:pointer;color:var(--cal);">
+            <div style="font-size:1.8rem;margin-bottom:8px;">${s.emoji}</div>
+            <div style="font-family:'Fraunces',serif;font-size:0.9rem;font-weight:500;">${s.label}</div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  async function abrirUFOPSubcat(subcat, label) {
+    moverDestaque(true);
+    const container = document.getElementById('lista-lojas');
+    container.innerHTML = '<div class="carregando">Carregando…</div>';
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/ufop_conteudo?subcategoria=eq.${subcat}&ativo=eq.true&order=created_at.desc&select=*`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const items = await r.json();
+      window._ufop = window._ufop || {};
+      items.forEach(i => window._ufop[i.id] = i);
+      if (!items.length) {
+        container.innerHTML = `<div class="carregando">Nenhum conteúdo em ${label} ainda.</div>`;
+        return;
+      }
+      container.innerHTML = items.map(item => {
+        const enc = item.data_encerramento ? new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'short'}) : '';
+        const foto = item.foto || '';
+        const fotoStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;` : 'background:linear-gradient(135deg,#0d1b2a,#1a2040);';
+        return `<div class="lugar-card" onclick="abrirUFOPItem('${item.id}')">
+          <div class="lugar-card-hero" style="${fotoStyle}">
+            <div class="lugar-card-cat">🎓 ${label}</div>
+          </div>
+          <div class="lugar-card-body">
+            <h4>${item.titulo}</h4>
+            <div class="horario">${enc ? '📅 Encerra '+enc : item.link ? '🔗 Ver mais' : ''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      container.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+    }
+  }
+
+  function abrirUFOPItem(id) {
+    const item = (window._ufop||{})[id];
+    if (!item) return;
+    registrarAcesso('ufop', id, item.titulo);
+    const sub = UFOP_SUBCATS.find(s => s.key === item.subcategoria);
+    const emoji = sub ? sub.emoji : '🎓';
+    const label = sub ? sub.label : 'UFOP';
+    window._lugarAtual = { ...item, categoria: 'UFOP', nome: item.titulo };
+    const fotoEl = document.getElementById('lugar-foto');
+    if (item.foto) { fotoEl.style.backgroundImage=`url('${item.foto}')`; fotoEl.style.display='block'; }
+    else { fotoEl.style.backgroundImage=''; fotoEl.style.display='none'; }
+    document.getElementById('lugar-nome').innerHTML = `${emoji} <em>${item.titulo}</em>`;
+    document.getElementById('lugar-cat-chip').textContent = `🎓 ${label}`;
+    document.getElementById('lugar-desc').textContent = item.descricao||'';
+    let infos = '';
+    if (item.data_encerramento) {
+      const dt = new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+      infos += `<div class="evento-info-row"><div class="ic">📅</div><div class="cnt"><div class="lbl">Encerramento</div><div class="val">${dt}</div></div></div>`;
+    }
+    if (item.link) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Link</div><div class="val" style="color:var(--gold-deep);word-break:break-all;">${item.link}</div></div></div>`;
+    document.getElementById('lugar-infos').innerHTML = infos;
+    const btnSite = document.getElementById('btn-site-lugar');
+    if (item.link) {
+      btnSite.textContent='Acessar oportunidade';
+      btnSite.classList.remove('sem-link');
+      btnSite.onclick=()=>{ let u=item.link; if(!u.startsWith('http'))u='https://'+u; window.open(u,'_blank'); };
+    } else {
+      btnSite.textContent='Sem link cadastrado';
+      btnSite.classList.add('sem-link');
+    }
+    irPara('tela-lugar');
+  }
+
+  async function carregarUFOPAgenda() {
+    const feed = document.getElementById('agenda-feed');
+    feed.innerHTML = `
+      <div style="padding:16px 0 8px;">
+        <div style="font-family:'Fraunces',serif;font-size:1.1rem;color:var(--ink);margin-bottom:4px;">🎓 Oportunidades <em style="color:var(--gold-deep);">UFOP</em></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.88rem;opacity:0.6;margin-bottom:16px;">Toque numa categoria para ver o conteúdo.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          ${UFOP_SUBCATS.map(s => `
+            <div onclick="abrirUFOPSubcatAgenda('${s.key}','${s.label}')"
+                 style="background:linear-gradient(135deg,#0d1b2a,#1a2040);border:1px solid var(--line);border-radius:16px;padding:18px 12px;text-align:center;cursor:pointer;color:var(--cal);">
+              <div style="font-size:1.6rem;margin-bottom:6px;">${s.emoji}</div>
+              <div style="font-family:'Fraunces',serif;font-size:0.85rem;font-weight:500;">${s.label}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  async function abrirUFOPSubcatAgenda(subcat, label) {
+    const feed = document.getElementById('agenda-feed');
+    feed.innerHTML = '<div class="carregando">Carregando…</div>';
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/ufop_conteudo?subcategoria=eq.${subcat}&ativo=eq.true&order=created_at.desc&select=*`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const items = await r.json();
+      window._ufop = window._ufop || {};
+      items.forEach(i => window._ufop[i.id] = i);
+      if (!items.length) { feed.innerHTML=`<div class="carregando">Nenhum conteúdo em ${label} ainda.</div>`; return; }
+      feed.innerHTML = items.map(item => {
+        const enc = item.data_encerramento ? new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'short'}) : '';
+        const fotoStyle = item.foto ? `background-image:url('${item.foto}');background-size:cover;background-position:center top;` : 'background:linear-gradient(135deg,#0d1b2a,#1a2040);';
+        return `<div class="lugar-card" onclick="abrirUFOPItem('${item.id}')">
+          <div class="lugar-card-hero" style="${fotoStyle}">
+            <div class="lugar-card-cat">🎓 ${label}</div>
+          </div>
+          <div class="lugar-card-body">
+            <h4>${item.titulo}</h4>
+            <div class="horario">${enc ? '📅 Encerra '+enc : item.link ? '🔗 Ver mais' : ''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) { feed.innerHTML='<div class="carregando">Erro ao carregar.</div>'; }
+  }
+
   function filtrarLojas(cat, el) {
     document.querySelectorAll('#cats-home .cat').forEach(c => c.classList.remove('ativo'));
     el.classList.add('ativo');
@@ -1142,6 +1377,16 @@
           <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
           <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Parques</div>
           <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Natureza e cachoeiras</div>
+        </div>
+        <div onclick="abrirRepublicas()" style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;">
+          <div style="font-size:2rem;margin-bottom:8px;">🏠</div>
+          <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Repúblicas</div>
+          <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Eventos e vagas</div>
+        </div>
+        <div onclick="abrirUFOP()" style="background:linear-gradient(135deg,#1a2040,#0d1b2a);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;">
+          <div style="font-size:2rem;margin-bottom:8px;">🎓</div>
+          <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">UFOP</div>
+          <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Labs, projetos e vagas</div>
         </div>
       </div>`;
   }
@@ -1419,6 +1664,18 @@
         if (!eventos.length) { feed.innerHTML = '<div class="carregando">Nenhum evento nos próximos 30 dias.</div>'; return; }
         feed.innerHTML = eventos.map(ev => renderEventoCard(ev)).join('');
       } catch(e) { feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
+      return;
+    }
+
+    // Repúblicas
+    if (cat === 'republicas') {
+      await carregarRepublicasAgenda();
+      return;
+    }
+
+    // UFOP
+    if (cat === 'ufop') {
+      await carregarUFOPAgenda();
       return;
     }
 
