@@ -405,13 +405,13 @@
   <div class="splash-content">
     <img src="https://dica-de-ouro.github.io/dica-de-ouro/logo.png?v=2"
          alt="Dica de Ouro"
-         style="width:88%;max-width:360px;margin-bottom:40px;filter:drop-shadow(0 12px 32px rgba(0,0,0,0.7));"
+         style="width:80%;max-width:300px;filter:drop-shadow(0 12px 32px rgba(0,0,0,0.7));"
          onerror="this.style.display='none';document.getElementById('splash-fallback').style.display='flex'"/>
-    <div id="splash-fallback" style="display:none;flex-direction:column;align-items:center;margin-bottom:32px;">
+    <div id="splash-fallback" style="display:none;flex-direction:column;align-items:center;">
       <div class="splash-mark"><span>D</span></div>
       <h1 class="splash-titulo">Dica de <em>Ouro</em></h1>
     </div>
-    <button class="btn-primario" onclick="irPara('tela-home','tab-inicio')">Explorar Ouro Preto</button>
+    <button class="btn-primario" style="margin-top:0;" onclick="irPara('tela-home','tab-inicio')">Explorar Ouro Preto</button>
   </div>
 </div>
 
@@ -1567,62 +1567,90 @@
   let _lojaDestaque = null;
 
   async function carregarDestaque(lojas) {
+    // Busca o próximo evento (data futura mais próxima)
+    try {
+      const hoje = new Date().toISOString().split('T')[0];
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hoje}&order=data_evento.asc&limit=1&select=*`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const eventos = await r.json();
+      if (eventos.length) {
+        const ev = eventos[0];
+        window._eventos = window._eventos || {};
+        window._eventos[ev.id] = ev;
+
+        const data = new Date(ev.data_evento + 'T12:00:00');
+        const dataStr = data.toLocaleDateString('pt-BR', { day:'numeric', month:'long' });
+
+        // Preenche o card de destaque com o evento
+        const partes = ev.nome.split(' ');
+        const ultima = partes.pop();
+        document.getElementById('destaque-nome').innerHTML =
+          partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : ev.nome;
+        document.getElementById('destaque-desc').textContent =
+          ev.descricao ? '"' + ev.descricao.substring(0,80) + (ev.descricao.length>80?'…"':'"') : '';
+
+        // Foto
+        const imgEl = document.getElementById('destaque-img');
+        if (ev.foto) {
+          imgEl.style.backgroundImage = `linear-gradient(180deg,transparent 35%,#1a1410cc 100%), url('${ev.foto}')`;
+          imgEl.style.backgroundSize = 'cover';
+          imgEl.style.backgroundPosition = 'center';
+        }
+
+        // Badge e frescor
+        document.getElementById('destaque-rating').innerHTML =
+          `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> ${dataStr}`;
+        document.getElementById('destaque-fresco').innerHTML =
+          `<span class="dot verde"></span> ${ev.horario || 'Em breve'}`;
+
+        // Badge muda para "Próximo evento"
+        const badge = document.querySelector('.destaque-badge');
+        if (badge) badge.innerHTML = '📅 Próximo evento';
+
+        // Clique abre o evento
+        document.getElementById('card-destaque').onclick = () => abrirEventoCompleto(ev.id);
+        return;
+      }
+    } catch(e) {}
+
+    // Fallback: loja mais acessada com info fresca
     if (!lojas.length) return;
-    // Pega a mais acessada que tenha informação fresca (menos de 72h)
     const frescas = lojas.filter(l => {
       const at = l['ATUALIZADO_EM'] || l.atualizado_em;
       if (!at) return false;
       return (new Date() - new Date(at)) < 72 * 3600000;
     });
     const pool = frescas.length ? frescas : lojas;
-    // Ordena por acessos
     pool.sort((a, b) => ((b['ACESSOS']||b.acessos||0) - (a['ACESSOS']||a.acessos||0)));
     const loja = pool[0];
     _lojaDestaque = loja;
-
     const nome = loja['NOME'] || loja.nome || '—';
     const desc = loja['DESCRIÇÃO'] || loja.descricao || '';
     const foto = loja['FOTO'] || loja.foto || '';
     const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em || null;
-
-    // Preenche o card
     const partes = nome.split(' ');
     const ultima = partes.pop();
     document.getElementById('destaque-nome').innerHTML =
       partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : nome;
     document.getElementById('destaque-desc').textContent = desc
-      ? '"' + desc.substring(0, 80) + (desc.length > 80 ? '…"' : '"')
-      : '';
-
-    // Foto de fundo
+      ? '"' + desc.substring(0,80) + (desc.length>80?'…"':'"') : '';
     const imgEl = document.getElementById('destaque-img');
     if (foto) {
       imgEl.style.backgroundImage = `linear-gradient(180deg,transparent 35%,#1a1410cc 100%), url('${foto}')`;
       imgEl.style.backgroundSize = 'cover';
       imgEl.style.backgroundPosition = 'center';
     }
-
-    // Frescor
     const frescoEl = document.getElementById('destaque-fresco');
     if (atualizado) {
       const h = (new Date() - new Date(atualizado)) / 3600000;
       const dot = h < 12 ? 'verde' : h < 48 ? 'warn' : 'stale';
       frescoEl.innerHTML = `<span class="dot ${dot}"></span> ${tempoAtras(atualizado)}`;
     }
-
-    // Busca nota média
-    try {
-      const r = await fetch(
-        `${SUPA_URL}/rest/v1/avaliacoes?loja_id=eq.${loja.id}&select=nota_geral`,
-        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
-      );
-      const avals = await r.json();
-      if (avals.length) {
-        const media = (avals.reduce((s,a) => s + parseFloat(a.nota_geral||0), 0) / avals.length).toFixed(1);
-        document.getElementById('destaque-rating').innerHTML =
-          `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> ${media} · ${avals.length}`;
-      }
-    } catch(e) {}
+    document.getElementById('card-destaque').onclick = () => abrirLoja(loja, 't1');
+    const badge = document.querySelector('.destaque-badge');
+    if (badge) badge.innerHTML = '● Dica do dia';
   }
 
   function abrirDestaque() {
