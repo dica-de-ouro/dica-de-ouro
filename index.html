@@ -448,6 +448,10 @@
     </div>
     <div class="sec-det">
       <div class="info-linhas">
+        <div class="info-linha" id="det-horario-linha" style="display:none">
+          <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div class="cnt"><div class="lbl">Horário</div><div class="val" id="det-horario">—</div></div>
+        </div>
         <div class="info-linha" id="det-endereco-linha">
           <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-6 8-12a8 8 0 0 0-16 0c0 6 8 12 8 12z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <div class="cnt"><div class="lbl">Endereço</div><div class="val" id="det-endereco">—</div></div>
@@ -1595,6 +1599,14 @@
     if (tel) { document.getElementById('det-telefone').textContent = tel; telLinha.style.display = 'flex'; }
     else { telLinha.style.display = 'none'; }
 
+    // Horario
+    const horario = loja['HORARIO'] || loja.horario || '';
+    const horarioLinha = document.getElementById('det-horario-linha');
+    if (horario) {
+      document.getElementById('det-horario').textContent = horario;
+      if (horarioLinha) horarioLinha.style.display = 'flex';
+    } else if (horarioLinha) horarioLinha.style.display = 'none';
+
     // Site
     const site = loja['SITE'] || loja.site || '';
     const siteLinha = document.getElementById('det-site-linha');
@@ -2087,6 +2099,7 @@
     document.getElementById('painel-descricao').value = loja['DESCRIÇÃO'] || loja.descricao || '';
     document.getElementById('painel-telefone').value = loja['TELEFONE'] || loja.telefone || '';
     document.getElementById('painel-site').value = loja['SITE'] || loja.site || '';
+    document.getElementById('painel-horario').value = loja['HORARIO'] || loja.horario || '';
     const fotoExistente = loja['FOTO'] || loja.foto || '';
     document.getElementById('painel-foto').value = fotoExistente;
     const preview = document.getElementById('painel-foto-preview');
@@ -2153,7 +2166,7 @@
         },
         body: JSON.stringify({
           'NOME': document.getElementById('painel-nome').value.trim(),
-          'SITE': document.getElementById('painel-site').value.trim() || null,
+          'SITE': document.getElementById('painel-site')?.value.trim() || null,
           'CATEGORIA': (() => {
             const base = document.getElementById('painel-categoria').value.trim();
             const sub = document.getElementById('painel-subcategoria').value.trim();
@@ -2162,6 +2175,7 @@
           'ENDEREÇO': document.getElementById('painel-endereco').value.trim(),
           'DESCRIÇÃO': document.getElementById('painel-descricao').value.trim(),
           'TELEFONE': document.getElementById('painel-telefone').value.trim(),
+          'HORARIO': document.getElementById('painel-horario')?.value.trim() || null,
           'FOTO': fotoUrl,
           'ATUALIZADO_EM': agora
         })
