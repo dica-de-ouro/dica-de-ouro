@@ -2483,16 +2483,53 @@
     } catch(e) {}
   }
 
-  async function geocodificarEAdicionar(item) {
+  let _geocFila = [];
+  let _geocRodando = false;
+
+  function geocodificarEAdicionar(item) {
+    _geocFila.push(item);
+    if (!_geocRodando) processarFilaGeoc();
+  }
+
+  async function processarFilaGeoc() {
+    _geocRodando = true;
+    while (_geocFila.length > 0) {
+      const item = _geocFila.shift();
+      await geocodificarUm(item);
+      await new Promise(r => setTimeout(r, 1100)); // respeita limite 1 req/seg
+    }
+    _geocRodando = false;
+  }
+
+  async function geocodificarUm(item) {
     try {
-      const query = encodeURIComponent(item.end + ', Ouro Preto, Minas Gerais, Brasil');
-      const r = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`,
-        { headers: { 'Accept-Language': 'pt-BR' } }
+      // Tenta pelo nome primeiro (mais preciso para pontos históricos)
+      const queryNome = encodeURIComponent(item.nome + ', Ouro Preto, Minas Gerais, Brasil');
+      let r = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${queryNome}&format=json&limit=1&countrycodes=br`,
+        { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'DicaDeOuro/1.0' } }
       );
-      const data = await r.json();
+      let data = await r.json();
+
+      // Se não achou pelo nome, tenta pelo endereço
+      if (!data.length && item.end) {
+        await new Promise(r => setTimeout(r, 1100));
+        const queryEnd = encodeURIComponent(item.end + ', Ouro Preto, MG, Brasil');
+        r = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${queryEnd}&format=json&limit=1&countrycodes=br`,
+          { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'DicaDeOuro/1.0' } }
+        );
+        data = await r.json();
+      }
+
       if (!data.length) return;
-      adicionarMarcador(item, parseFloat(data[0].lat), parseFloat(data[0].lon));
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+
+      // Verifica se está dentro da região de Ouro Preto (raio ~50km)
+      if (lat < -20.8 || lat > -19.9 || lng < -44.0 || lng > -43.0) return;
+
+      adicionarMarcador(item, lat, lng);
     } catch(e) {}
   }
 
