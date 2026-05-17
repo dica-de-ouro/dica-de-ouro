@@ -947,22 +947,22 @@
     const container = document.getElementById('lista-lojas');
     container.innerHTML = `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
-        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Igrejas'),100)" style="background:linear-gradient(135deg,#2c2218,#1a1410);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+        <div onclick="abrirLugaresPorCat('Igrejas')" style="background:linear-gradient(135deg,#2c2218,#1a1410);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;">
           <div style="font-size:2rem;margin-bottom:8px;">⛪</div>
           <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Igrejas</div>
           <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Barroco mineiro</div>
         </div>
-        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Museus'),100)" style="background:linear-gradient(135deg,#3d2e1f,#2c2218);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+        <div onclick="abrirLugaresPorCat('Museus')" style="background:linear-gradient(135deg,#3d2e1f,#2c2218);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;">
           <div style="font-size:2rem;margin-bottom:8px;">🏛</div>
           <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Museus</div>
           <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">História e arte</div>
         </div>
-        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Minas'),100)" style="background:linear-gradient(135deg,#1a1410,#2c2218);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+        <div onclick="abrirLugaresPorCat('Minas')" style="background:linear-gradient(135deg,#1a1410,#2c2218);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;">
           <div style="font-size:2rem;margin-bottom:8px;">⛏</div>
           <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Minas</div>
           <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Ouro e aventura</div>
         </div>
-        <div onclick="irTab('tela-agenda','tab-agenda');setTimeout(()=>filtrarAgendaDireto('Parques e Cachoeiras'),100)" style="background:linear-gradient(135deg,#2c3820,#1a2410);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+        <div onclick="abrirLugaresPorCat('Parques e Cachoeiras')" style="background:linear-gradient(135deg,#2c3820,#1a2410);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--cal);transition:all 0.2s;">
           <div style="font-size:2rem;margin-bottom:8px;">🌿</div>
           <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:500;">Parques</div>
           <div style="font-size:0.7rem;opacity:0.5;margin-top:3px;">Natureza e cachoeiras</div>
@@ -970,15 +970,55 @@
       </div>`;
   }
 
-  function filtrarAgendaDireto(cat) {
-    // Clica no filtro correto na aba Agenda
-    const filtros = document.querySelectorAll('#filtros-agenda .filtro');
-    const mapa = { 'Igrejas':'⛪ Igrejas', 'Museus':'🏛 Museus', 'Minas':'⛏ Minas', 'Parques e Cachoeiras':'🌿 Parques' };
-    filtros.forEach(f => {
-      if (f.textContent.trim() === mapa[cat]) {
-        f.click();
-      }
-    });
+  async function abrirLugaresPorCat(cat) {
+    // Navega para tela de lista de lugares (reutiliza tela-agenda mas sem trocar de aba)
+    const tabelaMap = {
+      'Igrejas': 'igrejas',
+      'Museus': 'museus',
+      'Minas': 'minas',
+      'Parques e Cachoeiras': 'parques_cachoeiras'
+    };
+    const emojisMap = { 'Igrejas':'⛪','Museus':'🏛','Minas':'⛏','Parques e Cachoeiras':'🌿' };
+    const tabela = tabelaMap[cat];
+    const emoji = emojisMap[cat] || '📍';
+
+    // Atualiza cabeçalho da agenda e vai para ela
+    document.querySelector('.agenda-hero h2').innerHTML = `${emoji} <em>${cat}</em>`;
+    document.querySelector('.agenda-hero .sub').textContent = 'Toque em qualquer item para saber mais.';
+
+    // Desmarca filtros e vai para a tela
+    document.querySelectorAll('#filtros-agenda .filtro').forEach(f => f.classList.remove('ativo'));
+    irPara('tela-agenda');
+
+    const feed = document.getElementById('agenda-feed');
+    feed.innerHTML = '<div class="carregando">Carregando…</div>';
+
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/${tabela}?order=nome.asc&select=id,nome,descricao,endereco,site,horario_funcionamento,foto`,
+        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      );
+      const lugares = await r.json();
+      window._lugares = window._lugares || {};
+      lugares.forEach(l => { l.categoria = cat; window._lugares[l.id] = l; });
+      if (!lugares.length) { feed.innerHTML = '<div class="carregando">Nenhum local encontrado.</div>'; return; }
+      feed.innerHTML = lugares.map(l => {
+        const fotoStyle = (l.foto && l.foto.startsWith('http'))
+          ? `background-image:url('${l.foto}');background-size:cover;background-position:center;` : '';
+        const horario = l.horario_funcionamento || 'Confirmar horário';
+        return `<div class="lugar-card" onclick="abrirLugar('${l.id}')">
+          <div class="lugar-card-hero" style="${fotoStyle}">
+            <div class="lugar-card-cat">${emoji} ${cat}</div>
+          </div>
+          <div class="lugar-card-body">
+            <h4>${l.nome}</h4>
+            <div class="horario">🕐 ${horario.substring(0,60)}${horario.length>60?'…':''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+    }
   }
 
   async function carregarEventos() {
@@ -1143,6 +1183,9 @@
     el.classList.add('ativo');
     const feed = document.getElementById('agenda-feed');
     feed.innerHTML = '<div class="carregando">Carregando…</div>';
+    // Reseta cabeçalho
+    document.querySelector('.agenda-hero h2').innerHTML = 'Agenda de <em>eventos</em>';
+    document.querySelector('.agenda-hero .sub').textContent = 'O que acontece na cidade, semana a semana.';
 
     const hoje = new Date();
     const hojeStr = hoje.toISOString().split('T')[0];
