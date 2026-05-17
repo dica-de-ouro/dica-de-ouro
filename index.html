@@ -2429,24 +2429,26 @@
   async function carregarLojasMapa() {
     try {
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/lojas?select=id,NOME,CATEGORIA,ENDEREÇO,FOTO&order=created_at.asc`,
+        `${SUPA_URL}/rest/v1/lojas?select=id,NOME,CATEGORIA,ENDEREÇO,FOTO,lat,lng&order=created_at.asc`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
       const lojas = await r.json();
       for (const l of lojas) {
-        const end = l['ENDEREÇO'] || '';
-        if (!end) continue;
         const item = {
           id: l.id,
           nome: l['NOME'] || '—',
           cat: l['CATEGORIA'] || 'Loja',
-          end: end,
+          end: l['ENDEREÇO'] || '',
           foto: l['FOTO'] || null,
           tipo: 'lojas',
           tabela: 'lojas'
         };
         _dadosMapa.push(item);
-        await geocodificarEAdicionar(item);
+        if (l.lat && l.lng) {
+          adicionarMarcador(item, parseFloat(l.lat), parseFloat(l.lng));
+        } else if (item.end) {
+          geocodificarEAdicionar(item);
+        }
       }
     } catch(e) {}
   }
@@ -2454,18 +2456,16 @@
   async function carregarLugaresMapa(tabela, cat) {
     try {
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/${tabela}?select=id,nome,descricao,endereco,foto&order=nome.asc`,
+        `${SUPA_URL}/rest/v1/${tabela}?select=id,nome,descricao,endereco,foto,lat,lng&order=nome.asc`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
       const lugares = await r.json();
       for (const l of lugares) {
-        const end = l.endereco || '';
-        if (!end) continue;
         const item = {
           id: l.id,
           nome: l.nome || '—',
           cat: cat,
-          end: end,
+          end: l.endereco || '',
           foto: l.foto || null,
           tipo: cat,
           tabela: tabela
@@ -2474,7 +2474,11 @@
         l.categoria = cat;
         window._lugares = window._lugares || {};
         window._lugares[l.id] = l;
-        await geocodificarEAdicionar(item);
+        if (l.lat && l.lng) {
+          adicionarMarcador(item, parseFloat(l.lat), parseFloat(l.lng));
+        } else if (item.end) {
+          geocodificarEAdicionar(item);
+        }
       }
     } catch(e) {}
   }
@@ -2488,9 +2492,7 @@
       );
       const data = await r.json();
       if (!data.length) return;
-      const lat = parseFloat(data[0].lat);
-      const lng = parseFloat(data[0].lon);
-      adicionarMarcador(item, lat, lng);
+      adicionarMarcador(item, parseFloat(data[0].lat), parseFloat(data[0].lon));
     } catch(e) {}
   }
 
