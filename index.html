@@ -990,6 +990,7 @@
         <input type="hidden" id="painel-foto" value="">
       </div>
       <button class="btn-salvar" onclick="salvarLoja()">Salvar e renovar prazo</button>
+      <button class="btn-sair" style="margin-top:8px;color:#c47a5a;border-color:#c47a5a55;" onclick="apagarAnuncio()">🗑 Apagar este anúncio</button>
       <div class="salvo-msg" id="salvo-msg"></div>
     </div>
 
@@ -2881,6 +2882,65 @@
     } catch(e) {
       msgEl.style.color = '#ff6b6b';
       msgEl.textContent = 'Erro de conexão: ' + e.message;
+    }
+  }
+
+  async function apagarAnuncio() {
+    const lojaId = localStorage.getItem('dica_loja_id');
+    const tabela = localStorage.getItem('dica_loja_tabela') || 'loja';
+
+    if (!lojaId) {
+      alert('Nenhum anúncio selecionado.');
+      return;
+    }
+
+    const item = (window._lojasDoAnunciante || []).find(l => String(l.id) === String(lojaId));
+    const nome = item ? (item['NOME'] || item.nome || item.titulo || 'este anúncio') : 'este anúncio';
+
+    const ok = confirm(`Tem certeza que quer apagar "${nome}"? Esta ação não pode ser desfeita.`);
+    if (!ok) return;
+
+    const confirmacao = prompt(`Para confirmar, digite APAGAR (em maiúsculas):`);
+    if (confirmacao !== 'APAGAR') {
+      alert('Cancelado.');
+      return;
+    }
+
+    const tabelaBanco = tabela === 'republica' ? 'republicas' :
+                        tabela === 'ufop' ? 'ufop_conteudo' : 'lojas';
+
+    try {
+      const r = await fetch(
+        `${SUPA_URL}/rest/v1/${tabelaBanco}?id=eq.${lojaId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': `Bearer ${SUPA_KEY}`,
+            'Prefer': 'return=minimal'
+          }
+        }
+      );
+
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        alert('Erro ao apagar: ' + (err.message || r.status));
+        return;
+      }
+
+      alert('Anúncio apagado com sucesso.');
+
+      // Recarrega o painel
+      const uid = localStorage.getItem('dica_uid');
+      const email = localStorage.getItem('dica_email');
+      const token = localStorage.getItem('dica_token');
+      if (uid && email && token) {
+        await abrirPainel(uid, email, token);
+      } else {
+        irPara('tela-home', 'tab-inicio');
+      }
+    } catch(e) {
+      alert('Erro de conexão. Tente novamente.');
     }
   }
 
