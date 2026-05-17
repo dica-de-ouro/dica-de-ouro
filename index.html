@@ -49,8 +49,26 @@
   /* SPLASH */
   #tela-splash { background: linear-gradient(180deg,#1a1410 0%,#2c2218 60%,#3d2e1f 100%); display: flex; flex-direction: column; padding-bottom: 0; overflow: hidden; }
   #tela-splash::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 30% 20%,#d4a04a28,transparent 45%), radial-gradient(circle at 75% 75%,#8a3a1f20,transparent 40%); pointer-events:none; }
-  .splash-mountain { position:absolute; bottom:0; left:0; right:0; height:45vh; opacity:0.45; pointer-events:none; }
-  .splash-content { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:0 40px; position:relative; z-index:2; text-align:center; color:var(--cal); }
+  .splash-mountain { display:none; }
+  .splash-base {
+    position:absolute;
+    bottom:0; left:0; right:0;
+    width:100%;
+    height: auto;
+    max-height: 55vh;
+    object-fit: contain;
+    object-position: bottom center;
+    pointer-events:none;
+    opacity:0.85;
+  }
+  @media (min-width: 600px) {
+    .splash-base {
+      max-height: 60vh;
+      object-fit: cover;
+      object-position: top center;
+    }
+  }
+  .splash-content { flex:1; display:flex; flex-direction:column; justify-content:flex-start; align-items:center; padding:calc(var(--safe-top) + 40px) 40px 0; position:relative; z-index:2; text-align:center; color:var(--cal); }
   .splash-mark { width:88px; height:88px; border:1.5px solid var(--gold-bright); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:32px; position:relative; animation:girar 60s linear infinite; }
   .splash-mark::before { content:''; position:absolute; inset:8px; border:1px solid var(--gold); border-radius:50%; opacity:0.4; }
   .splash-mark span { font-family:'Fraunces',serif; font-weight:400; font-size:2.4rem; color:var(--gold-bright); font-style:italic; animation:contra-girar 60s linear infinite; }
@@ -356,16 +374,9 @@
 
 <!-- TELA 1: SPLASH -->
 <div id="tela-splash" class="tela escura">
-  <svg class="splash-mountain" viewBox="0 0 390 300" preserveAspectRatio="xMidYMax slice">
-    <path fill="#1a1410" d="M0 220 L50 185 L100 205 L155 165 L210 190 L255 158 L305 180 L355 155 L390 170 L390 300 L0 300 Z" opacity="0.65"/>
-    <path fill="#0a0805" d="M0 265 L70 230 L140 250 L210 215 L280 242 L350 222 L390 238 L390 300 L0 300 Z"/>
-    <g opacity="0.45" fill="#d4a04a">
-      <rect x="178" y="195" width="34" height="35"/>
-      <polygon points="178,195 195,178 212,195"/>
-      <rect x="191" y="167" width="8" height="14"/>
-      <circle cx="195" cy="167" r="3"/>
-    </g>
-  </svg>
+  <img class="splash-base"
+       src="https://dica-de-ouro.github.io/dica-de-ouro/imagembase.png?v=1"
+       alt="Ouro Preto"/>
   <div class="splash-content">
     <img src="https://dica-de-ouro.github.io/dica-de-ouro/logo.png?v=2"
          alt="Dica de Ouro"
