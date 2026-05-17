@@ -1870,7 +1870,10 @@
     document.getElementById(tabId).classList.add('ativo');
     // Carrega agenda automaticamente ao entrar
     if (telaId === 'tela-explorar') {
-      setTimeout(iniciarMapa, 100);
+      _mapaCarregado = false;
+      _marcadores = [];
+      _dadosMapa = [];
+      setTimeout(iniciarMapa, 200);
     }
     if (telaId === 'tela-agenda') {
       // Mostra filtros de eventos ao entrar pela tab bar
@@ -2374,6 +2377,7 @@
   let _marcadores = [];
   let _dadosMapa = [];
   let _mapaCarregado = false;
+  let _mapaIniciado = false;
 
   const CORES_MAPA = {
     'lojas': '#d4a04a',
@@ -2404,11 +2408,21 @@
 
     // Aguarda Leaflet carregar
     if (typeof L === 'undefined') {
-      setTimeout(iniciarMapa, 300); return;
+      console.log('Leaflet não carregou, tentando novamente...');
+      setTimeout(iniciarMapa, 500); return;
     }
+    console.log('Leaflet carregado, iniciando mapa...');
 
     // Centro de Ouro Preto
+    const container = document.getElementById('mapa-container');
+    if (!container) { console.log('Container do mapa não encontrado'); return; }
+    // Se já existe instância Leaflet no container, remove
+    if (container._leaflet_id) {
+      _mapa.remove();
+      _mapa = null;
+    }
     _mapa = L.map('mapa-container', { zoomControl: true }).setView([-20.3856, -43.5035], 14);
+    console.log('Mapa criado com sucesso');
 
     // Tiles OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -2502,8 +2516,8 @@
   }
 
   async function geocodificarUm(item) {
+    console.log('Geocodificando:', item.nome);
     try {
-      // Tenta pelo nome primeiro (mais preciso para pontos históricos)
       const queryNome = encodeURIComponent(item.nome + ', Ouro Preto, Minas Gerais, Brasil');
       let r = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${queryNome}&format=json&limit=1&countrycodes=br`,
@@ -2534,7 +2548,8 @@
   }
 
   function adicionarMarcador(item, lat, lng) {
-    if (!_mapa) return;
+    if (!_mapa) { console.log('Mapa não iniciado ao tentar adicionar:', item.nome); return; }
+    console.log('Marcador adicionado:', item.nome, lat, lng);
     const marcador = L.marker([lat, lng], { icon: criarIcone(item.tipo) });
     marcador.itemData = item;
 
