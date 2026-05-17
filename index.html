@@ -456,6 +456,10 @@
           <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg></div>
           <div class="cnt"><div class="lbl">Contato</div><div class="val" id="det-telefone">—</div></div>
         </div>
+        <div class="info-linha" id="det-site-linha" style="display:none">
+          <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div class="cnt"><div class="lbl">Site</div><div class="val" id="det-site" style="color:var(--gold-deep);cursor:pointer;"></div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -629,6 +633,10 @@
       <input id="cad-telefone" type="text" placeholder="(31) 9 9999-9999">
     </div>
     <div class="campo-grupo">
+      <label>Site do estabelecimento (opcional)</label>
+      <input id="cad-site" type="url" placeholder="https://www.seusite.com.br">
+    </div>
+    <div class="campo-grupo">
       <label>Foto do estabelecimento (opcional)</label>
       <div id="cad-foto-preview" style="width:100%;height:140px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff20;margin-bottom:8px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;">
         <span style="opacity:0.3;font-size:0.8rem;" id="cad-foto-label">Nenhuma foto selecionada</span>
@@ -728,6 +736,10 @@
       <div class="campo-editar">
         <label>Telefone / WhatsApp</label>
         <input id="painel-telefone" type="text" placeholder="(31) 9 9999-9999">
+      </div>
+      <div class="campo-editar">
+        <label>Site do estabelecimento (opcional)</label>
+        <input id="painel-site" type="url" placeholder="https://www.seusite.com.br">
       </div>
     </div>
 
@@ -1583,6 +1595,22 @@
     if (tel) { document.getElementById('det-telefone').textContent = tel; telLinha.style.display = 'flex'; }
     else { telLinha.style.display = 'none'; }
 
+    // Site
+    const site = loja['SITE'] || loja.site || '';
+    const siteLinha = document.getElementById('det-site-linha');
+    if (site) {
+      const siteEl = document.getElementById('det-site');
+      siteEl.textContent = site.replace(/^https?:\/\//, '');
+      siteEl.onclick = () => {
+        let url = site;
+        if (!url.startsWith('http')) url = 'https://' + url;
+        window.open(url, '_blank');
+      };
+      siteLinha.style.display = 'flex';
+    } else {
+      siteLinha.style.display = 'none';
+    }
+
     // Frescor
     const frescorEl = document.getElementById('det-frescor');
     const barraEl = document.getElementById('det-barra');
@@ -1911,6 +1939,7 @@
         },
         body: JSON.stringify({
           'NOME': nome,
+          'SITE': document.getElementById('cad-site')?.value.trim() || null,
           'CATEGORIA': (() => {
             const base = document.getElementById('cad-categoria').value.trim();
             const sub = document.getElementById('cad-subcategoria').value.trim();
@@ -2057,6 +2086,7 @@
     document.getElementById('painel-endereco').value = loja['ENDEREÇO'] || loja.endereco || '';
     document.getElementById('painel-descricao').value = loja['DESCRIÇÃO'] || loja.descricao || '';
     document.getElementById('painel-telefone').value = loja['TELEFONE'] || loja.telefone || '';
+    document.getElementById('painel-site').value = loja['SITE'] || loja.site || '';
     const fotoExistente = loja['FOTO'] || loja.foto || '';
     document.getElementById('painel-foto').value = fotoExistente;
     const preview = document.getElementById('painel-foto-preview');
@@ -2123,6 +2153,7 @@
         },
         body: JSON.stringify({
           'NOME': document.getElementById('painel-nome').value.trim(),
+          'SITE': document.getElementById('painel-site').value.trim() || null,
           'CATEGORIA': (() => {
             const base = document.getElementById('painel-categoria').value.trim();
             const sub = document.getElementById('painel-subcategoria').value.trim();
