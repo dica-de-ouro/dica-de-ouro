@@ -719,8 +719,6 @@
     <div class="filtro ativo" onclick="filtrarAgenda('semana',this)">📅 Esta semana</div>
     <div class="filtro" onclick="filtrarAgenda('proximo',this)">📆 Próximos</div>
     <div class="filtro" onclick="filtrarAgenda('todos',this)">🗓 Todos</div>
-    <div class="filtro" onclick="filtrarAgenda('republicas',this)">🏠 Repúblicas</div>
-    <div class="filtro" onclick="filtrarAgenda('ufop',this)">🎓 UFOP</div>
   </div>
   <div class="agenda-feed" id="agenda-feed">
     <div class="carregando">Carregando…</div>
@@ -1451,6 +1449,16 @@
     if (cat === 'Descubra') {
       moverDestaque(true);
       abrirDescubra();
+      return;
+    }
+    if (cat === 'Republicas') {
+      moverDestaque(true);
+      abrirRepublicas();
+      return;
+    }
+    if (cat === 'UFOP') {
+      moverDestaque(true);
+      abrirUFOP();
       return;
     }
     if (cat === 'Tudo') {
