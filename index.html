@@ -270,7 +270,7 @@
   .ev-card .local-row { display:flex; align-items:center; gap:6px; font-size:0.72rem; opacity:0.6; padding-top:9px; border-top:1px solid var(--line); }
   .lugar-card { background:var(--paper); border:1px solid var(--line); border-radius:17px; overflow:hidden; margin-bottom:13px; box-shadow:0 4px 12px -4px #1a141015; cursor:pointer; transition:all 0.2s; }
   .lugar-card:active { transform:scale(0.98); }
-  .lugar-card-hero { height:120px; background:linear-gradient(135deg,#2c2218,#3d2e1f); background-size:cover !important; background-position:center !important; position:relative; overflow:hidden; }
+  .lugar-card-hero { height:140px; background:linear-gradient(135deg,#2c2218,#3d2e1f); background-size:cover !important; background-position:center top !important; position:relative; overflow:hidden; background-repeat:no-repeat !important; }
   .lugar-card-hero::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,#1a141080 100%); }
   .lugar-card-cat { position:absolute; top:10px; left:12px; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-bright); font-weight:600; z-index:1; }
   .lugar-card-body { padding:14px 16px; }
@@ -1106,7 +1106,7 @@
       if (!lugares.length) { feed.innerHTML = '<div class="carregando">Nenhum local encontrado.</div>'; return; }
       feed.innerHTML = lugares.map((l, i) => {
         const fotoStyle = (l.foto && l.foto.startsWith('http'))
-          ? `background-image:url('${l.foto}');background-size:cover;background-position:center;` : '';
+          ? `background-image:url('${l.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
         const horario = l.horario_funcionamento || 'Confirmar horário';
         // Usa índice no array em vez do uuid para evitar problemas no onclick
         const arrIdx = window._lugaresArr.findIndex(x => x.id === l.id);
@@ -1149,7 +1149,7 @@
         const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
         const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
         const thumbStyle = ev.foto
-          ? `style="background-image:url('${ev.foto}');background-size:cover;background-position:center;"`
+          ? `style="background-image:url('${ev.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;"`
           : '';
         return `<div class="lugar" style="align-items:flex-start;gap:16px;cursor:pointer;" onclick="abrirEvento('${ev.id}')">
           <div style="width:58px;height:68px;border-radius:13px;flex-shrink:0;overflow:hidden;" ${ev.foto ? thumbStyle : ''}>
@@ -1270,7 +1270,7 @@
     const dia = data.getDate();
     const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
     const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
-    const fotoStyle = ev.foto ? `background-image:url('${ev.foto}');background-size:cover;background-position:center;` : '';
+    const fotoStyle = ev.foto ? `background-image:url('${ev.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
     return `<div class="lugar-card" onclick="abrirEventoCompleto('${ev.id}')">
       <div class="lugar-card-hero" style="${fotoStyle}">
         <div class="lugar-card-cat">📅 ${semana} ${dia}/${mes}</div>
@@ -1383,7 +1383,7 @@
       }
       const emoji = emojisMap[cat] || '📍';
       feed.innerHTML = lugares.map(l => {
-        const fotoStyle = (l.foto && l.foto.startsWith('http')) ? `background-image:url('${l.foto}');background-size:cover;background-position:center;` : '';
+        const fotoStyle = (l.foto && l.foto.startsWith('http')) ? `background-image:url('${l.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
         const horario = l.horario_funcionamento || l.horario || 'Confirmar horário';
         return `<div class="lugar-card" onclick="abrirLugar('${l.id}')">
           <div class="lugar-card-hero" style="${fotoStyle}">
@@ -1550,7 +1550,7 @@
       // Monta cards mínimos com dados do localStorage
       el.innerHTML = favs.map((f, i) => {
         const tc = ['t1','t2','t3'][i%3];
-        const thumbStyle = f.foto ? `style="background-image:url('${f.foto}');background-size:cover;background-position:center;"` : '';
+        const thumbStyle = f.foto ? `style="background-image:url('${f.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;"` : '';
         return `<div class="lugar" onclick="abrirLojaPorId(${f.id},'${tc}')">
           <div class="lugar-thumb ${f.foto?'':tc}" ${thumbStyle}></div>
           <div class="lugar-info">
@@ -1885,7 +1885,7 @@
         window._lojas[l.id] = l;
         // Thumb: foto ou ícone
         const thumbStyle = foto
-          ? `style="background-image:url('${foto}');background-size:cover;background-position:center;"`
+          ? `style="background-image:url('${foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;"`
           : '';
         const thumbIcone = foto ? '' : svgIcone(cat, tc);
         return `<div class="lugar" onclick="abrirLojaPorId(${l.id},'${tc}')">
