@@ -2506,9 +2506,13 @@
 
     try {
       // Passo 1: cria usuário no Auth
-      const rAuth = await fetch(`${SUPA_AUTH}/signup`, {
+      const rAuth = await fetch(`${SUPA_URL}/auth/v1/signup`, {
         method: 'POST',
-        headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ email, password: senha })
       });
       const dataAuth = await rAuth.json();
@@ -2627,9 +2631,13 @@
     if (!email || !senha) { erroEl.textContent = 'Preencha email e senha.'; return; }
 
     try {
-      const r = await fetch(`${SUPA_AUTH}/token?grant_type=password`, {
+      const r = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`, {
         method: 'POST',
-        headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ email, password: senha })
       });
       const data = await r.json();
