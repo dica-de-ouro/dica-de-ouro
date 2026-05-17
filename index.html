@@ -2666,8 +2666,8 @@
             const sub = document.getElementById('cad-subcategoria').value.trim();
             return sub ? `${base} · ${sub}` : base || categoria;
           })(),
-          'DESCRICAO': document.getElementById('cad-descricao')?.value.trim() || null,
-          'ENDERECO': endereco,
+          'DESCRIÇÃO': document.getElementById('cad-descricao')?.value.trim() || null,
+          'ENDEREÇO': endereco,
           'TELEFONE': telefone || null,
           'FOTO': fotoUrl,
           'lojista_id': uid
@@ -3064,8 +3064,8 @@
           const sub = document.getElementById('cad-subcategoria').value.trim();
           return sub ? `${base} · ${sub}` : base;
         })(),
-        'DESCRICAO': document.getElementById('cad-descricao')?.value.trim() || null,
-        'ENDERECO': endereco,
+        'DESCRIÇÃO': document.getElementById('cad-descricao')?.value.trim() || null,
+        'ENDEREÇO': endereco,
         'TELEFONE': telefone || null,
         'FOTO': fotoUrl,
         'lojista_id': uid
