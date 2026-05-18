@@ -1620,18 +1620,18 @@
       );
       let eventos = await r.json();
 
-      // Filtra eventos que ainda estão acontecendo
-      // Se tem data_fim, mostra enquanto data_fim >= hoje
-      // Se não tem, mostra se data_evento >= hoje
+      // Filtra eventos que estão acontecendo ou vão acontecer
+      // Mostra se: (data_fim >= hoje) OU (data_evento >= hoje)
+      const hojeDate = new Date(hoje);
       eventos = eventos.filter(ev => {
         if (ev.data_fim) {
+          // Tem data final — mostra se ainda não acabou
           const dataFim = new Date(ev.data_fim);
-          const hojeDateOnly = new Date(hoje);
-          return dataFim >= hojeDateOnly;
+          return dataFim >= hojeDate;
         } else {
+          // Sem data final — mostra se data_evento >= hoje
           const dataEv = new Date(ev.data_evento);
-          const hojeDateOnly = new Date(hoje);
-          return dataEv >= hojeDateOnly;
+          return dataEv >= hojeDate;
         }
       });
 
@@ -1815,18 +1815,33 @@
 
     const hoje = new Date();
     const hojeStr = hoje.toISOString().split('T')[0];
+    const hojeDate = new Date(hojeStr);
 
     if (cat === 'semana') {
       const fimSemana = new Date(hoje);
       fimSemana.setDate(hoje.getDate() + 7);
-      const inicioStr = hojeStr;
       const fimStr = fimSemana.toISOString().split('T')[0];
       try {
+        // Busca TODOS os eventos e filtra no JS
+        // Mostra se: (data_fim >= hoje) OU (data_evento <= fimSemana)
         const r = await fetch(
-          `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${inicioStr}&data_evento=lte.${fimStr}&order=data_evento.asc&select=*`,
+          `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&order=data_evento.asc&select=*`,
           { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
         );
-        const eventos = await r.json();
+        let eventos = await r.json();
+        
+        // Filtra para essa semana
+        eventos = eventos.filter(ev => {
+          const dataEv = new Date(ev.data_evento);
+          if (ev.data_fim) {
+            const dataFim = new Date(ev.data_fim);
+            // Mostra se data_fim cai nessa semana OU se começou antes e termina depois
+            return dataFim >= hojeDate && dataEv <= fimSemana;
+          } else {
+            return dataEv >= hojeDate && dataEv <= fimSemana;
+          }
+        });
+
         window._eventos = window._eventos || {};
         eventos.forEach(ev => window._eventos[ev.id] = ev);
         if (!eventos.length) {
@@ -1845,12 +1860,25 @@
       const fim30 = new Date(hoje);
       fim30.setDate(hoje.getDate() + 30);
       const fimStr = fim30.toISOString().split('T')[0];
+      const fim30Date = new Date(fimStr);
       try {
         const r = await fetch(
-          `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hojeStr}&data_evento=lte.${fimStr}&order=data_evento.asc&select=*`,
+          `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&order=data_evento.asc&select=*`,
           { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
         );
-        const eventos = await r.json();
+        let eventos = await r.json();
+        
+        // Filtra para próximos 30 dias
+        eventos = eventos.filter(ev => {
+          const dataEv = new Date(ev.data_evento);
+          if (ev.data_fim) {
+            const dataFim = new Date(ev.data_fim);
+            return dataFim >= hojeDate && dataEv <= fim30Date;
+          } else {
+            return dataEv >= hojeDate && dataEv <= fim30Date;
+          }
+        });
+
         window._eventos = window._eventos || {};
         eventos.forEach(ev => window._eventos[ev.id] = ev);
         if (!eventos.length) { feed.innerHTML = '<div class="carregando">Nenhum evento nos próximos 30 dias.</div>'; return; }
