@@ -3120,6 +3120,7 @@
     const token = localStorage.getItem('dica_token');
     const uid = localStorage.getItem('dica_uid');
     const lojaId = localStorage.getItem('dica_loja_id');
+    const tabela = localStorage.getItem('dica_loja_tabela') || 'loja';
     const msgEl = document.getElementById('salvo-msg');
     msgEl.textContent = '';
     msgEl.style.color = 'var(--gold-bright)';
@@ -3139,15 +3140,35 @@
     }
 
     try {
-      const r = await fetch(`${SUPA_URL}/rest/v1/lojas?id=eq.${lojaId}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
+      // Determina a tabela correta
+      let tabelaBanco = 'lojas';
+      let body = {};
+
+      if (tabela === 'republica') {
+        tabelaBanco = 'republicas';
+        body = {
+          nome: document.getElementById('painel-nome').value.trim(),
+          descricao: document.getElementById('painel-descricao').value.trim(),
+          endereco: document.getElementById('painel-endereco').value.trim(),
+          telefone: document.getElementById('painel-telefone').value.trim(),
+          site: document.getElementById('painel-site')?.value.trim() || null,
+          foto: fotoUrl,
+          atualizado_em: agora
+        };
+      } else if (tabela === 'ufop') {
+        tabelaBanco = 'ufop_conteudo';
+        body = {
+          titulo: document.getElementById('painel-nome').value.trim(),
+          descricao: document.getElementById('painel-descricao').value.trim(),
+          subcategoria: document.getElementById('painel-categoria')?.value.trim() || null,
+          link: document.getElementById('painel-site')?.value.trim() || null,
+          foto: fotoUrl,
+          ativo: true
+        };
+      } else {
+        // Loja normal
+        tabelaBanco = 'lojas';
+        body = {
           'NOME': document.getElementById('painel-nome').value.trim(),
           'SITE': document.getElementById('painel-site')?.value.trim() || null,
           'CATEGORIA': (() => {
@@ -3161,7 +3182,18 @@
           'HORARIO': document.getElementById('painel-horario')?.value.trim() || null,
           'FOTO': fotoUrl,
           'ATUALIZADO_EM': agora
-        })
+        };
+      }
+
+      const r = await fetch(`${SUPA_URL}/rest/v1/${tabelaBanco}?id=eq.${lojaId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(body)
       });
 
       if (r.ok) {
