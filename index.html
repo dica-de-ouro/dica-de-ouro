@@ -1615,10 +1615,26 @@
     try {
       const hoje = new Date().toISOString().split('T')[0];
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hoje}&order=data_evento.asc&select=*`,
+        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&order=data_evento.asc&select=*`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
-      const eventos = await r.json();
+      let eventos = await r.json();
+
+      // Filtra eventos que ainda estão acontecendo
+      // Se tem data_fim, mostra enquanto data_fim >= hoje
+      // Se não tem, mostra se data_evento >= hoje
+      eventos = eventos.filter(ev => {
+        if (ev.data_fim) {
+          const dataFim = new Date(ev.data_fim);
+          const hojeDateOnly = new Date(hoje);
+          return dataFim >= hojeDateOnly;
+        } else {
+          const dataEv = new Date(ev.data_evento);
+          const hojeDateOnly = new Date(hoje);
+          return dataEv >= hojeDateOnly;
+        }
+      });
+
       if (!eventos.length) {
         container.innerHTML = '<div class="carregando">Nenhum evento cadastrado ainda.</div>';
         return;
@@ -1632,6 +1648,16 @@
         const dia = data.getDate();
         const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
         const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
+        
+        // Se tem data_fim, mostra o intervalo
+        let dataLabel = `${semana} ${dia}/${mes}`;
+        if (ev.data_fim) {
+          const dataFim = new Date(ev.data_fim);
+          const diaFim = dataFim.getDate();
+          const mesFim = dataFim.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
+          dataLabel = `${semana} ${dia}/${mes} a ${diaFim}/${mesFim}`;
+        }
+
         const thumbStyle = ev.foto
           ? `style="background-image:url('${ev.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;"`
           : '';
@@ -1644,7 +1670,7 @@
             </div>` : ''}
           </div>
           <div style="flex:1;min-width:0;">
-            <div class="cat-tag">${ev.fonte || 'Ouro Preto'} · ${semana} ${dia}/${mes}</div>
+            <div class="cat-tag">${ev.fonte || 'Ouro Preto'} · ${dataLabel}</div>
             <h4 style="font-family:'Fraunces',serif;font-weight:500;font-size:1rem;line-height:1.2;margin-bottom:3px;">${ev.nome}</h4>
             ${ev.horario ? `<div class="onde">⏰ ${ev.horario}</div>` : ''}
             ${ev.local ? `<div class="onde">📍 ${ev.local}</div>` : ''}
@@ -1755,10 +1781,19 @@
     const dia = data.getDate();
     const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
     const semana = data.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.','').toUpperCase();
+    
+    let dataLabel = `📅 ${semana} ${dia}/${mes}`;
+    if (ev.data_fim) {
+      const dataFim = new Date(ev.data_fim);
+      const diaFim = dataFim.getDate();
+      const mesFim = dataFim.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
+      dataLabel = `📅 ${semana} ${dia}/${mes} a ${diaFim}/${mesFim}`;
+    }
+
     const fotoStyle = ev.foto ? `background-image:url('${ev.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
     return `<div class="lugar-card" onclick="abrirEventoCompleto('${ev.id}')">
       <div class="lugar-card-hero" style="${fotoStyle}">
-        <div class="lugar-card-cat">📅 ${semana} ${dia}/${mes}</div>
+        <div class="lugar-card-cat">${dataLabel}</div>
       </div>
       <div class="lugar-card-body">
         <h4>${ev.nome}</h4>
