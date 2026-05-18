@@ -969,14 +969,23 @@
       <div class="campo-editar">
         <label>Categoria</label>
         <div class="cat-selector" id="painel-cat-selector">
-          <div class="cat-option" data-cat="Comer" onclick="selecionarCat(this)">🍽 Comer</div>
-          <div class="cat-option" data-cat="Beber" onclick="selecionarCat(this)">🍺 Beber</div>
-          <div class="cat-option" data-cat="Hospedar" onclick="selecionarCat(this)">🛏 Hospedar</div>
-          <div class="cat-option" data-cat="Visitar" onclick="selecionarCat(this)">🏛 Visitar</div>
-          <div class="cat-option" data-cat="Comprar" onclick="selecionarCat(this)">🛍 Comprar</div>
-          <div class="cat-option" data-cat="Serviços" onclick="selecionarCat(this)">🔧 Serviços</div>
-          <div class="cat-option" data-cat="Saúde" onclick="selecionarCat(this)">🏥 Saúde</div>
-          <div class="cat-option" data-cat="Republicas" onclick="selecionarCat(this)">🏠 República</div>
+          <!-- Lojas normais -->
+          <div class="cat-option loja" data-cat="Comer" onclick="selecionarCat(this)">🍽 Comer</div>
+          <div class="cat-option loja" data-cat="Beber" onclick="selecionarCat(this)">🍺 Beber</div>
+          <div class="cat-option loja" data-cat="Hospedar" onclick="selecionarCat(this)">🛏 Hospedar</div>
+          <div class="cat-option loja" data-cat="Visitar" onclick="selecionarCat(this)">🏛 Visitar</div>
+          <div class="cat-option loja" data-cat="Comprar" onclick="selecionarCat(this)">🛍 Comprar</div>
+          <div class="cat-option loja" data-cat="Serviços" onclick="selecionarCat(this)">🔧 Serviços</div>
+          <div class="cat-option loja" data-cat="Saúde" onclick="selecionarCat(this)">🏥 Saúde</div>
+          <div class="cat-option loja" data-cat="Republicas" onclick="selecionarCat(this)">🏠 República</div>
+          <!-- UFOP -->
+          <div class="cat-option ufop" style="display:none;" data-cat="laboratorios" onclick="selecionarCat(this)">🔬 Laboratórios</div>
+          <div class="cat-option ufop" style="display:none;" data-cat="extensao" onclick="selecionarCat(this)">🌱 Extensão</div>
+          <div class="cat-option ufop" style="display:none;" data-cat="vagas" onclick="selecionarCat(this)">💼 Vagas</div>
+          <div class="cat-option ufop" style="display:none;" data-cat="iniciacao" onclick="selecionarCat(this)">🧪 Iniciação Científica</div>
+          <div class="cat-option ufop" style="display:none;" data-cat="estagio" onclick="selecionarCat(this)">📋 Estágio</div>
+          <div class="cat-option ufop" style="display:none;" data-cat="pos_graduacao" onclick="selecionarCat(this)">🎓 Pós-graduação</div>
+          <div class="cat-option ufop" style="display:none;" data-cat="concursos" onclick="selecionarCat(this)">📣 Concursos</div>
         </div>
         <input type="hidden" id="painel-categoria">
         <div style="margin-top:8px;">
@@ -3072,13 +3081,24 @@
     localStorage.setItem('dica_loja_id', loja.id);
     const tipoAtual = localStorage.getItem('dica_loja_tabela') || 'loja';
     
-    document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || '—';
-    document.getElementById('painel-nome').value = loja['NOME'] || loja.nome || '';
-    const catAtual = loja['CATEGORIA'] || loja.categoria || '';
+    // Mostra categorias corretas conforme o tipo
+    document.querySelectorAll('#painel-cat-selector .cat-option').forEach(o => o.style.display = 'none');
+    if (tipoAtual === 'ufop') {
+      document.querySelectorAll('#painel-cat-selector .cat-option.ufop').forEach(o => o.style.display = 'block');
+    } else {
+      document.querySelectorAll('#painel-cat-selector .cat-option.loja').forEach(o => o.style.display = 'block');
+    }
+
+    document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || loja.titulo || '—';
+    document.getElementById('painel-nome').value = loja['NOME'] || loja.nome || loja.titulo || '';
+    const catAtual = loja['CATEGORIA'] || loja.categoria || loja.subcategoria || '';
     document.getElementById('painel-categoria').value = catAtual;
     document.querySelectorAll('#painel-cat-selector .cat-option').forEach(o => {
-      if (catAtual.includes(o.dataset.cat)) o.classList.add('selecionado');
-      else o.classList.remove('selecionado');
+      if (o.style.display !== 'none' && catAtual.includes(o.dataset.cat)) {
+        o.classList.add('selecionado');
+      } else {
+        o.classList.remove('selecionado');
+      }
     });
     document.getElementById('painel-endereco').value = loja['ENDEREÇO'] || loja.endereco || '';
     document.getElementById('painel-descricao').value = loja['DESCRIÇÃO'] || loja.descricao || '';
