@@ -942,7 +942,7 @@
   </div>
   <div class="painel-corpo">
 
-    <div class="validade-card">
+    <div class="validade-card" id="painel-validade">
       <div class="validade-row">
         <div class="lbl">Suas informações expiram em</div>
         <div class="count" id="painel-expira">—</div>
@@ -3070,6 +3070,8 @@
 
   function preencherFormularioLoja(loja) {
     localStorage.setItem('dica_loja_id', loja.id);
+    const tipoAtual = localStorage.getItem('dica_loja_tabela') || 'loja';
+    
     document.getElementById('painel-nome-loja').textContent = loja['NOME'] || loja.nome || '—';
     document.getElementById('painel-nome').value = loja['NOME'] || loja.nome || '';
     const catAtual = loja['CATEGORIA'] || loja.categoria || '';
@@ -3094,25 +3096,33 @@
       preview.style.backgroundImage = '';
       if (label) label.style.display = 'block';
     }
-    // Validade
-    const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em
-      ? new Date(loja['ATUALIZADO_EM'] || loja.atualizado_em) : null;
-    const expira = atualizado ? new Date(atualizado.getTime() + 72 * 3600000) : null;
-    const agora = new Date();
-    if (expira) {
-      const diffMs = expira - agora;
-      if (diffMs > 0) {
-        const h = Math.floor(diffMs / 3600000);
-        const m = Math.floor((diffMs % 3600000) / 60000);
-        document.getElementById('painel-expira').textContent = `${h}h ${m}min`;
-        document.getElementById('painel-barra-val').style.width = Math.min(100, (diffMs/(72*3600000))*100) + '%';
+
+    // Validade — só para lojas normais
+    const painelValidade = document.getElementById('painel-validade');
+    if (tipoAtual === 'loja') {
+      if (painelValidade) painelValidade.style.display = 'block';
+      const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em
+        ? new Date(loja['ATUALIZADO_EM'] || loja.atualizado_em) : null;
+      const expira = atualizado ? new Date(atualizado.getTime() + 72 * 3600000) : null;
+      const agora = new Date();
+      if (expira) {
+        const diffMs = expira - agora;
+        if (diffMs > 0) {
+          const h = Math.floor(diffMs / 3600000);
+          const m = Math.floor((diffMs % 3600000) / 60000);
+          document.getElementById('painel-expira').textContent = `${h}h ${m}min`;
+          document.getElementById('painel-barra-val').style.width = Math.min(100, (diffMs/(72*3600000))*100) + '%';
+        } else {
+          document.getElementById('painel-expira').textContent = 'Expirado';
+          document.getElementById('painel-barra-val').style.width = '0%';
+        }
       } else {
-        document.getElementById('painel-expira').textContent = 'Expirado';
+        document.getElementById('painel-expira').textContent = 'Nunca atualizado';
         document.getElementById('painel-barra-val').style.width = '0%';
       }
     } else {
-      document.getElementById('painel-expira').textContent = 'Nunca atualizado';
-      document.getElementById('painel-barra-val').style.width = '0%';
+      // República ou UFOP — permanentes
+      if (painelValidade) painelValidade.style.display = 'none';
     }
   }
 
@@ -3198,11 +3208,16 @@
 
       if (r.ok) {
         msgEl.style.color = '#9dd49d';
-        msgEl.textContent = '✓ Salvo! Prazo renovado por 72 horas.';
+        const tipoAtual = localStorage.getItem('dica_loja_tabela') || 'loja';
+        if (tipoAtual === 'loja') {
+          msgEl.textContent = '✓ Salvo! Prazo renovado por 72 horas.';
+          const h = 72;
+          document.getElementById('painel-expira').textContent = `${h}h 0min`;
+          document.getElementById('painel-barra-val').style.width = '100%';
+        } else {
+          msgEl.textContent = '✓ Salvo com sucesso!';
+        }
         setTimeout(() => msgEl.textContent = '', 4000);
-        const h = 72;
-        document.getElementById('painel-expira').textContent = `${h}h 0min`;
-        document.getElementById('painel-barra-val').style.width = '100%';
       } else {
         const erroJson = await r.json().catch(() => ({}));
         msgEl.style.color = '#ff6b6b';
