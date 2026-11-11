@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #1a1410;
@@ -26,6 +26,9 @@
     --gold-bright: #d4a04a;
     --rust: #8a3a1f;
     --line: #2c221820;
+    --texto-2-escuro: #b9ab95;
+    --ouro-texto: #7a5520;
+    --ouro-claro: #efe2c4;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -61,48 +64,33 @@
     opacity:0.9;
     z-index:1;
   }
-  /* Celular: logo + botão juntos no centro */
+  /* Logotipo em texto + botões, a partir do topo */
   .splash-content {
-    position:absolute;
-    top:50%; left:0; right:0;
-    transform:translateY(-55%);
+    position:relative;
     display:flex; flex-direction:column;
     align-items:center;
-    gap:20px;
-    padding:0 32px;
+    width:100%; max-width:440px; margin:0 auto;
+    padding:calc(64px + var(--safe-top)) 28px 0;
     z-index:2;
     text-align:center; color:var(--cal);
   }
-  .splash-content img { margin-bottom:0; width:80%; max-width:300px; }
-  .splash-content .btn-primario { margin-top:0; }
-  /* Desktop: logo esquerda, botão direita — ambos no centro vertical */
-  @media (min-width:640px) {
-    .splash-content {
-      top:50%; bottom:auto;
-      transform:translateY(-60%);
-      flex-direction:row;
-      align-items:center;
-      justify-content:center;
-      gap:56px;
-      padding:0 100px;
-    }
-    .splash-content img { margin-bottom:0; max-width:320px; }
-    .splash-content .btn-primario {
-      width:auto;
-      min-width:260px;
-      flex-shrink:0;
-      margin-top:0;
-    }
-  }
-  .splash-mark { width:88px; height:88px; border:1.5px solid var(--gold-bright); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:32px; position:relative; animation:girar 60s linear infinite; }
-  .splash-mark::before { content:''; position:absolute; inset:8px; border:1px solid var(--gold); border-radius:50%; opacity:0.4; }
-  .splash-mark span { font-family:'Fraunces',serif; font-weight:400; font-size:2.4rem; color:var(--gold-bright); font-style:italic; animation:contra-girar 60s linear infinite; }
+  .splash-eyebrow { font-size:12px; letter-spacing:0.22em; text-transform:uppercase; color:var(--texto-2-escuro); font-weight:500; }
+  .splash-mark { width:88px; height:88px; border:1.5px solid var(--gold-bright); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:36px; position:relative; }
+  .splash-mark::before { content:''; position:absolute; inset:8px; border:1px solid #d4a04a66; border-radius:50%; }
+  .splash-mark span { font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:38px; line-height:1; color:var(--gold-bright); font-style:italic; }
+  .splash-titulo { margin-top:22px; font-family:'Fraunces',Georgia,serif; font-weight:300; font-size:40px; line-height:0.95; letter-spacing:-0.02em; }
+  .splash-titulo em { display:block; font-size:78px; font-style:italic; font-weight:400; color:var(--gold-bright); }
+  .splash-tagline { margin-top:18px; max-width:280px; font-family:'Inter',sans-serif; font-size:16px; line-height:1.5; color:var(--texto-2-escuro); }
+  .splash-acoes { margin-top:30px; width:100%; display:flex; flex-direction:column; gap:12px; }
+  .splash-acoes button { display:flex; align-items:center; justify-content:center; width:100%; border-radius:999px; font-family:'Inter',sans-serif; cursor:pointer; transition:transform 0.25s; }
+  .splash-acoes button:active { transform:scale(0.97); }
+  .splash-acoes .btn-primario { max-width:none; height:56px; padding:0 24px; gap:10px; margin:0; font-size:16px; font-weight:600; letter-spacing:0; text-transform:none; }
+  .btn-negocio { height:48px; padding:0 20px; gap:9px; background:#1a1410b3; border:1px solid #f4ede03d; color:var(--cal); font-size:15px; font-weight:500; }
+  /* Tela larga: a ilustração não sobe por trás dos botões */
+  @media (min-width:640px) { .splash-base { max-height:42vh; } }
   @keyframes girar { to { transform:rotate(360deg); } }
   @keyframes contra-girar { to { transform:rotate(-360deg); } }
   @keyframes pulsar { 0%,100%{opacity:1} 50%{opacity:0.4} }
-  .splash-titulo { font-family:'Fraunces',serif; font-weight:300; font-size:clamp(2.4rem,10vw,3.2rem); line-height:0.95; letter-spacing:-0.02em; margin-bottom:16px; }
-  .splash-titulo em { font-style:italic; font-weight:400; color:var(--gold-bright); display:block; }
-  .splash-tagline { font-family:'Cormorant Garamond',serif; font-size:1.05rem; line-height:1.4; opacity:0.72; max-width:260px; margin-bottom:56px; font-style:italic; }
   .btn-primario { width:100%; max-width:300px; padding:17px 24px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:999px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.9rem; letter-spacing:0.06em; cursor:pointer; text-transform:uppercase; margin-bottom:14px; transition:all 0.25s; }
   .btn-primario:active { transform:scale(0.97); }
   .splash-link { color:var(--cal); opacity:0.55; font-size:0.82rem; background:none; border:none; border-bottom:1px solid currentColor; padding-bottom:2px; cursor:pointer; font-family:'Inter',sans-serif; }
@@ -279,30 +267,63 @@
 
   .carregando { text-align:center; padding:36px 0; opacity:0.5; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.02rem; }
 
-  /* TELA DE PAGAMENTO */
+  /* TELA DE ATIVAÇÃO (promoção de 90 dias) — mantém o id tela-pagamento */
   #tela-pagamento { background:var(--ink); color:var(--cal); }
-  .pag-content { padding:calc(var(--safe-top) + 24px) 22px 80px; max-width:520px; margin:0 auto; }
-  .pag-eyebrow { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:8px; }
-  .pag-titulo { font-family:'Fraunces',serif; font-weight:300; font-size:1.8rem; letter-spacing:-0.02em; margin-bottom:8px; }
-  .pag-titulo em { font-style:italic; color:var(--gold-bright); }
-  .pag-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1rem; opacity:0.7; margin-bottom:24px; }
-  .pag-card { background:#ffffff06; border:1px solid #ffffff15; border-radius:18px; padding:22px; margin-bottom:18px; }
-  .pag-card-title { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-bright); margin-bottom:10px; }
-  .pag-valor { font-family:'Fraunces',serif; font-size:2.4rem; color:var(--gold-bright); line-height:1; margin-bottom:6px; }
-  .pag-valor small { font-size:1rem; opacity:0.6; font-weight:300; }
-  .pag-info-row { padding:12px 0; border-bottom:1px solid #ffffff10; display:flex; justify-content:space-between; align-items:center; }
-  .pag-info-row:last-child { border-bottom:none; }
-  .pag-info-row .lbl { font-size:0.78rem; opacity:0.6; }
-  .pag-info-row .val { font-size:0.88rem; font-weight:500; color:var(--cal); }
-  .pag-chave-pix { font-family:'Courier New',monospace; font-size:1.05rem; color:var(--gold-bright); padding:14px; background:#0a0805; border:1px dashed #d4a04a55; border-radius:10px; text-align:center; margin:10px 0; word-break:break-all; cursor:pointer; }
-  .pag-instr { font-size:0.85rem; line-height:1.5; opacity:0.8; margin-bottom:8px; }
-  .pag-instr strong { color:var(--gold-bright); font-weight:600; }
-  .pag-passo { display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
-  .pag-passo-num { width:28px; height:28px; border-radius:50%; background:var(--gold-bright); color:var(--ink); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; flex-shrink:0; }
-  .pag-passo-texto { flex:1; font-size:0.88rem; line-height:1.5; opacity:0.9; }
-  .pag-passo-texto strong { color:var(--gold-bright); }
-  .btn-copiar { background:#d4a04a25; border:1px solid #d4a04a55; color:var(--gold-bright); padding:8px 14px; border-radius:8px; font-size:0.75rem; cursor:pointer; }
-  .btn-pag-pronto { width:100%; padding:15px; background:var(--gold-bright); color:var(--ink); border:none; border-radius:13px; font-family:'Inter',sans-serif; font-weight:600; font-size:0.88rem; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; margin-top:18px; }
+  .pag-content { padding:calc(var(--safe-top) + 36px) 20px 48px; max-width:520px; margin:0 auto; }
+  .ativ-check { width:64px; height:64px; border-radius:50%; border:1.5px solid var(--gold-bright); display:flex; align-items:center; justify-content:center; color:var(--gold-bright); }
+  .ativ-eyebrow { margin-top:22px; font-size:12px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold-bright); }
+  .ativ-titulo { margin-top:8px; font-family:'Fraunces',Georgia,serif; font-weight:300; font-size:34px; line-height:1.05; letter-spacing:-0.02em; }
+  .ativ-titulo em { font-style:italic; font-weight:400; color:var(--gold-bright); }
+  .ativ-sub { margin-top:10px; font-size:15px; line-height:1.5; color:var(--texto-2-escuro); }
+  .ativ-promo { margin-top:24px; border-radius:20px; background:#d4a04a1a; border:1px solid #d4a04a6b; padding:18px; }
+  .ativ-rotulo { font-size:12px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-bright); }
+  .ativ-gratis { margin-top:8px; font-family:'Fraunces',Georgia,serif; font-size:25px; line-height:1.15; }
+  .ativ-gratis em { font-style:italic; color:var(--gold-bright); }
+  .ativ-dias { margin-top:14px; display:flex; justify-content:space-between; font-size:13px; color:var(--texto-2-escuro); }
+  .ativ-barra { margin-top:6px; height:6px; border-radius:3px; background:#f4ede024; overflow:hidden; }
+  .ativ-barra div { height:6px; background:var(--gold-bright); }
+  .ativ-beneficios { margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:10px; font-size:15px; }
+  .ativ-beneficios li { display:flex; gap:10px; align-items:center; }
+  .ativ-beneficios svg { flex-shrink:0; }
+  .ativ-depois { margin-top:14px; border-radius:18px; background:#f4ede00d; border:1px solid #f4ede024; padding:16px 18px; }
+  .ativ-depois strong { display:block; font-size:15px; font-weight:600; }
+  .ativ-depois p { margin-top:6px; font-size:15px; line-height:1.5; color:#d6cab6; }
+  .ativ-passos-titulo { margin-top:24px; font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:21px; }
+  .ativ-passos-titulo em { font-style:italic; color:var(--gold-bright); }
+  .ativ-passos { margin-top:12px; list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .ativ-passos li { display:flex; gap:12px; align-items:flex-start; font-size:15px; line-height:1.45; }
+  .ativ-passos li span:first-child { width:28px; height:28px; border-radius:50%; background:var(--gold-bright); color:var(--ink); font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ativ-passos li span:last-child { padding-top:3px; }
+  .ativ-acoes { margin-top:26px; display:flex; flex-direction:column; gap:10px; }
+  .btn-ativ { height:56px; border-radius:14px; border:none; background:var(--gold-bright); color:var(--ink); font-family:'Inter',sans-serif; font-size:16px; font-weight:600; cursor:pointer; }
+  .btn-compartilhar { width:100%; height:52px; border-radius:14px; background:transparent; border:1px solid #f4ede042; color:var(--cal); display:flex; align-items:center; justify-content:center; gap:8px; font-family:'Inter',sans-serif; font-size:15px; font-weight:500; cursor:pointer; }
+
+  /* CARTÃO DO PLANO (painel) */
+  .plano-card { border-radius:20px; background:var(--gold-bright); color:var(--ink); padding:16px 18px; margin-bottom:14px; }
+  .plano-topo { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .plano-rotulo { font-size:12px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; }
+  .plano-selo { height:26px; padding:0 10px; border-radius:999px; background:var(--ink); color:var(--gold-bright); font-size:12px; font-weight:600; display:flex; align-items:center; white-space:nowrap; }
+  .plano-titulo { margin-top:6px; font-family:'Fraunces',Georgia,serif; font-size:26px; line-height:1.1; }
+  .plano-titulo em { font-style:italic; }
+  .plano-barra { margin-top:10px; height:6px; border-radius:3px; background:#1a14102e; overflow:hidden; }
+  .plano-barra div { height:6px; background:var(--ink); }
+  .plano-msg { margin-top:8px; font-size:14px; line-height:1.4; }
+
+  /* CONVITE DA PROMOÇÃO (home e cadastro) */
+  .promo-faixa { border-radius:20px; background:var(--ouro-claro); color:var(--ink); padding:20px; margin-bottom:24px; }
+  .promo-faixa-topo { display:flex; align-items:center; gap:10px; }
+  .promo-faixa-icone { width:36px; height:36px; border-radius:50%; background:var(--ink); color:var(--gold-bright); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .promo-faixa-rotulo { font-size:12px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--ouro-texto); }
+  .promo-faixa h2 { margin-top:12px; font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:21px; line-height:1.2; }
+  .promo-faixa h2 em { font-style:italic; color:var(--ouro-texto); }
+  .promo-faixa button { margin-top:16px; width:100%; height:48px; border-radius:14px; border:none; background:var(--ink); color:var(--gold-bright); font-family:'Inter',sans-serif; font-size:15px; font-weight:600; cursor:pointer; }
+  .cad-promo { border-radius:20px; background:var(--gold-bright); color:var(--ink); padding:18px 18px 16px; margin-bottom:24px; }
+  .cad-promo-topo { display:flex; align-items:center; justify-content:space-between; }
+  .cad-promo-rotulo { font-size:12px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; }
+  .cad-promo-titulo { margin-top:6px; font-family:'Fraunces',Georgia,serif; font-size:38px; line-height:1; font-weight:400; }
+  .cad-promo-titulo em { font-style:italic; }
+  .cad-promo p { margin-top:10px; font-size:15px; line-height:1.45; }
+  .cad-promo-gratuito { font-size:15px; line-height:1.45; font-weight:500; }
 
   /* PAINEL ADMIN */
   #tela-admin { background:var(--ink); color:var(--cal); }
@@ -499,15 +520,14 @@
        src="https://dica-de-ouro.github.io/dica-de-ouro/imagembase.png?v=1"
        alt="Ouro Preto"/>
   <div class="splash-content">
-    <img src="https://dica-de-ouro.github.io/dica-de-ouro/logo.png?v=2"
-         alt="Dica de Ouro"
-         style="width:80%;max-width:300px;filter:drop-shadow(0 12px 32px rgba(0,0,0,0.7));"
-         onerror="this.style.display='none';document.getElementById('splash-fallback').style.display='flex'"/>
-    <div id="splash-fallback" style="display:none;flex-direction:column;align-items:center;">
-      <div class="splash-mark"><span>D</span></div>
-      <h1 class="splash-titulo">Dica de <em>Ouro</em></h1>
+    <div class="splash-eyebrow">Vila Rica · MG · 1711</div>
+    <div class="splash-mark" aria-hidden="true"><span>D</span></div>
+    <h1 class="splash-titulo">Dica de <em>Ouro</em></h1>
+    <p class="splash-tagline">A cidade colonial, atualizada hoje por quem vive nela.</p>
+    <div class="splash-acoes">
+      <button class="btn-primario" onclick="irPara('tela-home','tab-inicio')">Explorar Ouro Preto<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
+      <button class="btn-negocio" onclick="abrirNegocio()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4a04a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>Tenho um negócio · 90 dias grátis</button>
     </div>
-    <button class="btn-primario" style="margin-top:0;" onclick="irPara('tela-home','tab-inicio')">Explorar Ouro Preto</button>
   </div>
 </div>
 
@@ -560,6 +580,14 @@
           <div style="opacity:0.4;font-size:0.82rem;padding:8px 0;">Carregando…</div>
         </div>
       </div>
+      <section class="promo-faixa" aria-label="Promoção para empresas">
+        <div class="promo-faixa-topo">
+          <span class="promo-faixa-icone"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>
+          <span class="promo-faixa-rotulo">Promoção de lançamento</span>
+        </div>
+        <h2>Tem um negócio em Ouro Preto? Seu perfil é <em>grátis por 90 dias</em>.</h2>
+        <button onclick="irPara('tela-cadastro')">Cadastrar meu negócio</button>
+      </section>
     </div>
 
     <div class="sec-topo" id="sec-lista-titulo"><h2>Atualizados <em>hoje</em></h2><a href="#">Ver tudo</a></div>
@@ -757,6 +785,18 @@
     <h2 class="cadastro-titulo">Cadastrar no <em>Dica de Ouro</em></h2>
     <p class="cadastro-sub">Crie sua conta e coloque seu espaço no mapa de Ouro Preto.</p>
 
+    <section class="cad-promo" aria-label="Promoção de lançamento">
+      <div id="cad-promo-loja">
+        <div class="cad-promo-topo">
+          <span class="cad-promo-rotulo">Promoção de lançamento</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>
+        </div>
+        <div class="cad-promo-titulo"><em>90 dias</em> grátis</div>
+        <p>Perfil completo com fotos, horário, WhatsApp e estatísticas. Sem cartão e sem cobrança automática.</p>
+      </div>
+      <div id="cad-promo-gratuito" class="cad-promo-gratuito" style="display:none;">Repúblicas e conteúdos da UFOP são sempre gratuitos.</div>
+    </section>
+
     <div class="cadastro-secao">Sua conta</div>
     <div class="campo-grupo">
       <label>Email</label>
@@ -942,13 +982,23 @@
   </div>
   <div class="painel-corpo">
 
+    <section class="plano-card" id="painel-plano" aria-label="Seu plano" style="display:none;">
+      <div class="plano-topo">
+        <span class="plano-rotulo" id="plano-rotulo">Lançamento · grátis</span>
+        <span class="plano-selo" id="plano-selo">Dia 1 de 90</span>
+      </div>
+      <div class="plano-titulo" id="plano-titulo"><em>90 dias</em> restantes</div>
+      <div class="plano-barra" id="plano-barra-wrap"><div id="plano-barra" style="width:2%"></div></div>
+      <p class="plano-msg" id="plano-msg"></p>
+    </section>
+
     <div class="validade-card" id="painel-validade">
       <div class="validade-row">
         <div class="lbl">Suas informações expiram em</div>
         <div class="count" id="painel-expira">—</div>
       </div>
       <div class="validade-barra"><div class="fill" id="painel-barra-val" style="width:50%"></div></div>
-      <div class="validade-msg">Após o prazo, sua loja some das buscas. Manter fresco é manter visível.</div>
+      <div class="validade-msg">Depois desse prazo seu perfil perde o destaque na home. Atualizar leva um minuto.</div>
     </div>
 
     <!-- Seletor de lojas -->
@@ -1031,6 +1081,7 @@
         <input type="hidden" id="painel-foto" value="">
       </div>
       <button class="btn-salvar" onclick="salvarLoja()">Salvar e renovar prazo</button>
+      <button class="btn-compartilhar" id="painel-compartilhar" style="margin-top:8px;" onclick="compartilharDoPainel()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/></svg>Compartilhar meu perfil</button>
       <button class="btn-sair" style="margin-top:8px;color:#c47a5a;border-color:#c47a5a55;" onclick="apagarAnuncio()">🗑 Apagar este anúncio</button>
       <div class="salvo-msg" id="salvo-msg"></div>
     </div>
@@ -1093,6 +1144,157 @@
   const SUPA_URL = 'https://qwwncqvdzpzmgntxkulu.supabase.co';
   const SUPA_KEY = 'sb_publishable_DIqdMLgMQben5Y42DGvGlg_gDlE6s9D';
 
+  // Escapa texto vindo do banco antes de entrar em innerHTML
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+  // Endereço de foto dentro de style="background-image:url('...')"
+  function escUrl(u) {
+    return esc(String(u ?? '').replace(/['"()\\\s]/g, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')));
+  }
+  // Nome com a última palavra em itálico, já escapado
+  function nomeComEm(nome) {
+    const partes = String(nome ?? '').split(' ');
+    const ultima = partes.pop();
+    return partes.length ? esc(partes.join(' ')) + ' <em>' + esc(ultima) + '</em>' : esc(ultima);
+  }
+
+  // PROMOÇÃO DE LANÇAMENTO (90 dias grátis)
+  // Data local no formato AAAA-MM-DD
+  function hojeISO(maisDias = 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + maisDias);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+  // Situação do plano de uma loja; sem gratis_ate, conta 90 dias a partir de hoje
+  function infoPlano(loja) {
+    const DIA = 86400000;
+    const hoje = new Date(); hoje.setHours(12, 0, 0, 0);
+    const fim = loja && loja.gratis_ate
+      ? new Date(String(loja.gratis_ate).slice(0, 10) + 'T12:00:00')
+      : new Date(hoje.getTime() + 90 * DIA);
+    const faltam = Math.round((fim - hoje) / DIA);
+    const dia = Math.min(90, Math.max(1, 91 - faltam));
+    return {
+      pago: !!loja && loja.plano === 'pago',
+      encerrada: faltam < 0,
+      restantes: Math.max(0, faltam),
+      dia,
+      pct: Math.max(2, Math.round(dia / 90 * 100)),
+      dataLonga: fim.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })
+    };
+  }
+  const textoDias = n => `${n} dia${n === 1 ? '' : 's'}`;
+
+  // Tela de ativação, logo depois de cadastrar uma loja
+  function mostrarAtivacao(loja) {
+    window._lojaAtivada = loja || {};
+    const p = infoPlano(loja);
+    const nome = (loja && loja['NOME']) || '';
+    document.getElementById('ativ-boasvindas').textContent =
+      `Boas-vindas ao Dica de Ouro${nome ? ', ' + nome : ''}. Os primeiros 90 dias são por nossa conta.`;
+    document.getElementById('ativ-data').textContent = p.dataLonga;
+    document.getElementById('ativ-dia').textContent = `Dia ${p.dia} de 90`;
+    document.getElementById('ativ-restantes').textContent = `${textoDias(p.restantes)} restante${p.restantes === 1 ? '' : 's'}`;
+    document.getElementById('ativ-barra').style.width = p.pct + '%';
+    document.getElementById('ativ-compartilhar').style.display = loja && loja.id ? 'flex' : 'none';
+    irPara('tela-pagamento');
+  }
+
+  function compartilharPerfil(lojaId, nome) {
+    const url = `https://guiadicadeouro.com.br/?loja=${lojaId}`;
+    const texto = `${nome} está no Dica de Ouro, o guia de Ouro Preto. Veja e avalie:`;
+    if (navigator.share) {
+      navigator.share({ title: 'Dica de Ouro', text: texto, url }).catch(() => {});
+    } else {
+      window.open('https://wa.me/?text=' + encodeURIComponent(texto + ' ' + url), '_blank');
+    }
+  }
+  function compartilharAtivacao() {
+    const l = window._lojaAtivada || {};
+    if (l.id) compartilharPerfil(l.id, l['NOME'] || 'Meu negócio');
+  }
+  function compartilharDoPainel() {
+    const id = localStorage.getItem('dica_loja_id');
+    const l = (window._lojasDoAnunciante || []).find(x => String(x.id) === String(id) && x._tabela === 'loja');
+    if (l) compartilharPerfil(l.id, l['NOME'] || 'Meu negócio');
+  }
+
+  // Cartão do plano no painel (só para lojas e serviços)
+  function preencherCartaoPlano(loja, tipo) {
+    const card = document.getElementById('painel-plano');
+    const btn = document.getElementById('painel-compartilhar');
+    if (btn) btn.style.display = tipo === 'loja' ? 'flex' : 'none';
+    if (!card) return;
+    const p = infoPlano(loja);
+    // Sem as colunas da promoção no banco, não mostra um prazo inventado
+    if (tipo !== 'loja' || (!p.pago && !loja.gratis_ate)) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    const rotulo = document.getElementById('plano-rotulo');
+    const selo = document.getElementById('plano-selo');
+    const titulo = document.getElementById('plano-titulo');
+    const barra = document.getElementById('plano-barra-wrap');
+    const msg = document.getElementById('plano-msg');
+    if (p.pago) {
+      rotulo.textContent = 'Plano mensal';
+      selo.style.display = 'none'; barra.style.display = 'none'; msg.style.display = 'none';
+      titulo.innerHTML = 'Plano mensal <em>ativo</em>';
+      return;
+    }
+    rotulo.textContent = 'Lançamento · grátis';
+    selo.style.display = 'flex'; barra.style.display = 'block'; msg.style.display = 'block';
+    selo.textContent = `Dia ${p.dia} de 90`;
+    document.getElementById('plano-barra').style.width = p.pct + '%';
+    if (p.encerrada) {
+      titulo.innerHTML = 'Promoção <em>encerrada</em>';
+      msg.textContent = `Terminou em ${p.dataLonga}. Para continuar, o plano é R$ 100 por mês.`;
+    } else {
+      titulo.innerHTML = `<em>${textoDias(p.restantes)}</em> restante${p.restantes === 1 ? '' : 's'}`;
+      msg.textContent = `Termina em ${p.dataLonga}. Avisamos 7 dias antes.`;
+    }
+  }
+
+  // Lojas visíveis ao público: pagas ou dentro do prazo grátis
+  async function buscarLojasAtivas(params) {
+    const h = { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } };
+    let r = await fetch(`${SUPA_URL}/rest/v1/lojas?${params}&or=(plano.eq.pago,gratis_ate.gte.${hojeISO()})`, h);
+    // Se as colunas da promoção ainda não existirem no banco, lista tudo como antes
+    if (!r.ok) r = await fetch(`${SUPA_URL}/rest/v1/lojas?${params}`, h);
+    return r.json();
+  }
+
+  // SESSÃO DO ANUNCIANTE
+  function guardarSessao(d) {
+    localStorage.setItem('dica_token', d.access_token);
+    localStorage.setItem('dica_refresh', d.refresh_token || '');
+    localStorage.setItem('dica_token_exp', String(Date.now() + (d.expires_in || 0) * 1000));
+  }
+  // Devolve o token do anunciante, renovando se estiver perto de vencer
+  async function tokenValido() {
+    const exp = Number(localStorage.getItem('dica_token_exp') || 0);
+    if (Date.now() < exp - 60000) return localStorage.getItem('dica_token');
+    const refresh = localStorage.getItem('dica_refresh');
+    if (!refresh) return null;
+    const r = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=refresh_token`, {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refresh })
+    });
+    if (!r.ok) return null; // sessão acabou: mandar para o login
+    const d = await r.json();
+    guardarSessao(d);
+    return d.access_token;
+  }
+  function sessaoExpirada() {
+    ['dica_token', 'dica_refresh', 'dica_token_exp', 'dica_uid', 'dica_email', 'dica_loja_id']
+      .forEach(k => localStorage.removeItem(k));
+    irPara('tela-login');
+    const el = document.getElementById('login-erro');
+    if (el) el.textContent = 'Sua sessão expirou. Entre de novo.';
+  }
+
   function tempoAtras(d) {
     if (!d) return 'sem data';
     const m = (new Date() - new Date(d)) / 60000;
@@ -1148,11 +1350,12 @@
     reader.readAsDataURL(file);
   }
 
-  async function uploadFoto(file, uid) {
+  async function uploadFoto(file, uid, tokenDado) {
     if (!file) return null;
+    const token = tokenDado || await tokenValido();
+    if (!token) return null;
     const ext = file.name.split('.').pop() || 'jpg';
     const path = `loja-${uid}-${Date.now()}.${ext}`;
-    const token = localStorage.getItem('dica_token') || SUPA_KEY;
     try {
       const r = await fetch(
         `${SUPA_URL}/storage/v1/object/fotos-lojas/${path}`,
@@ -1200,6 +1403,9 @@
     document.getElementById('cad-campos-loja').style.display = tipo==='loja' ? 'block' : 'none';
     document.getElementById('cad-campos-republica').style.display = tipo==='republica' ? 'block' : 'none';
     document.getElementById('cad-campos-ufop').style.display = tipo==='ufop' ? 'block' : 'none';
+    // Cartão da promoção: 90 dias só para lojas e serviços
+    document.getElementById('cad-promo-loja').style.display = tipo==='loja' ? 'block' : 'none';
+    document.getElementById('cad-promo-gratuito').style.display = tipo==='loja' ? 'none' : 'block';
   }
 
   function selecionarSubcatRep(el) {
@@ -1272,15 +1478,15 @@
       container.innerHTML = reps.map((r, i) => {
         const tc = ['t1','t2','t3'][i%3];
         const foto = r.foto || '';
-        const thumbStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;` : '';
-        return `<div class="lugar" onclick="abrirRepublica('${r.id}')">
+        const thumbStyle = foto ? `background-image:url('${escUrl(foto)}');background-size:cover;background-position:center top;` : '';
+        return `<div class="lugar" onclick="abrirRepublica('${esc(r.id)}')">
           <div class="lugar-thumb ${foto?'':tc}" style="${thumbStyle}">
             ${!foto ? '<span style="font-size:1.4rem;">🏠</span>' : ''}
           </div>
           <div class="lugar-info">
             <div class="cat-tag">🏠 República</div>
-            <h4>${r.nome}</h4>
-            <div class="onde">${r.endereco||''}</div>
+            <h4>${esc(r.nome)}</h4>
+            <div class="onde">${esc(r.endereco)}</div>
             <div class="meta-row"><span class="stars">Vagas e eventos</span></div>
           </div>
         </div>`;
@@ -1300,13 +1506,13 @@
     if (r.foto) { fotoEl.style.backgroundImage=`url('${r.foto}')`; fotoEl.style.display='block'; }
     else { fotoEl.style.backgroundImage=''; fotoEl.style.display='none'; }
     const partes = r.nome.split(' '); const ultima = partes.pop();
-    document.getElementById('lugar-nome').innerHTML = partes.length ? partes.join(' ')+' <em>'+ultima+'</em>' : r.nome;
+    document.getElementById('lugar-nome').innerHTML = nomeComEm(r.nome);
     document.getElementById('lugar-cat-chip').textContent = '🏠 República';
     document.getElementById('lugar-desc').textContent = r.descricao||'';
     let infos = '';
-    if (r.endereco) infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Endereço</div><div class="val">${r.endereco}</div></div></div>`;
-    if (r.telefone) infos += `<div class="evento-info-row"><div class="ic">📞</div><div class="cnt"><div class="lbl">Contato</div><div class="val">${r.telefone}</div></div></div>`;
-    if (r.site) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);">${r.site}</div></div></div>`;
+    if (r.endereco) infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Endereço</div><div class="val">${esc(r.endereco)}</div></div></div>`;
+    if (r.telefone) infos += `<div class="evento-info-row"><div class="ic">📞</div><div class="cnt"><div class="lbl">Contato</div><div class="val">${esc(r.telefone)}</div></div></div>`;
+    if (r.site) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);">${esc(r.site)}</div></div></div>`;
     document.getElementById('lugar-infos').innerHTML = infos;
     const btnSite = document.getElementById('btn-site-lugar');
     if (r.site) { btnSite.textContent='Ver site'; btnSite.classList.remove('sem-link'); btnSite.onclick=()=>{ let u=r.site; if(!u.startsWith('http'))u='https://'+u; window.open(u,'_blank'); }; }
@@ -1327,14 +1533,14 @@
       reps.forEach(r => window._republicas[r.id] = r);
       if (!reps.length) { feed.innerHTML='<div class="carregando">Nenhuma república cadastrada.</div>'; return; }
       feed.innerHTML = reps.map(r => {
-        const fotoStyle = r.foto ? `background-image:url('${r.foto}');background-size:cover;background-position:center top;` : '';
-        return `<div class="lugar-card" onclick="abrirRepublica('${r.id}')">
+        const fotoStyle = r.foto ? `background-image:url('${escUrl(r.foto)}');background-size:cover;background-position:center top;` : '';
+        return `<div class="lugar-card" onclick="abrirRepublica('${esc(r.id)}')">
           <div class="lugar-card-hero" style="${fotoStyle}">
             <div class="lugar-card-cat">🏠 República</div>
           </div>
           <div class="lugar-card-body">
-            <h4>${r.nome}</h4>
-            <div class="horario">📍 ${r.endereco||'Ouro Preto'}</div>
+            <h4>${esc(r.nome)}</h4>
+            <div class="horario">📍 ${esc(r.endereco||'Ouro Preto')}</div>
           </div>
         </div>`;
       }).join('');
@@ -1383,19 +1589,19 @@
       window._ufop = window._ufop || {};
       items.forEach(i => window._ufop[i.id] = i);
       if (!items.length) {
-        container.innerHTML = `<div class="carregando">Nenhum conteúdo em ${label} ainda.</div>`;
+        container.innerHTML = `<div class="carregando">Nenhum conteúdo em ${esc(label)} ainda.</div>`;
         return;
       }
       container.innerHTML = items.map(item => {
         const enc = item.data_encerramento ? new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'short'}) : '';
         const foto = item.foto || '';
-        const fotoStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;` : 'background:linear-gradient(135deg,#0d1b2a,#1a2040);';
-        return `<div class="lugar-card" onclick="abrirUFOPItem('${item.id}')">
+        const fotoStyle = foto ? `background-image:url('${escUrl(foto)}');background-size:cover;background-position:center top;` : 'background:linear-gradient(135deg,#0d1b2a,#1a2040);';
+        return `<div class="lugar-card" onclick="abrirUFOPItem('${esc(item.id)}')">
           <div class="lugar-card-hero" style="${fotoStyle}">
-            <div class="lugar-card-cat">🎓 ${label}</div>
+            <div class="lugar-card-cat">🎓 ${esc(label)}</div>
           </div>
           <div class="lugar-card-body">
-            <h4>${item.titulo}</h4>
+            <h4>${esc(item.titulo)}</h4>
             <div class="horario">${enc ? '📅 Encerra '+enc : item.link ? '🔗 Ver mais' : ''}</div>
           </div>
         </div>`;
@@ -1416,7 +1622,7 @@
     const fotoEl = document.getElementById('lugar-foto');
     if (item.foto) { fotoEl.style.backgroundImage=`url('${item.foto}')`; fotoEl.style.display='block'; }
     else { fotoEl.style.backgroundImage=''; fotoEl.style.display='none'; }
-    document.getElementById('lugar-nome').innerHTML = `${emoji} <em>${item.titulo}</em>`;
+    document.getElementById('lugar-nome').innerHTML = `${emoji} <em>${esc(item.titulo)}</em>`;
     document.getElementById('lugar-cat-chip').textContent = `🎓 ${label}`;
     document.getElementById('lugar-desc').textContent = item.descricao||'';
     let infos = '';
@@ -1424,7 +1630,7 @@
       const dt = new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
       infos += `<div class="evento-info-row"><div class="ic">📅</div><div class="cnt"><div class="lbl">Encerramento</div><div class="val">${dt}</div></div></div>`;
     }
-    if (item.link) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Link</div><div class="val" style="color:var(--gold-deep);word-break:break-all;">${item.link}</div></div></div>`;
+    if (item.link) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Link</div><div class="val" style="color:var(--gold-deep);word-break:break-all;">${esc(item.link)}</div></div></div>`;
     document.getElementById('lugar-infos').innerHTML = infos;
     const btnSite = document.getElementById('btn-site-lugar');
     if (item.link) {
@@ -1466,16 +1672,16 @@
       const items = await r.json();
       window._ufop = window._ufop || {};
       items.forEach(i => window._ufop[i.id] = i);
-      if (!items.length) { feed.innerHTML=`<div class="carregando">Nenhum conteúdo em ${label} ainda.</div>`; return; }
+      if (!items.length) { feed.innerHTML=`<div class="carregando">Nenhum conteúdo em ${esc(label)} ainda.</div>`; return; }
       feed.innerHTML = items.map(item => {
         const enc = item.data_encerramento ? new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'short'}) : '';
-        const fotoStyle = item.foto ? `background-image:url('${item.foto}');background-size:cover;background-position:center top;` : 'background:linear-gradient(135deg,#0d1b2a,#1a2040);';
-        return `<div class="lugar-card" onclick="abrirUFOPItem('${item.id}')">
+        const fotoStyle = item.foto ? `background-image:url('${escUrl(item.foto)}');background-size:cover;background-position:center top;` : 'background:linear-gradient(135deg,#0d1b2a,#1a2040);';
+        return `<div class="lugar-card" onclick="abrirUFOPItem('${esc(item.id)}')">
           <div class="lugar-card-hero" style="${fotoStyle}">
-            <div class="lugar-card-cat">🎓 ${label}</div>
+            <div class="lugar-card-cat">🎓 ${esc(label)}</div>
           </div>
           <div class="lugar-card-body">
-            <h4>${item.titulo}</h4>
+            <h4>${esc(item.titulo)}</h4>
             <div class="horario">${enc ? '📅 Encerra '+enc : item.link ? '🔗 Ver mais' : ''}</div>
           </div>
         </div>`;
@@ -1599,7 +1805,7 @@
       if (!lugares.length) { feed.innerHTML = '<div class="carregando">Nenhum local encontrado.</div>'; return; }
       feed.innerHTML = lugares.map((l, i) => {
         const fotoStyle = (l.foto && l.foto.startsWith('http'))
-          ? `background-image:url('${l.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
+          ? `background-image:url('${escUrl(l.foto)}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
         const horario = l.horario_funcionamento || 'Confirmar horário';
         // Usa índice no array em vez do uuid para evitar problemas no onclick
         const arrIdx = window._lugaresArr.findIndex(x => x.id === l.id);
@@ -1608,8 +1814,8 @@
             <div class="lugar-card-cat">${emoji} ${cat}</div>
           </div>
           <div class="lugar-card-body">
-            <h4>${l.nome}</h4>
-            <div class="horario">🕐 ${horario.substring(0,60)}${horario.length>60?'…':''}</div>
+            <h4>${esc(l.nome)}</h4>
+            <div class="horario">🕐 ${esc(horario.substring(0,60))}${horario.length>60?'…':''}</div>
           </div>
         </div>`;
       }).join('');
@@ -1668,9 +1874,9 @@
         }
 
         const thumbStyle = ev.foto
-          ? `style="background-image:url('${ev.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;"`
+          ? `style="background-image:url('${escUrl(ev.foto)}');background-size:cover;background-position:center top;background-repeat:no-repeat;"`
           : '';
-        return `<div class="lugar" style="align-items:flex-start;gap:16px;cursor:pointer;" onclick="abrirEvento('${ev.id}')">
+        return `<div class="lugar" style="align-items:flex-start;gap:16px;cursor:pointer;" onclick="abrirEvento('${esc(ev.id)}')">
           <div style="width:58px;height:68px;border-radius:13px;flex-shrink:0;overflow:hidden;" ${ev.foto ? thumbStyle : ''}>
             ${!ev.foto ? `<div style="width:100%;height:100%;background:linear-gradient(135deg,#2c2218,#1a1410);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--cal);">
               <div style="font-family:'Fraunces',serif;font-size:1.4rem;line-height:1;color:var(--gold-bright);">${dia}</div>
@@ -1679,11 +1885,11 @@
             </div>` : ''}
           </div>
           <div style="flex:1;min-width:0;">
-            <div class="cat-tag">${ev.fonte || 'Ouro Preto'} · ${dataLabel}</div>
-            <h4 style="font-family:'Fraunces',serif;font-weight:500;font-size:1rem;line-height:1.2;margin-bottom:3px;">${ev.nome}</h4>
-            ${ev.horario ? `<div class="onde">⏰ ${ev.horario}</div>` : ''}
-            ${ev.local ? `<div class="onde">📍 ${ev.local}</div>` : ''}
-            ${ev.descricao ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;opacity:0.65;margin-top:4px;line-height:1.4;">${ev.descricao.substring(0,80)}${ev.descricao.length>80?'…':''}</div>` : ''}
+            <div class="cat-tag">${esc(ev.fonte || 'Ouro Preto')} · ${dataLabel}</div>
+            <h4 style="font-family:'Fraunces',serif;font-weight:500;font-size:1rem;line-height:1.2;margin-bottom:3px;">${esc(ev.nome)}</h4>
+            ${ev.horario ? `<div class="onde">⏰ ${esc(ev.horario)}</div>` : ''}
+            ${ev.local ? `<div class="onde">📍 ${esc(ev.local)}</div>` : ''}
+            ${ev.descricao ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;opacity:0.65;margin-top:4px;line-height:1.4;">${esc(ev.descricao.substring(0,80))}${ev.descricao.length>80?'…':''}</div>` : ''}
           </div>
         </div>`;
       }).join('');
@@ -1740,8 +1946,7 @@
     // Nome
     const partes = ev.nome.split(' ');
     const ultima = partes.pop();
-    document.getElementById('evento-nome').innerHTML =
-      partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : ev.nome;
+    document.getElementById('evento-nome').innerHTML = nomeComEm(ev.nome);
 
     // Fonte
     document.getElementById('evento-fonte').textContent = ev.fonte || 'Dica de Ouro';
@@ -1751,9 +1956,9 @@
 
     // Infos
     let infos = '';
-    if (ev.horario) infos += `<div class="evento-info-row"><div class="ic">⏰</div><div class="cnt"><div class="lbl">Horário</div><div class="val">${ev.horario}</div></div></div>`;
-    if (ev.local)   infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Local</div><div class="val">${ev.local}</div></div></div>`;
-    if (ev.link)    infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);">${ev.link}</div></div></div>`;
+    if (ev.horario) infos += `<div class="evento-info-row"><div class="ic">⏰</div><div class="cnt"><div class="lbl">Horário</div><div class="val">${esc(ev.horario)}</div></div></div>`;
+    if (ev.local)   infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Local</div><div class="val">${esc(ev.local)}</div></div></div>`;
+    if (ev.link)    infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);">${esc(ev.link)}</div></div></div>`;
     document.getElementById('evento-infos').innerHTML = infos;
 
     // Botão de site
@@ -1799,14 +2004,14 @@
       dataLabel = `📅 ${semana} ${dia}/${mes} a ${diaFim}/${mesFim}`;
     }
 
-    const fotoStyle = ev.foto ? `background-image:url('${ev.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
-    return `<div class="lugar-card" onclick="abrirEventoCompleto('${ev.id}')">
+    const fotoStyle = ev.foto ? `background-image:url('${escUrl(ev.foto)}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
+    return `<div class="lugar-card" onclick="abrirEventoCompleto('${esc(ev.id)}')">
       <div class="lugar-card-hero" style="${fotoStyle}">
         <div class="lugar-card-cat">${dataLabel}</div>
       </div>
       <div class="lugar-card-body">
-        <h4>${ev.nome}</h4>
-        <div class="horario">⏰ ${ev.horario || '—'} &nbsp;·&nbsp; 📍 ${ev.local || '—'}</div>
+        <h4>${esc(ev.nome)}</h4>
+        <div class="horario">⏰ ${esc(ev.horario || '—')} &nbsp;·&nbsp; 📍 ${esc(ev.local || '—')}</div>
       </div>
     </div>`;
   }
@@ -1952,15 +2157,15 @@
       }
       const emoji = emojisMap[cat] || '📍';
       feed.innerHTML = lugares.map(l => {
-        const fotoStyle = (l.foto && l.foto.startsWith('http')) ? `background-image:url('${l.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
+        const fotoStyle = (l.foto && l.foto.startsWith('http')) ? `background-image:url('${escUrl(l.foto)}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
         const horario = l.horario_funcionamento || l.horario || 'Confirmar horário';
-        return `<div class="lugar-card" onclick="abrirLugar('${l.id}')">
+        return `<div class="lugar-card" onclick="abrirLugar('${esc(l.id)}')">
           <div class="lugar-card-hero" style="${fotoStyle}">
             <div class="lugar-card-cat">${emoji} ${cat}</div>
           </div>
           <div class="lugar-card-body">
-            <h4>${l.nome}</h4>
-            <div class="horario">🕐 ${horario.substring(0,60)}${horario.length>60?'…':''}</div>
+            <h4>${esc(l.nome)}</h4>
+            <div class="horario">🕐 ${esc(horario.substring(0,60))}${horario.length>60?'…':''}</div>
           </div>
         </div>`;
       }).join('');
@@ -1997,8 +2202,7 @@
     // Nome e categoria
     const partes = (l.nome||'—').split(' ');
     const ultima = partes.pop();
-    document.getElementById('lugar-nome').innerHTML = partes.length
-      ? partes.join(' ') + ' <em>' + ultima + '</em>' : (l.nome||'—');
+    document.getElementById('lugar-nome').innerHTML = nomeComEm(l.nome||'—');
     document.getElementById('lugar-cat-chip').textContent = emoji + ' ' + (l.categoria||'');
 
     // Descrição — tenta campos com e sem acento
@@ -2009,9 +2213,9 @@
     const endereco = l.endereco || l['endereço'] || '';
     const site = l.site || '';
     let infos = '';
-    if (horario) infos += `<div class="evento-info-row"><div class="ic">🕐</div><div class="cnt"><div class="lbl">Horário</div><div class="val">${horario}</div></div></div>`;
-    if (endereco) infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Endereço</div><div class="val">${endereco}</div></div></div>`;
-    if (site) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);word-break:break-all;">${site}</div></div></div>`;
+    if (horario) infos += `<div class="evento-info-row"><div class="ic">🕐</div><div class="cnt"><div class="lbl">Horário</div><div class="val">${esc(horario)}</div></div></div>`;
+    if (endereco) infos += `<div class="evento-info-row"><div class="ic">📍</div><div class="cnt"><div class="lbl">Endereço</div><div class="val">${esc(endereco)}</div></div></div>`;
+    if (site) infos += `<div class="evento-info-row"><div class="ic">🔗</div><div class="cnt"><div class="lbl">Site</div><div class="val" style="color:var(--gold-deep);word-break:break-all;">${esc(site)}</div></div></div>`;
     document.getElementById('lugar-infos').innerHTML = infos;
 
     // Botão site
@@ -2120,13 +2324,13 @@
       // Monta cards mínimos com dados do localStorage
       el.innerHTML = favs.map((f, i) => {
         const tc = ['t1','t2','t3'][i%3];
-        const thumbStyle = f.foto ? `style="background-image:url('${f.foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;"` : '';
-        return `<div class="lugar" onclick="abrirLojaPorId(${f.id},'${tc}')">
+        const thumbStyle = f.foto ? `style="background-image:url('${escUrl(f.foto)}');background-size:cover;background-position:center top;background-repeat:no-repeat;"` : '';
+        return `<div class="lugar" onclick="abrirLojaPorId(${Number(f.id) || 0},'${tc}')">
           <div class="lugar-thumb ${f.foto?'':tc}" ${thumbStyle}></div>
           <div class="lugar-info">
-            <div class="cat-tag">${f.cat}</div>
-            <h4>${f.nome}</h4>
-            <div class="onde">${f.end}</div>
+            <div class="cat-tag">${esc(f.cat)}</div>
+            <h4>${esc(f.nome)}</h4>
+            <div class="onde">${esc(f.end)}</div>
             <div class="meta-row"><span class="stars">♥ Favorito</span></div>
           </div>
         </div>`;
@@ -2156,8 +2360,7 @@
         // Preenche o card de destaque com o evento
         const partes = ev.nome.split(' ');
         const ultima = partes.pop();
-        document.getElementById('destaque-nome').innerHTML =
-          partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : ev.nome;
+        document.getElementById('destaque-nome').innerHTML = nomeComEm(ev.nome);
         document.getElementById('destaque-desc').textContent =
           ev.descricao ? '"' + ev.descricao.substring(0,80) + (ev.descricao.length>80?'…"':'"') : '';
 
@@ -2173,7 +2376,7 @@
         document.getElementById('destaque-rating').innerHTML =
           `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7h7l-5.7 4.2 2.2 7L12 16l-5.9 4.2 2.2-7L2.4 9h7z"/></svg> ${dataStr}`;
         document.getElementById('destaque-fresco').innerHTML =
-          `<span class="dot verde"></span> ${ev.horario || 'Em breve'}`;
+          `<span class="dot verde"></span> ${esc(ev.horario || 'Em breve')}`;
 
         // Badge muda para "Próximo evento"
         const badge = document.querySelector('.destaque-badge');
@@ -2202,8 +2405,7 @@
     const atualizado = loja['ATUALIZADO_EM'] || loja.atualizado_em || null;
     const partes = nome.split(' ');
     const ultima = partes.pop();
-    document.getElementById('destaque-nome').innerHTML =
-      partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : nome;
+    document.getElementById('destaque-nome').innerHTML = nomeComEm(nome);
     document.getElementById('destaque-desc').textContent = desc
       ? '"' + desc.substring(0,80) + (desc.length>80?'…"':'"') : '';
     const imgEl = document.getElementById('destaque-img');
@@ -2264,7 +2466,7 @@
     const nomeEl = document.getElementById('det-nome');
     const partes = nome.split(' ');
     const ultima = partes.pop();
-    nomeEl.innerHTML = (partes.length ? partes.join(' ') + ' <em>' + ultima + '</em>' : nome);
+    nomeEl.innerHTML = nomeComEm(nome);
 
     // Categoria e endereço
     document.getElementById('det-categoria').textContent = cat;
@@ -2389,10 +2591,10 @@
           const nome = a.nome_avaliador || 'Anônimo';
           return `<div class="comentario-card">
             <div class="com-header">
-              <span class="com-nome">${nome}</span>
+              <span class="com-nome">${esc(nome)}</span>
               <span class="com-nota">★ ${nota}</span>
             </div>
-            <div class="com-texto">"${a.comentario}"</div>
+            <div class="com-texto">"${esc(a.comentario)}"</div>
             <div class="com-data">${data}</div>
           </div>`;
         }).join('');
@@ -2408,14 +2610,14 @@
   async function carregarLojas() {
     const el = document.getElementById('lista-lojas');
     try {
-      const r = await fetch(`${SUPA_URL}/rest/v1/lojas?select=*&order=created_at.desc`, {
-        headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }
-      });
-      const lojas = await r.json();
+      const lojas = await buscarLojasAtivas('select=*&order=created_at.desc');
       if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
       _todasLojas = lojas;
       await renderLojas(lojas);
       carregarDestaque(lojas);
+      // Link direto para um perfil: guiadicadeouro.com.br/?loja=123
+      const idLink = new URLSearchParams(location.search).get('loja');
+      if (idLink && window._lojas?.[idLink]) abrirLojaPorId(window._lojas[idLink].id, 't1');
     } catch(e) {
       el.innerHTML = '<div class="carregando">Erro ao carregar. Tente novamente.</div>';
     }
@@ -2490,26 +2692,26 @@
     const total = lojasFiltradas.length + lugaresFiltrados.length;
 
     if (!total) {
-      container.innerHTML = `<div class="carregando">Nenhum resultado para "${termo}". Tente outra palavra.</div>`;
+      container.innerHTML = `<div class="carregando">Nenhum resultado para "${esc(termo)}". Tente outra palavra.</div>`;
       return;
     }
 
     // Renderiza tudo num feed unificado
-    let html = `<div style="margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.92rem;opacity:0.6;">${total} resultado${total>1?'s':''} para "${termo}"</div>`;
+    let html = `<div style="margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.92rem;opacity:0.6;">${total} resultado${total>1?'s':''} para "${esc(termo)}"</div>`;
 
     // Lugares primeiro
     lugaresFiltrados.forEach(l => {
       const foto = l.foto || '';
-      const thumbStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;` : '';
-      const onclickFn = l._cat === 'República' ? `abrirRepublica('${l.id}')` :
-                        l._cat === 'UFOP' ? `abrirUFOPItem('${l.id}')` :
-                        `abrirLugar('${l.id}')`;
+      const thumbStyle = foto ? `background-image:url('${escUrl(foto)}');background-size:cover;background-position:center top;` : '';
+      const onclickFn = l._cat === 'República' ? `abrirRepublica('${esc(l.id)}')` :
+                        l._cat === 'UFOP' ? `abrirUFOPItem('${esc(l.id)}')` :
+                        `abrirLugar('${esc(l.id)}')`;
       html += `<div class="lugar" onclick="${onclickFn}">
         <div class="lugar-thumb" style="${thumbStyle}">${!foto ? `<span style="font-size:1.4rem;">${l._emoji}</span>` : ''}</div>
         <div class="lugar-info">
           <div class="cat-tag">${l._emoji} ${l._cat}</div>
-          <h4>${l.nome}</h4>
-          <div class="onde">${l.endereco||''}</div>
+          <h4>${esc(l.nome)}</h4>
+          <div class="onde">${esc(l.endereco)}</div>
         </div>
       </div>`;
     });
@@ -2539,7 +2741,7 @@
       const end  = l['ENDEREÇO'] || l.endereco || '';
       const foto = l['FOTO'] || l.foto || '';
       const tc = ['t1','t2','t3'][i%3];
-      const thumbStyle = foto ? `background-image:url('${foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
+      const thumbStyle = foto ? `background-image:url('${escUrl(foto)}');background-size:cover;background-position:center top;background-repeat:no-repeat;` : '';
       const thumbIcone = !foto ? '<span style="font-size:1.4rem;">🏪</span>' : '';
       const div = document.createElement('div');
       div.className = 'lugar';
@@ -2547,9 +2749,9 @@
       div.innerHTML = `
         <div class="lugar-thumb ${foto?'':tc}" style="${thumbStyle}">${thumbIcone}</div>
         <div class="lugar-info">
-          <div class="cat-tag">${cat}</div>
-          <h4>${nome}</h4>
-          <div class="onde">${end}</div>
+          <div class="cat-tag">${esc(cat)}</div>
+          <h4>${esc(nome)}</h4>
+          <div class="onde">${esc(end)}</div>
         </div>`;
       container.appendChild(div);
     }
@@ -2591,15 +2793,15 @@
         window._lojas[l.id] = l;
         // Thumb: foto ou ícone
         const thumbStyle = foto
-          ? `style="background-image:url('${foto}');background-size:cover;background-position:center top;background-repeat:no-repeat;"`
+          ? `style="background-image:url('${escUrl(foto)}');background-size:cover;background-position:center top;background-repeat:no-repeat;"`
           : '';
         const thumbIcone = foto ? '' : svgIcone(cat, tc);
-        return `<div class="lugar" onclick="abrirLojaPorId(${l.id},'${tc}')">
-          <div class="lugar-thumb ${foto ? '' : tc}" ${thumbStyle} ${foto ? `onclick="event.stopPropagation();abrirViewer('${foto}','${nome}')"  style="cursor:zoom-in;"` : ''}>${thumbIcone}</div>
+        return `<div class="lugar" onclick="abrirLojaPorId(${esc(l.id)},'${tc}')">
+          <div class="lugar-thumb ${foto ? '' : tc}" ${thumbStyle} ${foto ? `onclick="event.stopPropagation();abrirViewerLoja(${esc(l.id)})"` : ''}>${thumbIcone}</div>
           <div class="lugar-info">
-            <div class="cat-tag">${cat}</div>
-            <h4>${nome}</h4>
-            <div class="onde">${end}</div>
+            <div class="cat-tag">${esc(cat)}</div>
+            <h4>${esc(nome)}</h4>
+            <div class="onde">${esc(end)}</div>
             <div class="meta-row">
               <span class="stars">${notaStr}</span>
               <div class="fresco"><span class="dot ${corDot(atualizado)}"></span> ${tempoAtras(atualizado)}</div>
@@ -2801,7 +3003,6 @@
         method: 'POST',
         headers: {
           'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password: senha })
@@ -2832,7 +3033,7 @@
       let fotoUrl = null;
       const fotoInputCad = document.getElementById('cad-foto-input');
       if (fotoInputCad && fotoInputCad.files && fotoInputCad.files[0]) {
-        fotoUrl = await uploadFoto(fotoInputCad.files[0], uid);
+        fotoUrl = await uploadFoto(fotoInputCad.files[0], uid, token);
       }
 
       erroEl.textContent = 'Cadastrando…';
@@ -2860,7 +3061,8 @@
           link: document.getElementById('cad-ufop-link')?.value.trim() || null,
           data_encerramento: document.getElementById('cad-ufop-encerramento')?.value || null,
           foto: fotoUrl,
-          ativo: true
+          ativo: true,
+          lojista_id: uid
         };
       } else {
         tabela = 'lojas';
@@ -2884,7 +3086,7 @@
         method: 'POST',
         headers: {
           'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=representation'
         },
@@ -2900,14 +3102,14 @@
       }
 
       // Salva sessão
-      localStorage.setItem('dica_token', token);
+      guardarSessao(dataAuth);
       localStorage.setItem('dica_uid', uid);
       localStorage.setItem('dica_email', email);
 
-      // Se for loja, manda para tela de pagamento
+      // Se for loja, mostra a ativação dos 90 dias grátis
       if (tipo === 'loja') {
-        localStorage.setItem('dica_nome_loja_pendente', nome);
-        irPara('tela-pagamento');
+        const criada = (await rLoja.json().catch(() => []))[0] || {};
+        mostrarAtivacao({ ...body, ...criada });
         return;
       }
 
@@ -2942,7 +3144,6 @@
         method: 'POST',
         headers: {
           'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password: senha })
@@ -2951,7 +3152,7 @@
       if (data.error) { erroEl.textContent = 'Email ou senha incorretos.'; return; }
 
       // Salva sessão
-      localStorage.setItem('dica_token', data.access_token);
+      guardarSessao(data);
       localStorage.setItem('dica_uid', data.user.id);
       localStorage.setItem('dica_email', data.user.email);
 
@@ -2959,6 +3160,12 @@
     } catch(e) {
       erroEl.textContent = 'Erro de conexão. Tente novamente.';
     }
+  }
+
+  // Botão "Tenho um negócio" da abertura: cadastro, ou painel se já estiver logado
+  function abrirNegocio() {
+    if (localStorage.getItem('dica_token') && localStorage.getItem('dica_uid')) abrirAreaAnunciante();
+    else irPara('tela-cadastro');
   }
 
   async function abrirAreaAnunciante() {
@@ -2979,18 +3186,25 @@
 
   async function abrirPainel(uid, email, token) {
     const isAdmin = email === 'thp.bio@gmail.com';
-    const headers = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` };
+    const tk = await tokenValido();
+    if (!tk) { sessaoExpirada(); return; }
+    const headers = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${tk}` };
+    // Anunciante comum vê só os conteúdos UFOP dele; o admin vê todos
+    const filtroUfop = isAdmin
+      ? 'select=*&order=created_at.asc&limit=50'
+      : `lojista_id=eq.${uid}&select=*&order=created_at.asc`;
 
     // Busca anúncios em todas as tabelas em paralelo
     const [rLojas, rReps, rUfop] = await Promise.all([
       fetch(`${SUPA_URL}/rest/v1/lojas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, { headers }),
       fetch(`${SUPA_URL}/rest/v1/republicas?lojista_id=eq.${uid}&select=*&order=created_at.asc`, { headers }),
-      fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?select=*&order=created_at.asc&limit=50`, { headers }),
+      fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?${filtroUfop}`, { headers }),
     ]);
 
     const lojas = await rLojas.json();
-    const reps  = (await rReps.json()).map(r => ({ ...r, _tabela: 'republica', 'NOME': r.nome, 'CATEGORIA': 'República', 'FOTO': r.foto }));
-    const ufops = (await rUfop.json()).map(u => ({ ...u, _tabela: 'ufop', 'NOME': u.titulo, 'CATEGORIA': 'UFOP · ' + u.subcategoria, 'FOTO': u.foto }));
+    const lista = j => Array.isArray(j) ? j : [];
+    const reps  = lista(await rReps.json()).map(r => ({ ...r, _tabela: 'republica', 'NOME': r.nome, 'CATEGORIA': 'República', 'FOTO': r.foto }));
+    const ufops = lista(await rUfop.json()).map(u => ({ ...u, _tabela: 'ufop', 'NOME': u.titulo, 'CATEGORIA': 'UFOP · ' + u.subcategoria, 'FOTO': u.foto }));
 
     // Junta tudo
     const todos = [
@@ -3019,13 +3233,13 @@
         const nome = l['NOME'] || '—';
         const cat  = l['CATEGORIA'] || '';
         const foto = l['FOTO'] || l.foto || '';
-        const thumbStyle = foto ? `style="background-image:url('${foto}');"` : '';
+        const thumbStyle = foto ? `style="background-image:url('${escUrl(foto)}');"` : '';
         const emoji = l._tabela === 'republica' ? '🏠 ' : l._tabela === 'ufop' ? '🎓 ' : '';
-        return `<div class="loja-btn ${i===0?'ativa':''}" onclick="trocarAnuncio('${l.id}','${l._tabela}',this)">
+        return `<div class="loja-btn ${i===0?'ativa':''}" onclick="trocarAnuncio('${esc(l.id)}','${l._tabela}',this)">
           <div class="loja-thumb-mini" ${thumbStyle}></div>
           <div class="loja-info-mini">
-            <div class="nome">${emoji}${nome}</div>
-            <div class="cat">${cat}</div>
+            <div class="nome">${emoji}${esc(nome)}</div>
+            <div class="cat">${esc(cat)}</div>
           </div>
         </div>`;
       }).join('');
@@ -3117,6 +3331,8 @@
       if (label) label.style.display = 'block';
     }
 
+    preencherCartaoPlano(loja, tipoAtual);
+
     // Validade — só para lojas normais
     const painelValidade = document.getElementById('painel-validade');
     if (tipoAtual === 'loja') {
@@ -3147,7 +3363,8 @@
   }
 
   async function salvarLoja() {
-    const token = localStorage.getItem('dica_token');
+    const token = await tokenValido();
+    if (!token) { sessaoExpirada(); return; }
     const uid = localStorage.getItem('dica_uid');
     const lojaId = localStorage.getItem('dica_loja_id');
     const tabela = localStorage.getItem('dica_loja_tabela') || 'loja';
@@ -3165,7 +3382,7 @@
     const fotoInput = document.getElementById('painel-foto-input');
     if (fotoInput && fotoInput.files && fotoInput.files[0]) {
       msgEl.textContent = 'Enviando foto…';
-      const url = await uploadFoto(fotoInput.files[0], uid || lojaId);
+      const url = await uploadFoto(fotoInput.files[0], uid || lojaId, token);
       if (url) fotoUrl = url;
     }
 
@@ -3219,7 +3436,7 @@
         method: 'PATCH',
         headers: {
           'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
@@ -3255,11 +3472,11 @@
     erroEl.textContent = '';
 
     const uid = localStorage.getItem('dica_uid');
-    const token = localStorage.getItem('dica_token');
     const email = localStorage.getItem('dica_email');
+    const token = await tokenValido();
 
     if (!uid || !token) {
-      erroEl.textContent = 'Sessão expirada. Faça login novamente.';
+      sessaoExpirada();
       return;
     }
 
@@ -3316,7 +3533,8 @@
         link: document.getElementById('cad-ufop-link')?.value.trim() || null,
         data_encerramento: document.getElementById('cad-ufop-encerramento')?.value || null,
         foto: fotoUrl,
-        ativo: true
+        ativo: true,
+        lojista_id: uid
       };
     } else {
       tabela = 'lojas';
@@ -3341,7 +3559,7 @@
         method: 'POST',
         headers: {
           'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=representation'
         },
@@ -3355,10 +3573,10 @@
         return;
       }
 
-      // Se for loja, vai para pagamento
+      // Se for loja, mostra a ativação dos 90 dias grátis
       if (tipo === 'loja') {
-        localStorage.setItem('dica_nome_loja_pendente', nome);
-        irPara('tela-pagamento');
+        const criada = (await r.json().catch(() => []))[0] || {};
+        mostrarAtivacao({ ...body, ...criada });
         return;
       }
 
@@ -3378,6 +3596,8 @@
       alert('Nenhum anúncio selecionado.');
       return;
     }
+    const tokenApagar = await tokenValido();
+    if (!tokenApagar) { sessaoExpirada(); return; }
 
     const item = (window._lojasDoAnunciante || []).find(l => String(l.id) === String(lojaId));
     const nome = item ? (item['NOME'] || item.nome || item.titulo || 'este anúncio') : 'este anúncio';
@@ -3401,7 +3621,7 @@
           method: 'DELETE',
           headers: {
             'apikey': SUPA_KEY,
-            'Authorization': `Bearer ${SUPA_KEY}`,
+            'Authorization': `Bearer ${tokenApagar}`,
             'Prefer': 'return=minimal'
           }
         }
@@ -3431,6 +3651,8 @@
 
   function fazerLogout() {
     localStorage.removeItem('dica_token');
+    localStorage.removeItem('dica_refresh');
+    localStorage.removeItem('dica_token_exp');
     localStorage.removeItem('dica_uid');
     localStorage.removeItem('dica_email');
     localStorage.removeItem('dica_loja_id');
@@ -3543,11 +3765,11 @@
         const data = new Date(ev.data_evento + 'T12:00:00');
         const dia = data.getDate();
         const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','').toUpperCase();
-        return `<div class="ev-row" style="cursor:pointer;" onclick="abrirEventoCompleto('${ev.id}')">
+        return `<div class="ev-row" style="cursor:pointer;" onclick="abrirEventoCompleto('${esc(ev.id)}')">
           <div class="ev-data"><div class="d">${dia}</div><div class="m">${mes}</div></div>
           <div class="ev-texto">
-            <div class="nome">${ev.nome}</div>
-            <div class="src">${ev.fonte || 'Dica de Ouro'}</div>
+            <div class="nome">${esc(ev.nome)}</div>
+            <div class="src">${esc(ev.fonte || 'Dica de Ouro')}</div>
           </div>
           <div style="opacity:0.35;font-size:0.8rem;">›</div>
         </div>`;
@@ -3627,11 +3849,7 @@
 
   async function carregarLojasMapa() {
     try {
-      const r = await fetch(
-        `${SUPA_URL}/rest/v1/lojas?select=id,NOME,CATEGORIA,ENDEREÇO,FOTO,lat,lng&order=created_at.asc`,
-        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
-      );
-      const lojas = await r.json();
+      const lojas = await buscarLojasAtivas('select=id,NOME,CATEGORIA,ENDEREÇO,FOTO,lat,lng&order=created_at.asc');
       for (const l of lojas) {
         const item = {
           id: l.id,
@@ -3739,10 +3957,10 @@
     marcador.itemData = item;
 
     const popupHtml = `<div class="popup-inner">
-      <div class="cat">${item.cat}</div>
-      <h4>${item.nome}</h4>
-      <div class="end">${item.end}</div>
-      <button class="btn-pop" onclick="abrirDoMapa('${item.tabela}','${item.id}')">Ver detalhes →</button>
+      <div class="cat">${esc(item.cat)}</div>
+      <h4>${esc(item.nome)}</h4>
+      <div class="end">${esc(item.end)}</div>
+      <button class="btn-pop" onclick="abrirDoMapa('${item.tabela}','${esc(item.id)}')">Ver detalhes →</button>
     </div>`;
 
     marcador.bindPopup(popupHtml, { maxWidth: 220 });
@@ -3782,6 +4000,13 @@
     document.getElementById('img-viewer-legenda').textContent = legenda || '';
     document.getElementById('img-viewer').classList.add('aberto');
     document.body.style.overflow = 'hidden';
+  }
+
+  // Foto da loja na lista: recebe só o id e busca o resto na memória
+  function abrirViewerLoja(id) {
+    const l = (window._lojas || {})[id];
+    if (!l) return;
+    abrirViewer(l['FOTO'] || l.foto || '', l['NOME'] || l.nome || '');
   }
 
   function abrirViewerDet() {
@@ -3875,12 +4100,13 @@
 
     try {
       // Busca tudo em paralelo
-      const [rLojas, rAvals, rAcessos, rEventos, rUsuarios] = await Promise.all([
+      const [rLojas, rAvals, rAcessos, rEventos, rUsuarios, rPromo] = await Promise.all([
         fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,ATUALIZADO_EM,ACESSOS,lojista_id`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/avaliacoes?select=id,nota_geral,created_at,loja_id&order=created_at.desc&limit=10`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/acessos?select=tipo,referencia_id,referencia_nome,created_at&order=created_at.desc&limit=500`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/eventos?select=id,nome,data_evento,ativo&order=data_evento.asc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
         fetch(`${SUPA_URL}/rest/v1/lojas?select=id,lojista_id&lojista_id=not.is.null`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
+        fetch(`${SUPA_URL}/rest/v1/lojas?select=id,NOME,TELEFONE,plano,gratis_ate&plano=neq.pago&gratis_ate=lte.${hojeISO(7)}&order=gratis_ate.asc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }),
       ]);
 
       const lojas = await rLojas.json();
@@ -3888,6 +4114,8 @@
       const acessos = await rAcessos.json();
       const eventos = await rEventos.json();
       const anunciantes = await rUsuarios.json();
+      const promoJson = await rPromo.json().catch(() => []);
+      const promoFim = Array.isArray(promoJson) ? promoJson : [];
 
       // Calcular stats
       const agora = new Date();
@@ -3924,6 +4152,24 @@
         </div>
 
         <div class="admin-sec">
+          <h3>Promoção termina em 7 dias</h3>
+          ${promoFim.length ? promoFim.map(l => {
+            const dt = new Date(String(l.gratis_ate).slice(0, 10) + 'T12:00:00').toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+            const venceu = String(l.gratis_ate).slice(0, 10) < hojeISO();
+            let dig = String(l['TELEFONE'] || '').replace(/\D/g, '');
+            if (dig && !(dig.startsWith('55') && dig.length >= 12)) dig = '55' + dig;
+            const zap = dig
+              ? `<a class="val-sm" href="https://wa.me/${dig}" target="_blank" rel="noopener" style="text-decoration:underline;">${esc(l['TELEFONE'])}</a>`
+              : '<span style="font-size:0.72rem;opacity:0.5;">sem telefone</span>';
+            return `<div class="admin-row">
+              <span class="nome">${esc(l['NOME']||'—')}</span>
+              <span style="font-size:0.72rem;opacity:0.5;">${venceu ? 'terminou ' : ''}${dt}</span>
+              ${zap}
+            </div>`;
+          }).join('') : '<div style="opacity:0.4;font-size:0.85rem;padding:8px 0;">Ninguém termina nos próximos 7 dias.</div>'}
+        </div>
+
+        <div class="admin-sec">
           <h3>🏪 Lojas — status de atualização</h3>
           ${lojas.slice(0,15).map(l => {
             const at = l['ATUALIZADO_EM'];
@@ -3933,7 +4179,7 @@
                           '<span class="badge badge-vermelho">Vencida</span>';
             const tempo = at ? tempoAtras(at) : 'Nunca';
             return `<div class="admin-row">
-              <span class="nome">${l['NOME']||'—'}</span>
+              <span class="nome">${esc(l['NOME']||'—')}</span>
               <span style="font-size:0.72rem;opacity:0.5;">${tempo}</span>
               ${badge}
             </div>`;
@@ -3946,7 +4192,7 @@
             const dt = new Date(a.created_at).toLocaleDateString('pt-BR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
             const nota = parseFloat(a.nota_geral||0).toFixed(1);
             return `<div class="admin-row">
-              <span class="nome">Loja #${a.loja_id}</span>
+              <span class="nome">Loja #${esc(a.loja_id)}</span>
               <span style="font-size:0.7rem;opacity:0.5;">${dt}</span>
               <span class="val-sm">★ ${nota}</span>
             </div>`;
@@ -3958,7 +4204,7 @@
           ${proxEventos.slice(0,5).map(e => {
             const dt = new Date(e.data_evento + 'T12:00:00').toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
             return `<div class="admin-row">
-              <span class="nome">${e.nome}</span>
+              <span class="nome">${esc(e.nome)}</span>
               <span style="font-size:0.72rem;opacity:0.5;">${dt}</span>
             </div>`;
           }).join('')}
@@ -3970,40 +4216,6 @@
     } catch(e) {
       corpo.innerHTML = `<div class="carregando" style="color:var(--cal);">Erro ao carregar. Tente novamente.</div>`;
     }
-  }
-
-  // PAGAMENTO PIX
-  function copiarPix() {
-    const chave = 'thp.bio@gmail.com';
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(chave).then(() => {
-        const btn = event?.target;
-        if (btn && btn.tagName === 'BUTTON') {
-          const original = btn.textContent;
-          btn.textContent = '✓ Copiado!';
-          setTimeout(() => { btn.textContent = original; }, 2000);
-        }
-      });
-    } else {
-      const tmp = document.createElement('input');
-      tmp.value = chave;
-      document.body.appendChild(tmp);
-      tmp.select();
-      document.execCommand('copy');
-      document.body.removeChild(tmp);
-      alert('Chave PIX copiada: ' + chave);
-    }
-  }
-
-  function confirmarEnvioPix() {
-    const nomeLoja = localStorage.getItem('dica_nome_loja_pendente') || 'seu anúncio';
-    const subject = encodeURIComponent(nomeLoja);
-    const body = encodeURIComponent(`Olá,\n\nSegue em anexo o comprovante do PIX no valor de R$ 100,00 referente à mensalidade do anúncio "${nomeLoja}" no Dica de Ouro.\n\nAguardo a ativação.\n\nObrigado.`);
-    window.location.href = `mailto:thp.bio@gmail.com?subject=${subject}&body=${body}`;
-    setTimeout(() => {
-      alert('Após enviar o comprovante por email, seu anúncio será ativado em até 24h.');
-      irPara('tela-painel');
-    }, 1000);
   }
 
   // INIT — limpa sessão corrompida se necessário
@@ -4054,55 +4266,42 @@
   carregarCardEventos();
   registrarSessao();
 </script>
-<!-- TELA DE PAGAMENTO -->
+<!-- TELA DE ATIVAÇÃO (promoção de 90 dias; o id continua tela-pagamento) -->
 <div id="tela-pagamento" class="tela oculta">
   <div class="pag-content">
-    <div class="pag-eyebrow">Anúncio criado com sucesso</div>
-    <h2 class="pag-titulo">Ativar seu <em>anúncio</em></h2>
-    <p class="pag-sub">Para que seu estabelecimento apareça no Dica de Ouro, é necessário o pagamento mensal de manutenção.</p>
+    <div class="ativ-check" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>
+    <div class="ativ-eyebrow">Perfil criado</div>
+    <h1 class="ativ-titulo">Seu perfil já está <em>no ar</em>.</h1>
+    <p class="ativ-sub" id="ativ-boasvindas">Boas-vindas ao Dica de Ouro. Os primeiros 90 dias são por nossa conta.</p>
 
-    <div class="pag-card">
-      <div class="pag-card-title">Valor mensal</div>
-      <div class="pag-valor">R$ 100<small>,00 / mês</small></div>
-      <div style="font-size:0.78rem;opacity:0.55;line-height:1.45;">Cobrança mensal recorrente para manter o anúncio ativo no aplicativo. Inclui exibição na home, mapa, busca e painel de estatísticas.</div>
+    <section class="ativ-promo" aria-label="Sua promoção">
+      <div class="ativ-rotulo">Promoção de lançamento</div>
+      <div class="ativ-gratis">Grátis até <em id="ativ-data">—</em></div>
+      <div class="ativ-dias"><span id="ativ-dia">Dia 1 de 90</span><span id="ativ-restantes">90 dias restantes</span></div>
+      <div class="ativ-barra"><div id="ativ-barra" style="width:2%"></div></div>
+      <ul class="ativ-beneficios">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4a04a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Aparece na home, no mapa e na busca</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4a04a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Recebe avaliações de visitantes e moradores</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4a04a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Acompanha visualizações e cliques no painel</li>
+      </ul>
+    </section>
+
+    <section class="ativ-depois">
+      <strong>E depois dos 90 dias?</strong>
+      <p>Se quiser continuar, o plano é R$ 100 por mês. Avisamos 7 dias antes do fim — nada é cobrado automaticamente.</p>
+    </section>
+
+    <h2 class="ativ-passos-titulo">Para aparecer em <em>destaque</em></h2>
+    <ol class="ativ-passos">
+      <li><span>1</span><span>Adicione uma boa foto da fachada ou do ambiente.</span></li>
+      <li><span>2</span><span>Atualize a novidade do dia pelo menos a cada 3 dias.</span></li>
+      <li><span>3</span><span>Peça aos clientes que avaliem seu espaço no app.</span></li>
+    </ol>
+
+    <div class="ativ-acoes">
+      <button class="btn-ativ" onclick="abrirAreaAnunciante()">Ir para o meu painel</button>
+      <button class="btn-compartilhar" id="ativ-compartilhar" onclick="compartilharAtivacao()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/></svg>Compartilhar meu perfil</button>
     </div>
-
-    <div class="pag-card">
-      <div class="pag-card-title">Como pagar</div>
-
-      <div class="pag-passo">
-        <div class="pag-passo-num">1</div>
-        <div class="pag-passo-texto">Abra o app do seu banco e faça um <strong>PIX de R$ 100,00</strong> para a chave abaixo:</div>
-      </div>
-
-      <div class="pag-chave-pix" id="chave-pix" onclick="copiarPix()">thp.bio@gmail.com</div>
-      <button class="btn-copiar" onclick="copiarPix()" style="width:100%;margin-bottom:18px;">📋 Copiar chave PIX</button>
-
-      <div class="pag-passo">
-        <div class="pag-passo-num">2</div>
-        <div class="pag-passo-texto">Tire um print do comprovante.</div>
-      </div>
-
-      <div class="pag-passo">
-        <div class="pag-passo-num">3</div>
-        <div class="pag-passo-texto">Envie o comprovante por email para <strong>thp.bio@gmail.com</strong> com o <strong>nome da loja no assunto</strong>.</div>
-      </div>
-
-      <div class="pag-passo">
-        <div class="pag-passo-num">4</div>
-        <div class="pag-passo-texto">Em até 24h seu anúncio será ativado e ficará visível no aplicativo.</div>
-      </div>
-    </div>
-
-    <div class="pag-card" style="background:#d4a04a10;border-color:#d4a04a30;">
-      <div style="font-size:0.82rem;line-height:1.5;opacity:0.85;">
-        <strong style="color:var(--gold-bright);">⏰ Validade de 72 horas</strong><br>
-        Lembre-se: para que seu anúncio continue visível, atualize as informações pelo menos a cada 3 dias. Anúncios desatualizados perdem destaque na home.
-      </div>
-    </div>
-
-    <button class="btn-pag-pronto" onclick="confirmarEnvioPix()">Já enviei o comprovante</button>
-    <button class="btn-sair" style="margin-top:8px;" onclick="irPara('tela-painel')">Ir para o painel</button>
   </div>
 </div>
 
