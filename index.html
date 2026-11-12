@@ -395,7 +395,11 @@
   .btn-escuro, .btn-claro { height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
   .btn-escuro { background: var(--ink); color: var(--gold-bright); border: none; }
   .btn-claro { background: var(--card); color: var(--ink); border: 1px solid var(--borda-forte); }
-  #tela-explorar .leaflet-control-attribution { font-size: 12px; }
+  #tela-explorar .leaflet-control-attribution { font-size: 12px; background: #fffcf6cc; color: var(--texto-2); }
+  #tela-explorar .leaflet-control-attribution a { color: var(--ouro-texto); }
+  #mapa-container .leaflet-tile-pane { filter: grayscale(0.9) sepia(0.32) contrast(0.92) brightness(1.06); }
+  #tela-explorar .leaflet-bar a { width: 40px; height: 40px; line-height: 40px; color: var(--ink); background: var(--card); }
+  #tela-explorar .leaflet-bar { border: 1px solid var(--borda-forte); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px #1a14101f; }
 
   /* CADASTRO E LOGIN */
   #tela-cadastro, #tela-login { background: var(--ink); color: var(--cal); padding-bottom: calc(40px + var(--safe-bottom)); }
@@ -2907,10 +2911,8 @@
     // Carrega agenda automaticamente ao entrar
     if (telaId === 'tela-explorar') {
       fecharCardMapa();
-      document.querySelectorAll('.mapa-filtro').forEach((f, i) => f.classList.toggle('ativo', i === 0));
-      _mapaCarregado = false;
-      _marcadores = [];
-      _dadosMapa = [];
+      const tudo = document.querySelector('.mapa-filtro');
+      if (_mapa && tudo) filtrarMapa('todos', tudo);
       setTimeout(iniciarMapa, 200);
     }
     if (telaId === 'tela-agenda') {
@@ -3095,6 +3097,9 @@
           'FOTO': fotoUrl,
           'lojista_id': uid
         };
+        // Coordenadas para o mapa (sem travar o cadastro se a busca falhar)
+        const coord = await coordDoEndereco(endereco, nome);
+        if (coord) { body.lat = coord[0]; body.lng = coord[1]; }
       }
 
       rLoja = await fetch(`${SUPA_URL}/rest/v1/${tabela}`, {
@@ -3421,6 +3426,14 @@
           'FOTO': fotoUrl,
           'ATUALIZADO_EM': agora
         };
+        // Endereço novo ou loja ainda sem coordenadas: busca a posição no mapa
+        const atual = (window._lojasDoAnunciante || []).find(l => String(l.id) === String(lojaId) && l._tabela === 'loja') || {};
+        const novoEnd = body['ENDEREÇO'];
+        if (novoEnd && (novoEnd !== atual['ENDEREÇO'] || !atual.lat)) {
+          const coord = await coordDoEndereco(novoEnd, body['NOME']);
+          if (coord) { body.lat = coord[0]; body.lng = coord[1]; atual.lat = coord[0]; atual.lng = coord[1]; }
+        }
+        Object.assign(atual, body);
       }
 
       const r = await fetch(`${SUPA_URL}/rest/v1/${tabelaBanco}?id=eq.${lojaId}`, {
@@ -3544,6 +3557,9 @@
         'FOTO': fotoUrl,
         'lojista_id': uid
       };
+      // Coordenadas para o mapa (sem travar o cadastro se a busca falhar)
+      const coord = await coordDoEndereco(endereco, nome);
+      if (coord) { body.lat = coord[0]; body.lng = coord[1]; }
     }
 
     try {
@@ -3797,34 +3813,97 @@
     });
   }
 
+  // COORDENADAS
+  // Plus Codes do Google (ex.: "JFFM+FH Ouro Preto") viram coordenadas sem consultar a rede
+  const OLC_ALF = '23456789CFGHJMPQRVWX';
+  const OURO_PRETO = [-20.3856, -43.5035];
+  function olcDecodificar(codigo) {
+    const c = codigo.toUpperCase().replace('+', '').replace(/0+$/, '');
+    let lat = -90, lng = -180, res = 20, ult = 20;
+    for (let i = 0; i + 1 < Math.min(c.length, 10); i += 2) {
+      lat += OLC_ALF.indexOf(c[i]) * res;
+      lng += OLC_ALF.indexOf(c[i + 1]) * res;
+      ult = res; res /= 20;
+    }
+    return [lat + ult / 2, lng + ult / 2];
+  }
+  function olcPrefixo(lat, lng, n) {
+    lat += 90; lng += 180;
+    let res = 20, s = '';
+    for (let i = 0; i < n / 2; i++) {
+      const a = Math.floor(lat / res), b = Math.floor(lng / res);
+      s += OLC_ALF[a] + OLC_ALF[b];
+      lat -= a * res; lng -= b * res; res /= 20;
+    }
+    return s;
+  }
+  function coordDePlusCode(texto) {
+    const m = String(texto || '').match(/\b([23456789CFGHJMPQRVWX]{2,8}\+[23456789CFGHJMPQRVWX]{2,3})\b/i);
+    if (!m) return null;
+    const curto = m[1].toUpperCase();
+    const pad = 8 - curto.indexOf('+');
+    if (pad <= 0) return olcDecodificar(curto);
+    const res = Math.pow(20, 2 - pad / 2);
+    let [lat, lng] = olcDecodificar(olcPrefixo(OURO_PRETO[0], OURO_PRETO[1], pad) + curto);
+    if (OURO_PRETO[0] + res / 2 < lat) lat -= res; else if (OURO_PRETO[0] - res / 2 > lat) lat += res;
+    if (OURO_PRETO[1] + res / 2 < lng) lng -= res; else if (OURO_PRETO[1] - res / 2 > lng) lng += res;
+    return [lat, lng];
+  }
+  const naRegiao = (lat, lng) => lat >= -20.8 && lat <= -19.9 && lng >= -44.0 && lng <= -43.0;
+
+  // Busca no OpenStreetMap. Sem cabeçalhos extras: um User-Agent próprio faz o navegador
+  // pedir permissão antes (CORS) e o serviço recusa.
+  async function buscarCoordOSM(q) {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=br&accept-language=pt-BR`);
+    const d = await r.json();
+    if (!d.length) return null;
+    const lat = parseFloat(d[0].lat), lng = parseFloat(d[0].lon);
+    return naRegiao(lat, lng) ? [lat, lng] : null;
+  }
+
+  // Coordenadas de um endereço para gravar no cadastro (Plus Code ou OpenStreetMap, até 4s)
+  async function coordDoEndereco(endereco, nome) {
+    const pc = coordDePlusCode(endereco);
+    if (pc && naRegiao(pc[0], pc[1])) return pc;
+    if (!endereco && !nome) return null;
+    const limite = new Promise(ok => setTimeout(() => ok(null), 4000));
+    const busca = (async () => {
+      try {
+        return (endereco && await buscarCoordOSM(endereco + ', Ouro Preto, MG, Brasil'))
+            || (nome && await buscarCoordOSM(nome + ', Ouro Preto, Minas Gerais'));
+      } catch(e) { return null; }
+    })();
+    return Promise.race([busca, limite]);
+  }
+
+  // Lembra no aparelho os endereços já buscados (inclusive os não achados, por 7 dias)
+  function cacheGeo() {
+    try { return JSON.parse(localStorage.getItem('dica_geo_v1') || '{}'); } catch(e) { return {}; }
+  }
+  function guardarGeo(chave, valor) {
+    try {
+      const c = cacheGeo();
+      c[chave] = valor;
+      localStorage.setItem('dica_geo_v1', JSON.stringify(c));
+    } catch(e) {}
+  }
+
+  // MAPA
+  // Cria o mapa uma vez só; nas próximas visitas à aba, só reajusta o tamanho
   async function iniciarMapa() {
+    if (typeof L === 'undefined') { setTimeout(iniciarMapa, 500); return; }
+    if (_mapa) { _mapa.invalidateSize(); return; }
     if (_mapaCarregado) return;
     _mapaCarregado = true;
 
-    // Aguarda Leaflet carregar
-    if (typeof L === 'undefined') {
-      console.log('Leaflet não carregou, tentando novamente...');
-      setTimeout(iniciarMapa, 500); return;
-    }
-    console.log('Leaflet carregado, iniciando mapa...');
-
-    // Centro de Ouro Preto
-    const container = document.getElementById('mapa-container');
-    if (!container) { console.log('Container do mapa não encontrado'); return; }
-    // Se já existe instância Leaflet no container, remove
-    if (container._leaflet_id) {
-      _mapa.remove();
-      _mapa = null;
-    }
-    _mapa = L.map('mapa-container', { zoomControl: false }).setView([-20.3856, -43.5035], 14);
+    _mapa = L.map('mapa-container', { zoomControl: false, preferCanvas: false }).setView(OURO_PRETO, 15);
     L.control.zoom({ position: 'bottomright' }).addTo(_mapa);
     _mapa.on('click', fecharCardMapa);
-    console.log('Mapa criado com sucesso');
 
-    // Tiles OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap',
-      maxZoom: 18
+    // Mapa do OpenStreetMap; o CSS tira o excesso de cor e deixa em tom de papel
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19
     }).addTo(_mapa);
 
     // Carrega todos os dados
@@ -3835,6 +3914,17 @@
       carregarLugaresMapa('minas', 'Minas'),
       carregarLugaresMapa('parques_cachoeiras', 'Parques e Cachoeiras')
     ]);
+  }
+
+  // Põe o item no mapa: coordenada do banco, Plus Code, memória do aparelho ou busca
+  function posicionarItem(item, lat, lng) {
+    if (lat && lng) { adicionarMarcador(item, parseFloat(lat), parseFloat(lng)); return; }
+    const pc = coordDePlusCode(item.end);
+    if (pc && naRegiao(pc[0], pc[1])) { adicionarMarcador(item, pc[0], pc[1]); return; }
+    const salvo = cacheGeo()[item.tabela + ':' + item.id];
+    if (salvo && salvo.c) { adicionarMarcador(item, salvo.c[0], salvo.c[1]); return; }
+    if (salvo && Date.now() - salvo.t < 7 * 86400000) return; // não achou há pouco: não tenta de novo
+    if (item.end || item.nome) geocodificarEAdicionar(item);
   }
 
   async function carregarLojasMapa() {
@@ -3851,11 +3941,7 @@
           tabela: 'lojas'
         };
         _dadosMapa.push(item);
-        if (l.lat && l.lng) {
-          adicionarMarcador(item, parseFloat(l.lat), parseFloat(l.lng));
-        } else if (item.end) {
-          geocodificarEAdicionar(item);
-        }
+        posicionarItem(item, l.lat, l.lng);
       }
     } catch(e) {}
   }
@@ -3881,11 +3967,7 @@
         l.categoria = cat;
         window._lugares = window._lugares || {};
         window._lugares[l.id] = l;
-        if (l.lat && l.lng) {
-          adicionarMarcador(item, parseFloat(l.lat), parseFloat(l.lng));
-        } else if (item.end) {
-          geocodificarEAdicionar(item);
-        }
+        posicionarItem(item, l.lat, l.lng);
       }
     } catch(e) {}
   }
@@ -3909,34 +3991,15 @@
   }
 
   async function geocodificarUm(item) {
-    console.log('Geocodificando:', item.nome);
+    const chave = item.tabela + ':' + item.id;
     try {
-      const queryNome = encodeURIComponent(item.nome + ', Ouro Preto, Minas Gerais, Brasil');
-      let r = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${queryNome}&format=json&limit=1&countrycodes=br`,
-        { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'DicaDeOuro/1.0' } }
-      );
-      let data = await r.json();
-
-      // Se não achou pelo nome, tenta pelo endereço
-      if (!data.length && item.end) {
+      let c = await buscarCoordOSM(item.nome + ', Ouro Preto, Minas Gerais');
+      if (!c && item.end) {
         await new Promise(r => setTimeout(r, 1100));
-        const queryEnd = encodeURIComponent(item.end + ', Ouro Preto, MG, Brasil');
-        r = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${queryEnd}&format=json&limit=1&countrycodes=br`,
-          { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'DicaDeOuro/1.0' } }
-        );
-        data = await r.json();
+        c = await buscarCoordOSM(item.end + ', Brasil');
       }
-
-      if (!data.length) return;
-      const lat = parseFloat(data[0].lat);
-      const lng = parseFloat(data[0].lon);
-
-      // Verifica se está dentro da região de Ouro Preto (raio ~50km)
-      if (lat < -20.8 || lat > -19.9 || lng < -44.0 || lng > -43.0) return;
-
-      adicionarMarcador(item, lat, lng);
+      guardarGeo(chave, { c, t: Date.now() });
+      if (c) adicionarMarcador(item, c[0], c[1]);
     } catch(e) {}
   }
 
