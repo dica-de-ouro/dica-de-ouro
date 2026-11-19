@@ -599,6 +599,21 @@
   #secao-destaque .promo-faixa { margin: 24px 0 0; }
   #tela-explorar.com-card .leaflet-bottom { bottom: 200px; }
   .pino-wrap .pino { pointer-events: auto; }
+  /* Oportunidades UFOP: busca e filtro por campus */
+  .ufop-filtros { margin: 4px 0 14px; }
+  .ufop-busca { width: 100%; box-sizing: border-box; }
+  .ufop-campi { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .ufop-chip { border: 1px solid currentColor; border-radius: 999px; padding: 6px 12px; background: transparent; color: inherit; font: inherit; font-size: 13px; opacity: .65; cursor: pointer; }
+  .ufop-chip.ativo { opacity: 1; font-weight: 600; }
+  .ufop-contagem { margin: 10px 0 0; font-size: 13px; opacity: .75; }
+  .ufop-mais { display: block; margin: 6px auto 18px; }
+  /* Banners que convidam a anunciar nas abas vazias */
+  .dica-banner { display: flex; gap: 14px; align-items: flex-start; box-sizing: border-box; width: 100%; padding: 18px; margin: 4px 0 16px; border-radius: 18px; background: rgba(212,160,74,.12); border: 1px solid rgba(212,160,74,.5); }
+  .dica-banner-ic { flex: 0 0 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(212,160,74,.28); }
+  .dica-banner-tx { flex: 1; min-width: 0; }
+  .dica-banner h4 { margin: 0 0 4px; font-family: 'Fraunces', Georgia, serif; font-size: 18px; line-height: 1.25; }
+  .dica-banner p { margin: 0 0 12px; font-size: 14px; line-height: 1.45; opacity: .85; }
+  .dica-banner .btn-primario { width: auto; max-width: 100%; margin-bottom: 0; padding: 10px 18px; font-size: 0.8rem; }
 </style>
 </head>
 <body>
@@ -4421,6 +4436,242 @@
   <img id="img-viewer-img" src="" alt=""/>
   <div id="img-viewer-legenda"></div>
 </div>
+
+<!-- OPORTUNIDADES UFOP (busca e filtro por campus) E BANNERS PARA ANUNCIAR NAS ABAS VAZIAS -->
+<script>
+/* Substitui algumas funções da seção UFOP e troca os avisos de lista vazia por banners.
+   Os textos dos banners ficam no começo do bloco. */
+(function () {
+  'use strict';
+  if (typeof SUPA_URL === 'undefined' || typeof cardUFOP !== 'function' || window.__ufopBanners) return;
+  window.__ufopBanners = true;
+
+  // ===================== textos (edite à vontade) =====================
+  var PROMO_LOJA = 'Os primeiros 90 dias são grátis.'; // deixe '' se a promoção acabar
+  var BANNERS_LOJA = {
+    'Comer':    ['Seu restaurante pode aparecer aqui', 'Restaurante, lanchonete, café ou doceria? Anuncie no Dica de Ouro.'],
+    'Beber':    ['Seu bar pode aparecer aqui', 'Bar, boteco, cervejaria ou adega? Anuncie no Dica de Ouro.'],
+    'Hospedar': ['Sua hospedagem pode aparecer aqui', 'Pousada, hotel, hostel ou casa de temporada? Anuncie no Dica de Ouro.'],
+    'Comprar':  ['Sua loja pode aparecer aqui', 'Loja, ateliê, artesanato ou pedra-sabão? Anuncie no Dica de Ouro.'],
+    'Serviços': ['Seu serviço pode aparecer aqui', 'Guia, transporte, beleza, reparos ou outro serviço? Anuncie no Dica de Ouro.'],
+    'Saúde':    ['Seu consultório pode aparecer aqui', 'Clínica, consultório, farmácia ou terapia? Anuncie no Dica de Ouro.'],
+    'Tudo':     ['Seu negócio pode aparecer aqui', 'Tem um negócio na região? Anuncie no Dica de Ouro.']
+  };
+  var BANNER_REPUBLICA = ['Sua república pode aparecer aqui', 'Mora numa república? Cadastre a sua no Dica de Ouro, de graça.'];
+  var BANNERS_UFOP = {
+    vagas:         'Tem vaga de bolsista, voluntário ou monitoria no seu projeto? Divulgue aqui, de graça.',
+    iniciacao:     'Orienta iniciação científica? Divulgue sua vaga de IC aqui, de graça.',
+    estagio:       'Tem vaga de estágio no seu setor, laboratório ou empresa júnior? Divulgue aqui, de graça.',
+    concursos:     'Seu departamento abriu uma seleção ou concurso? Divulgue aqui, de graça.',
+    laboratorios:  'Coordena um laboratório? Divulgue vagas e novidades dele aqui, de graça.',
+    extensao:      'Coordena um projeto de extensão? Divulgue aqui, de graça.',
+    pos_graduacao: 'É de um programa de pós-graduação? Divulgue editais e seleções aqui, de graça.'
+  };
+  var UFOP_BANNER_NO_TOPO = ['vagas', 'iniciacao', 'estagio', 'concursos'];
+  var ICONE_CAT = { 'Comer': 'comer', 'Beber': 'beber', 'Hospedar': 'hospedar', 'Comprar': 'comprar',
+                    'Serviços': 'servicos', 'Saúde': 'saude', 'Tudo': 'lojas' };
+
+  var ESTRUTURADAS = ['laboratorios', 'extensao', 'pos_graduacao'];
+  var CAMPI = ['Ouro Preto', 'Mariana', 'João Monlevade'];
+  var POR_PAGINA = 40;
+
+  function norm(s) {
+    return (s || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  }
+  function siglaUnidade(u) {
+    var m = /\(([A-Z]{2,8})\)/.exec(u || '');
+    return m ? m[1] : (u || '');
+  }
+
+  // ===================== banners =====================
+  function bannerHTML(icon, titulo, texto, botao, acao) {
+    return '<div class="dica-banner" role="note">' +
+      '<div class="dica-banner-ic">' + icone(icon, 22, 1.7) + '</div>' +
+      '<div class="dica-banner-tx"><h4>' + esc(titulo) + '</h4><p>' + esc(texto) + '</p>' +
+      '<button type="button" class="btn-primario" onclick="' + acao + '">' + esc(botao) + '</button>' +
+      '</div></div>';
+  }
+  function bannerUFOP(subcat) {
+    return bannerHTML(subcat, 'É da UFOP?', BANNERS_UFOP[subcat] || 'Divulgue aqui, de graça.',
+      'Divulgar aqui', "dicaAnunciar('ufop','" + subcat + "')");
+  }
+
+  // Abre o cadastro de anunciante com tipo e categoria marcados (conta existente: área do anunciante)
+  window.dicaAnunciar = function (tipo, valor) {
+    var logado = false;
+    try { logado = !!(localStorage.getItem('dica_token') && localStorage.getItem('dica_uid')); } catch (e) {}
+    if (logado && typeof abrirAreaAnunciante === 'function') { abrirAreaAnunciante(); return; }
+    irPara('tela-cadastro');
+    var tela = document.getElementById('tela-cadastro');
+    if (!tela) return;
+    var chipTipo = tela.querySelector('[onclick*="selecionarTipoCad(\'' + tipo + '\'"]');
+    if (chipTipo && typeof selecionarTipoCad === 'function') selecionarTipoCad(tipo, chipTipo);
+    if (tipo === 'loja' && valor && valor !== 'Tudo') {
+      var chipCat = tela.querySelector('[onclick*="selecionarCatCad"][data-cat="' + valor + '"]');
+      if (chipCat && typeof selecionarCatCad === 'function') selecionarCatCad(chipCat);
+    }
+    if (tipo === 'ufop' && valor) {
+      var chipSub = tela.querySelector('[onclick*="selecionarSubcatUFOP"][data-sub="' + valor + '"]');
+      if (chipSub && typeof selecionarSubcatUFOP === 'function') selecionarSubcatUFOP(chipSub);
+    }
+    try { tela.scrollTop = 0; window.scrollTo(0, 0); } catch (e) {}
+  };
+
+  // Troca o aviso "Nenhuma loja…" / "Nenhuma república…" da lista principal por um banner
+  var VAZIO_LOJA = /^Nenhuma loja (nessa categoria|cadastrada)/;
+  var VAZIO_REPUBLICA = /^Nenhuma república cadastrada/;
+  function categoriaAtiva() {
+    var chip = document.querySelector('#cats-home .cat.ativo');
+    var m = chip && /filtrarLojas\('([^']+)'/.exec(chip.getAttribute('onclick') || '');
+    return m ? m[1] : 'Tudo';
+  }
+  function trocarAvisoVazio(lista) {
+    if (!lista || lista.children.length !== 1) return;
+    var aviso = lista.firstElementChild;
+    if (!aviso.classList.contains('carregando')) return;
+    var texto = (aviso.textContent || '').trim();
+    if (VAZIO_REPUBLICA.test(texto)) {
+      lista.innerHTML = bannerHTML('republicas', BANNER_REPUBLICA[0], BANNER_REPUBLICA[1],
+        'Cadastrar minha república', "dicaAnunciar('republica')");
+    } else if (VAZIO_LOJA.test(texto)) {
+      var cat = BANNERS_LOJA[categoriaAtiva()] ? categoriaAtiva() : 'Tudo';
+      var b = BANNERS_LOJA[cat];
+      lista.innerHTML = bannerHTML(ICONE_CAT[cat] || 'lojas', b[0], b[1] + (PROMO_LOJA ? ' ' + PROMO_LOJA : ''),
+        'Anunciar meu negócio', "dicaAnunciar('loja','" + cat + "')");
+    }
+  }
+  var listaPrincipal = document.getElementById('lista-lojas');
+  // A lista de lojas carrega de forma assíncrona: ao trocar de categoria, tira o banner antigo na hora
+  var filtrarOriginal = window.filtrarLojas;
+  if (typeof filtrarOriginal === 'function') {
+    window.filtrarLojas = function () {
+      if (listaPrincipal && listaPrincipal.querySelector('.dica-banner')) {
+        listaPrincipal.innerHTML = '<div class="carregando">Carregando…</div>';
+      }
+      return filtrarOriginal.apply(this, arguments);
+    };
+  }
+  if (listaPrincipal && 'MutationObserver' in window) {
+    new MutationObserver(function () { trocarAvisoVazio(listaPrincipal); })
+      .observe(listaPrincipal, { childList: true });
+    trocarAvisoVazio(listaPrincipal);
+  }
+
+  // ===================== Oportunidades UFOP =====================
+  async function buscarUFOP(subcat) {
+    var ordem = ESTRUTURADAS.indexOf(subcat) >= 0 ? 'titulo.asc' : 'created_at.desc';
+    var url = SUPA_URL + '/rest/v1/ufop_conteudo?subcategoria=eq.' + encodeURIComponent(subcat) +
+      '&ativo=eq.true&order=' + ordem + '&select=*';
+    var r = await fetch(url, { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    var items = await r.json();
+    if (ordem === 'titulo.asc') {
+      // ordem alfabética em pt-BR (acentos e aspas não jogam itens para o fim da lista)
+      items.sort(function (a, b) {
+        return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { sensitivity: 'base', ignorePunctuation: true });
+      });
+    }
+    window._ufop = window._ufop || {};
+    items.forEach(function (i) { window._ufop[i.id] = i; });
+    return items;
+  }
+
+  // card: mesmo visual + linha "unidade · campus"
+  var cardOriginal = cardUFOP;
+  window.cardUFOP = function (item, label) {
+    var html = cardOriginal(item, label);
+    var meta = [siglaUnidade(item.unidade), item.campus].filter(Boolean).join(' · ');
+    if (!meta) return html;
+    return html.replace('<div class="horario">',
+      '<div class="horario">' + icone('pin', 14, 2) + esc(meta) + '</div><div class="horario">');
+  };
+
+  // lista com banner, busca, filtro por campus e paginação
+  function renderListaUFOP(container, items, subcat, label) {
+    if (!items.length) { container.innerHTML = bannerUFOP(subcat); return; }
+    var topo = UFOP_BANNER_NO_TOPO.indexOf(subcat) >= 0 ? bannerUFOP(subcat) : '';
+    if (ESTRUTURADAS.indexOf(subcat) < 0 || items.length < 8) {
+      container.innerHTML = topo + items.map(function (i) { return cardUFOP(i, label); }).join('');
+      return;
+    }
+    var campi = CAMPI.filter(function (c) { return items.some(function (i) { return i.campus === c; }); });
+    container.innerHTML = topo +
+      '<div class="ufop-filtros">' +
+      '<input type="search" class="campo-claro ufop-busca" placeholder="Buscar por nome, unidade ou responsável" aria-label="Buscar em ' + esc(label) + '">' +
+      '<div class="ufop-campi" role="group" aria-label="Filtrar por campus">' +
+      ['Todos'].concat(campi).map(function (c, k) {
+        return '<button type="button" class="ufop-chip' + (k === 0 ? ' ativo' : '') + '" data-campus="' + (k === 0 ? '' : esc(c)) + '">' + esc(c) + '</button>';
+      }).join('') +
+      '</div><p class="ufop-contagem" aria-live="polite"></p></div>' +
+      '<div class="ufop-resultados"></div>';
+
+    var campoBusca = container.querySelector('.ufop-busca');
+    var resultados = container.querySelector('.ufop-resultados');
+    var contagem = container.querySelector('.ufop-contagem');
+    var indice = items.map(function (i) {
+      return norm([i.titulo, i.unidade, i.responsavel, i.localizacao, i.descricao].join(' '));
+    });
+    var campusAtivo = '', limite = POR_PAGINA;
+
+    function aplicar() {
+      var termos = norm(campoBusca.value).split(/\s+/).filter(Boolean);
+      var filtrados = items.filter(function (it, k) {
+        if (campusAtivo && it.campus !== campusAtivo) return false;
+        return termos.every(function (t) { return indice[k].indexOf(t) >= 0; });
+      });
+      contagem.textContent = filtrados.length + (filtrados.length === 1 ? ' resultado' : ' resultados');
+      resultados.innerHTML = filtrados.slice(0, limite).map(function (i) { return cardUFOP(i, label); }).join('') +
+        (filtrados.length > limite
+          ? '<button type="button" class="ufop-chip ufop-mais">Mostrar mais (' + (filtrados.length - limite) + ')</button>'
+          : '');
+      var mais = resultados.querySelector('.ufop-mais');
+      if (mais) mais.onclick = function () { limite += POR_PAGINA; aplicar(); };
+    }
+    var espera;
+    campoBusca.addEventListener('input', function () {
+      clearTimeout(espera);
+      espera = setTimeout(function () { limite = POR_PAGINA; aplicar(); }, 150);
+    });
+    container.querySelectorAll('.ufop-campi .ufop-chip').forEach(function (b) {
+      b.addEventListener('click', function () {
+        container.querySelectorAll('.ufop-campi .ufop-chip').forEach(function (x) { x.classList.remove('ativo'); });
+        b.classList.add('ativo');
+        campusAtivo = b.getAttribute('data-campus') || '';
+        limite = POR_PAGINA;
+        aplicar();
+      });
+    });
+    aplicar();
+  }
+
+  // substitui as duas telas de lista (Início e Agenda)
+  window.abrirUFOPSubcat = async function (subcat, label) {
+    if (typeof moverDestaque === 'function') moverDestaque(true);
+    var container = document.getElementById('lista-lojas');
+    container.innerHTML = '<div class="carregando">Carregando…</div>';
+    try { renderListaUFOP(container, await buscarUFOP(subcat), subcat, label); }
+    catch (e) { container.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
+  };
+  window.abrirUFOPSubcatAgenda = async function (subcat, label) {
+    var feed = document.getElementById('agenda-feed');
+    feed.innerHTML = '<div class="carregando">Carregando…</div>';
+    try { renderListaUFOP(feed, await buscarUFOP(subcat), subcat, label); }
+    catch (e) { feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
+  };
+
+  // página do item: rótulo do botão conforme o tipo de conteúdo
+  var abrirItemOriginal = abrirUFOPItem;
+  window.abrirUFOPItem = function (id) {
+    abrirItemOriginal(id);
+    var item = (window._ufop || {})[id];
+    var btn = document.getElementById('btn-site-lugar');
+    if (!item || !item.link || !btn) return;
+    if (/^fontes-oficiais/.test(item.origem || '')) btn.textContent = 'Abrir página oficial';
+    else if (item.subcategoria === 'pos_graduacao') btn.textContent = 'Site do programa';
+    else if (ESTRUTURADAS.indexOf(item.subcategoria) >= 0) btn.textContent = 'Acessar site';
+  };
+})();
+</script>
 
 </body>
 </html>
