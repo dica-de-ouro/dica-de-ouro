@@ -4437,9 +4437,9 @@
   <div id="img-viewer-legenda"></div>
 </div>
 
-<!-- OPORTUNIDADES UFOP (busca e filtro por campus) E BANNERS PARA ANUNCIAR NAS ABAS VAZIAS -->
+<!-- OPORTUNIDADES UFOP (busca e filtro por campus) E BANNERS PARA ANUNCIAR NO TOPO DAS LISTAS -->
 <script>
-/* Substitui algumas funções da seção UFOP e troca os avisos de lista vazia por banners.
+/* Substitui algumas funções da seção UFOP e põe, no topo das listas, banners convidando a anunciar.
    Os textos dos banners ficam no começo do bloco. */
 (function () {
   'use strict';
@@ -4458,7 +4458,9 @@
     'Tudo':     ['Seu negócio pode aparecer aqui', 'Tem um negócio na região? Anuncie no Dica de Ouro.']
   };
   var BANNER_REPUBLICA = ['Sua república pode aparecer aqui', 'Mora numa república? Cadastre a sua no Dica de Ouro, de graça.'];
+  var BANNER_DESCUBRA = ['Seu passeio pode aparecer aqui', 'Tem um passeio, ateliê, mina ou atração para visitantes? Anuncie no Dica de Ouro.'];
   var BANNERS_UFOP = {
+    geral:         'Divulgue vagas, projetos, laboratórios e eventos da UFOP aqui, de graça.',
     vagas:         'Tem vaga de bolsista, voluntário ou monitoria no seu projeto? Divulgue aqui, de graça.',
     iniciacao:     'Orienta iniciação científica? Divulgue sua vaga de IC aqui, de graça.',
     estagio:       'Tem vaga de estágio no seu setor, laboratório ou empresa júnior? Divulgue aqui, de graça.',
@@ -4467,7 +4469,6 @@
     extensao:      'Coordena um projeto de extensão? Divulgue aqui, de graça.',
     pos_graduacao: 'É de um programa de pós-graduação? Divulgue editais e seleções aqui, de graça.'
   };
-  var UFOP_BANNER_NO_TOPO = ['vagas', 'iniciacao', 'estagio', 'concursos'];
   var ICONE_CAT = { 'Comer': 'comer', 'Beber': 'beber', 'Hospedar': 'hospedar', 'Comprar': 'comprar',
                     'Serviços': 'servicos', 'Saúde': 'saude', 'Tudo': 'lojas' };
 
@@ -4491,9 +4492,25 @@
       '<button type="button" class="btn-primario" onclick="' + acao + '">' + esc(botao) + '</button>' +
       '</div></div>';
   }
+  function comPromo(texto) { return texto + (PROMO_LOJA ? ' ' + PROMO_LOJA : ''); }
+  function bannerLoja(cat) {
+    var c = BANNERS_LOJA[cat] ? cat : 'Tudo';
+    return bannerHTML(ICONE_CAT[c] || 'lojas', BANNERS_LOJA[c][0], comPromo(BANNERS_LOJA[c][1]),
+      'Anunciar meu negócio', "dicaAnunciar('loja','" + c + "')");
+  }
   function bannerUFOP(subcat) {
-    return bannerHTML(subcat, 'É da UFOP?', BANNERS_UFOP[subcat] || 'Divulgue aqui, de graça.',
-      'Divulgar aqui', "dicaAnunciar('ufop','" + subcat + "')");
+    return bannerHTML(subcat || 'ufop', 'É da UFOP?', BANNERS_UFOP[subcat] || BANNERS_UFOP.geral, 'Divulgar aqui',
+      subcat ? "dicaAnunciar('ufop','" + subcat + "')" : "dicaAnunciar('ufop')");
+  }
+  function bannerDoContexto(ctx) {
+    if (!ctx || ctx === 'busca') return '';
+    if (ctx.indexOf('loja:') === 0) return bannerLoja(ctx.slice(5));
+    if (ctx === 'republicas') return bannerHTML('republicas', BANNER_REPUBLICA[0], BANNER_REPUBLICA[1],
+      'Cadastrar minha república', "dicaAnunciar('republica')");
+    if (ctx === 'descubra') return bannerHTML('descubra', BANNER_DESCUBRA[0], comPromo(BANNER_DESCUBRA[1]),
+      'Anunciar meu negócio', "dicaAnunciar('loja')");
+    if (ctx === 'ufop') return bannerUFOP();
+    return '';
   }
 
   // Abre o cadastro de anunciante com tipo e categoria marcados (conta existente: área do anunciante)
@@ -4517,44 +4534,51 @@
     try { tela.scrollTop = 0; window.scrollTo(0, 0); } catch (e) {}
   };
 
-  // Troca o aviso "Nenhuma loja…" / "Nenhuma república…" da lista principal por um banner
+  // Põe o banner no topo da lista. Num aviso de lista vazia de lojas ou repúblicas, o banner toma o lugar do aviso.
   var VAZIO_LOJA = /^Nenhuma loja (nessa categoria|cadastrada)/;
   var VAZIO_REPUBLICA = /^Nenhuma república cadastrada/;
-  function categoriaAtiva() {
-    var chip = document.querySelector('#cats-home .cat.ativo');
-    var m = chip && /filtrarLojas\('([^']+)'/.exec(chip.getAttribute('onclick') || '');
-    return m ? m[1] : 'Tudo';
+  function porBanner(lista, ctx) {
+    var primeiro = lista && lista.firstElementChild;
+    if (!primeiro || primeiro.classList.contains('dica-banner') || lista.querySelector(':scope > .dica-banner')) return;
+    var aviso = lista.children.length === 1 && primeiro.classList.contains('carregando');
+    var texto = aviso ? (primeiro.textContent || '').trim() : '';
+    if (aviso && !/^Nenhum/.test(texto)) return; // carregando ou erro: espera o conteúdo
+    if (VAZIO_REPUBLICA.test(texto)) ctx = 'republicas';
+    var html = bannerDoContexto(ctx);
+    if (!html) return;
+    if (VAZIO_LOJA.test(texto) || VAZIO_REPUBLICA.test(texto)) lista.innerHTML = html;
+    else if (primeiro.classList.contains('tiles-titulo')) primeiro.insertAdjacentHTML('afterend', html);
+    else lista.insertAdjacentHTML('afterbegin', html);
   }
-  function trocarAvisoVazio(lista) {
-    if (!lista || lista.children.length !== 1) return;
-    var aviso = lista.firstElementChild;
-    if (!aviso.classList.contains('carregando')) return;
-    var texto = (aviso.textContent || '').trim();
-    if (VAZIO_REPUBLICA.test(texto)) {
-      lista.innerHTML = bannerHTML('republicas', BANNER_REPUBLICA[0], BANNER_REPUBLICA[1],
-        'Cadastrar minha república', "dicaAnunciar('republica')");
-    } else if (VAZIO_LOJA.test(texto)) {
-      var cat = BANNERS_LOJA[categoriaAtiva()] ? categoriaAtiva() : 'Tudo';
-      var b = BANNERS_LOJA[cat];
-      lista.innerHTML = bannerHTML(ICONE_CAT[cat] || 'lojas', b[0], b[1] + (PROMO_LOJA ? ' ' + PROMO_LOJA : ''),
-        'Anunciar meu negócio', "dicaAnunciar('loja','" + cat + "')");
-    }
-  }
+
+  // Qual lista está na tela: cada função que monta a lista principal marca o contexto do banner
+  var contexto = 'loja:Tudo'; // a home abre em "Tudo"
   var listaPrincipal = document.getElementById('lista-lojas');
-  // A lista de lojas carrega de forma assíncrona: ao trocar de categoria, tira o banner antigo na hora
-  var filtrarOriginal = window.filtrarLojas;
-  if (typeof filtrarOriginal === 'function') {
-    window.filtrarLojas = function () {
-      if (listaPrincipal && listaPrincipal.querySelector('.dica-banner')) {
-        listaPrincipal.innerHTML = '<div class="carregando">Carregando…</div>';
-      }
-      return filtrarOriginal.apply(this, arguments);
+  function envolver(nome, antes, depois) {
+    var original = window[nome];
+    if (typeof original !== 'function') return;
+    window[nome] = function () {
+      if (antes) antes.apply(this, arguments);
+      var r = original.apply(this, arguments);
+      if (depois) Promise.resolve(r).then(depois);
+      return r;
     };
   }
+  envolver('filtrarLojas', function (cat) {
+    // as listas de lojas carregam de forma assíncrona: tira o conteúdo anterior na hora
+    if (listaPrincipal) listaPrincipal.innerHTML = '<div class="carregando">Carregando…</div>';
+    contexto = BANNERS_LOJA[cat] ? 'loja:' + cat : null;
+  });
+  envolver('abrirDescubra', function () { contexto = 'descubra'; });
+  envolver('abrirLugaresPorCat', function () { contexto = 'descubra'; });
+  envolver('abrirRepublicas', function () { contexto = 'republicas'; });
+  envolver('abrirUFOP', function () { contexto = 'ufop'; });
+  envolver('buscarLojas', function (termo) { contexto = (termo || '').trim() ? 'busca' : 'loja:Tudo'; });
+  envolver('carregarUFOPAgenda', null, function () { porBanner(document.getElementById('agenda-feed'), 'ufop'); });
   if (listaPrincipal && 'MutationObserver' in window) {
-    new MutationObserver(function () { trocarAvisoVazio(listaPrincipal); })
+    new MutationObserver(function () { porBanner(listaPrincipal, contexto); })
       .observe(listaPrincipal, { childList: true });
-    trocarAvisoVazio(listaPrincipal);
+    porBanner(listaPrincipal, contexto);
   }
 
   // ===================== Oportunidades UFOP =====================
@@ -4586,10 +4610,10 @@
       '<div class="horario">' + icone('pin', 14, 2) + esc(meta) + '</div><div class="horario">');
   };
 
-  // lista com banner, busca, filtro por campus e paginação
+  // lista com banner no topo, busca, filtro por campus e paginação
   function renderListaUFOP(container, items, subcat, label) {
-    if (!items.length) { container.innerHTML = bannerUFOP(subcat); return; }
-    var topo = UFOP_BANNER_NO_TOPO.indexOf(subcat) >= 0 ? bannerUFOP(subcat) : '';
+    var topo = bannerUFOP(subcat);
+    if (!items.length) { container.innerHTML = topo; return; }
     if (ESTRUTURADAS.indexOf(subcat) < 0 || items.length < 8) {
       container.innerHTML = topo + items.map(function (i) { return cardUFOP(i, label); }).join('');
       return;
