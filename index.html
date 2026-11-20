@@ -689,6 +689,41 @@
   .lugar-card-compacto .lugar-card-body { flex: 1; min-width: 0; padding: 0; }
   .lugar-card-compacto h4 { font-size: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .lugar-card-icone { flex: 0 0 44px; height: 44px; border-radius: 12px; background: var(--ouro-claro); color: var(--ouro-texto); display: flex; align-items: center; justify-content: center; }
+  /* Lote 3 (nov/2026): agenda com filtros, aba Salvos e mapa útil */
+  .agenda-filtros { display: flex; flex-direction: column; gap: 10px; margin: 16px 0 0; }
+  .agenda-filtros .filtros { margin: 0 20px; }
+  .chips-periodo { display: flex; gap: 8px; padding: 0 20px; overflow-x: auto; scrollbar-width: none; }
+  .chips-periodo::-webkit-scrollbar { display: none; }
+  .chip-periodo { flex-shrink: 0; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--borda-forte); background: var(--card); color: var(--ink); font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; }
+  .chip-periodo[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--gold-bright); font-weight: 600; }
+  .agenda-vazia { text-align: center; padding: 28px 8px 8px; color: var(--texto-2); font-size: 15px; line-height: 1.5; }
+  .btn-calendario { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 18px; border-radius: 14px; border: 1px solid var(--borda-forte); background: var(--card); color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-anunciar-home { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #f4ede04d; background: #1a141066; color: var(--cal); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .hero-hoje:not([data-periodo="noite"]) .btn-anunciar-home { border-color: #1a141033; background: #fffcf6b3; color: var(--ink); }
+  .salvos-lista { padding: 8px 20px 0; }
+  .salvo { position: relative; }
+  .salvo + .salvo { margin-top: 12px; }
+  .salvo .lugar { padding-right: 56px; }
+  .salvo-remover { position: absolute; top: 50%; right: 6px; transform: translateY(-50%); width: 44px; height: 44px; border: none; border-radius: 50%; background: transparent; color: var(--texto-2); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .salvos-vazio { text-align: center; padding: 4px 8px 0; color: var(--texto-2); font-size: 15px; line-height: 1.5; }
+  .salvos-vazio img { display: block; width: min(100%, 300px); height: auto; margin: 0 auto 6px; mix-blend-mode: multiply; }
+  .salvos-anunciante { margin: 28px 20px 32px; padding: 18px; border-radius: 18px; border: 1px solid var(--borda); background: var(--card); }
+  .salvos-anunciante h3 { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.2; }
+  .salvos-anunciante p { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--texto-2); }
+  .salvos-anunciante-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .salvos-anunciante-acoes button { min-height: 44px; padding: 0 16px; border-radius: 12px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .mapa-header-linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; }
+  .mapa-header-linha h2 { margin: 0; font-size: 24px; }
+  .mapa-modo { display: flex; flex-shrink: 0; padding: 3px; border-radius: 12px; background: #f4ede014; border: 1px solid #f4ede026; }
+  .mapa-modo button { min-height: 38px; padding: 0 12px; border: none; border-radius: 9px; background: transparent; color: var(--cal); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .mapa-modo button[aria-pressed="true"] { background: var(--gold-bright); color: var(--ink); font-weight: 600; }
+  .mapa-lista { position: absolute; left: 0; right: 0; top: 0; bottom: calc(var(--tabbar) + var(--safe-bottom)); z-index: 1; overflow-y: auto; background: var(--fundo); padding: 0 16px 24px; }
+  .mapa-lista[hidden] { display: none; }
+  .mapa-lista-topo { margin: 4px 2px 12px; font-size: 14px; line-height: 1.5; color: var(--texto-2); }
+  .mapa-lista .dist { font-weight: 700; }
+  .btn-localizar { width: 44px; height: 44px; margin-bottom: 10px !important; border-radius: 12px; border: 1px solid var(--borda); background: var(--card); color: var(--ink); box-shadow: 0 4px 12px #1a14102e; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .pino-grupo span { width: 40px; height: 40px; background: var(--gold-bright); color: var(--ink); font-size: 15px; font-weight: 700; }
+  .pino-eu { width: 18px; height: 18px; margin: 3px; border-radius: 50%; background: #2563eb; border: 3px solid #fff; box-shadow: 0 0 0 6px #2563eb33; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   }
@@ -719,7 +754,7 @@
     <img class="hero-gravura" id="hero-gravura" alt="" aria-hidden="true" decoding="async">
     <div class="hero-topo">
       <div class="marca">Dica de <b>Ouro</b></div>
-      <button type="button" id="btn-favoritos" class="btn-fav-home" onclick="abrirFavoritos()" aria-label="Meus favoritos" title="Meus favoritos"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></button>
+      <button type="button" class="btn-anunciar-home" onclick="abrirAnunciar()">Anunciar</button>
     </div>
     <p class="hero-saudacao" id="hero-saudacao">Bom dia, viajante</p>
     <h1 class="hero-titulo">O que ver e fazer em Ouro Preto <em>hoje</em>.</h1>
@@ -727,7 +762,7 @@
   <div class="busca busca-hoje">
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11a7 7 0 1 1-14 0a7 7 0 0 1 14 0zM21 21l-4.3-4.3"/></svg>
     <input id="input-busca" type="search" aria-label="Buscar em Ouro Preto" enterkeyhint="search" autocomplete="off" oninput="agendarBusca(this.value)" onkeydown="teclaBusca(event)" placeholder="Igrejas, museus, eventos…"><span id="aviso-busca" class="sr-only" aria-live="polite"></span>
-    <button type="button" class="busca-mapa" onclick="irTab('tela-explorar','tab-explorar')" aria-label="Ver no mapa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0ZM15 6.5v15M9 3.8v15"/></svg></button>
+    <button type="button" class="busca-mapa" onclick="verTudoNoMapa()" aria-label="Ver no mapa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0ZM15 6.5v15M9 3.8v15"/></svg></button>
   </div>
   <div class="home-corpo">
     <nav class="cats" id="cats-home" aria-label="Categorias">
@@ -783,7 +818,7 @@
       </section>
     </div>
 
-    <div class="sec-topo" id="sec-lista-titulo"><h2>Atualizados <em>recentemente</em></h2><a href="#" onclick="irTab('tela-explorar','tab-explorar');return false;">Ver tudo</a></div>
+    <div class="sec-topo" id="sec-lista-titulo"><h2>Atualizados <em>recentemente</em></h2><a href="#/mapa" onclick="verTudoNoMapa();return false;">Ver tudo</a></div>
     <div class="lugares" id="lista-lojas"><div class="carregando">Carregando lojas…</div></div>
   </div>
 </div>
@@ -922,7 +957,10 @@
     <div class="evento-hero-foto" id="lugar-foto" onclick="abrirViewerLugar()"></div>
     <div class="detalhe-nav">
       <button type="button" class="btn-redondo" onclick="voltarOrigem('tela-agenda')" aria-label="Voltar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <button type="button" class="btn-redondo" onclick="compartilharTela()" aria-label="Compartilhar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM9 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM21 19a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+      <div class="detalhe-nav-dir">
+        <button type="button" class="btn-redondo" onclick="compartilharTela()" aria-label="Compartilhar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM9 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM21 19a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+        <button type="button" class="btn-redondo btn-fav btn-salvar-tela" onclick="salvarTela()" aria-label="Salvar" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></button>
+      </div>
     </div>
     <div class="evento-fundo">
       <div class="data-chip" id="lugar-cat-chip">—</div>
@@ -945,7 +983,10 @@
     <div class="evento-hero-foto" id="evento-foto" onclick="abrirViewerEvento()"></div>
     <div class="detalhe-nav">
       <button type="button" class="btn-redondo" onclick="voltarOrigem('tela-home')" aria-label="Voltar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
-      <button type="button" class="btn-redondo" onclick="compartilharTela()" aria-label="Compartilhar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM9 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM21 19a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+      <div class="detalhe-nav-dir">
+        <button type="button" class="btn-redondo" onclick="compartilharTela()" aria-label="Compartilhar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM9 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM21 19a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+        <button type="button" class="btn-redondo btn-fav btn-salvar-tela" onclick="salvarTela()" aria-label="Salvar" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></button>
+      </div>
     </div>
     <div class="evento-fundo">
       <div class="data-chip" id="evento-data-chip">—</div>
@@ -956,6 +997,7 @@
   <div class="evento-corpo">
     <p class="evento-desc" id="evento-desc"></p>
     <div id="evento-infos"></div>
+    <button type="button" class="btn-calendario" onclick="adicionarAoCalendario()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>Adicionar ao calendário</button>
   </div>
   <div class="cta-evento">
     <button type="button" class="btn-mapa" onclick="abrirMapsEvento()" aria-label="Como chegar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8-8-2z"/></svg><span class="rotulo-rota">Como chegar</span></button>
@@ -971,14 +1013,43 @@
     <h2>Agenda de <em>eventos</em></h2>
     <div class="sub">O que acontece na cidade, semana a semana.</div>
   </div>
-  <div class="filtros" id="filtros-agenda" role="group" aria-label="Período">
-    <button type="button" class="filtro ativo" onclick="filtrarAgenda('semana',this)">Esta semana</button>
-    <button type="button" class="filtro" onclick="filtrarAgenda('proximo',this)">Próximos</button>
-    <button type="button" class="filtro" onclick="filtrarAgenda('todos',this)">Todos</button>
+  <div class="agenda-filtros" id="filtros-agenda">
+    <div class="chips-periodo" role="group" aria-label="Quando">
+      <button type="button" class="chip-periodo" data-periodo="hoje" aria-pressed="false" onclick="filtrarAgendaPor('periodo','hoje')">Hoje</button>
+      <button type="button" class="chip-periodo" data-periodo="noite" aria-pressed="false" onclick="filtrarAgendaPor('periodo','noite')">Hoje à noite</button>
+      <button type="button" class="chip-periodo" data-periodo="fim" aria-pressed="false" onclick="filtrarAgendaPor('periodo','fim')">Fim de semana</button>
+      <button type="button" class="chip-periodo" data-periodo="semana" aria-pressed="true" onclick="filtrarAgendaPor('periodo','semana')">Esta semana</button>
+      <button type="button" class="chip-periodo" data-periodo="mes" aria-pressed="false" onclick="filtrarAgendaPor('periodo','mes')">Próximos 30 dias</button>
+    </div>
+    <div class="filtros" role="group" aria-label="Onde">
+      <button type="button" class="filtro ativo" data-cidade="todas" aria-pressed="true" onclick="filtrarAgendaPor('cidade','todas')">Todas</button>
+      <button type="button" class="filtro" data-cidade="ouro-preto" aria-pressed="false" onclick="filtrarAgendaPor('cidade','ouro-preto')">Ouro Preto</button>
+      <button type="button" class="filtro" data-cidade="mariana" aria-pressed="false" onclick="filtrarAgendaPor('cidade','mariana')">Mariana</button>
+      <button type="button" class="filtro" data-cidade="arredores" aria-pressed="false" onclick="filtrarAgendaPor('cidade','arredores')">Arredores</button>
+    </div>
   </div>
   <div class="agenda-feed" id="agenda-feed">
     <div class="carregando">Carregando…</div>
   </div>
+</div>
+
+<!-- TELA: SALVOS -->
+<div id="tela-salvos" class="tela oculta">
+  <div class="agenda-hero">
+    <img class="hero-arte" src="imagembase.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">
+    <div class="eyebrow-ouro">Neste aparelho</div>
+    <h2>Seus <em>salvos</em></h2>
+    <div class="sub">Igrejas, museus, eventos e negócios que você guardou.</div>
+  </div>
+  <div class="salvos-lista" id="salvos-lista"></div>
+  <section class="salvos-anunciante" aria-label="Para negócios">
+    <h3>Tem um negócio em Ouro Preto?</h3>
+    <p>Apareça no guia grátis por 90 dias. Depois, R$ 100 por mês, só se quiser continuar. Sem cartão.</p>
+    <div class="salvos-anunciante-acoes">
+      <button type="button" class="dialogo-ok" onclick="irPara('tela-cadastro')">Anunciar meu negócio</button>
+      <button type="button" class="dialogo-cancelar" onclick="abrirAreaAnunciante()">Já anuncio: entrar</button>
+    </div>
+  </section>
 </div>
 
 <!-- TELA 6: CADASTRO ANUNCIANTE -->
@@ -1319,11 +1390,13 @@
 <!-- TELA: EXPLORAR (MAPA) -->
 <div id="tela-explorar" class="tela oculta">
   <div id="mapa-container"></div>
-  <div class="mapa-header">
-    <div class="mapa-header-txt">
-      <div class="eyebrow-ouro">Ouro Preto no mapa</div>
+  <div class="mapa-header" id="mapa-header">
+    <div class="mapa-header-linha">
       <h2>Explorar <em>tudo</em></h2>
-      <div class="sub">Lojas, igrejas, museus, minas e parques.</div>
+      <div class="mapa-modo" role="group" aria-label="Ver como">
+        <button type="button" data-modo="mapa" aria-pressed="true" onclick="modoMapa('mapa')">Mapa</button>
+        <button type="button" data-modo="lista" aria-pressed="false" onclick="modoMapa('lista')">Lista</button>
+      </div>
     </div>
     <div class="mapa-filtros" id="mapa-filtros" role="group" aria-label="Filtrar o mapa">
       <button type="button" class="mapa-filtro ativo" onclick="filtrarMapa('todos',this)">Tudo</button>
@@ -1334,6 +1407,7 @@
       <button type="button" class="mapa-filtro" onclick="filtrarMapa('Parques e Cachoeiras',this)">Parques</button>
     </div>
   </div>
+  <div class="mapa-lista" id="mapa-lista" hidden></div>
   <section class="mapa-card" id="mapa-card" aria-label="Lugar selecionado" style="display:none;">
     <div class="mapa-card-puxador"></div>
     <div class="mapa-card-topo">
@@ -1365,9 +1439,9 @@
     <div class="tab-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12a10 10 0 1 1-20 0a10 10 0 1 1 20 0zM16.2 7.8l-2.1 6.3-6.3 2.1 2.1-6.3z"/></svg></div>
     Explorar
   </button>
-  <button type="button" class="tab" id="tab-eu" onclick="abrirAreaAnunciante()">
-    <div class="tab-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9 4.5 4h15L21 9M3 9v1a3 3 0 0 0 6 0V9m0 1a3 3 0 0 0 6 0V9m0 1a3 3 0 0 0 6 0V9M5 12.5V20h14v-7.5"/></svg></div>
-    Anunciante
+  <button type="button" class="tab" id="tab-salvos" onclick="irTab('tela-salvos','tab-salvos')">
+    <div class="tab-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
+    Salvos
   </button>
 </nav>
 
@@ -2267,6 +2341,10 @@
   }
 
   async function filtrarAgenda(cat, el) {
+    if (cat === 'semana' || cat === 'proximo' || cat === 'todos') {
+      if (cat !== 'semana') _filtroAgenda.periodo = 'mes';
+      return mostrarAgenda();
+    }
     // Garante que filtros estão visíveis
     document.getElementById('filtros-agenda').style.display = 'flex';
     document.querySelectorAll('#filtros-agenda .filtro').forEach(f => f.classList.remove('ativo'));
@@ -2436,16 +2514,18 @@
     const lojaNome = localStorage.getItem('aval_loja_nome');
     if (!lojaId) return;
     const favs = getFavoritos();
-    const idx = favs.findIndex(f => f.id == lojaId);
+    const idx = favs.findIndex(f => (f.tipo || 'loja') === 'loja' && f.id == lojaId);
     const btn = document.getElementById('btn-fav-detalhe');
     if (idx >= 0) {
       // Remove
       favs.splice(idx, 1);
+      avisar('Removido dos salvos');
       if (btn) btn.classList.remove('curtido');
     } else {
       // Adiciona
       const loja = (window._lojas || {})[lojaId] || {};
-      favs.push({
+      favs.unshift({
+        tipo: 'loja',
         id: lojaId,
         nome: lojaNome || loja['NOME'] || '—',
         cat: loja['CATEGORIA'] || '—',
@@ -2453,6 +2533,7 @@
         foto: loja['FOTO'] || null
       });
       registrarAcesso('salvar', lojaId, lojaNome || '');
+      avisar('Salvo. Está na aba Salvos.');
       if (btn) btn.classList.add('curtido');
     }
     setFavoritos(favs);
@@ -2463,58 +2544,11 @@
     if (!lojaId) return;
     const btn = document.getElementById('btn-fav-detalhe');
     if (!btn) return;
-    btn.classList.toggle('curtido', !!getFavoritos().find(f => f.id == lojaId));
+    btn.classList.toggle('curtido', estaSalvo('loja', lojaId));
   }
 
   function abrirFavoritos() {
-    const favs = getFavoritos();
-    const el = document.getElementById('lista-lojas');
-    const catBtn = document.getElementById('btn-favoritos');
-
-    // Toggle: se já está mostrando favoritos, volta para tudo
-    if (catBtn && catBtn.dataset.mostrando === 'favs') {
-      catBtn.dataset.mostrando = '';
-      catBtn.classList.remove('curtido');
-      moverDestaque(false);
-      renderLojas(_todasLojas);
-      return;
-    }
-
-    if (catBtn) {
-      catBtn.dataset.mostrando = 'favs';
-      catBtn.classList.add('curtido');
-    }
-
-    // Desmarca filtros de categoria
-    document.querySelectorAll('#cats-home .cat').forEach(c => c.classList.remove('ativo'));
-    moverDestaque(true);
-
-    if (!favs.length) {
-      el.innerHTML = '<div class="carregando">Nenhum favorito ainda.<br>Toque no coração dentro de um perfil.</div>';
-      return;
-    }
-
-    // Filtra as lojas da memória pelos ids favoritos
-    const favIds = favs.map(f => String(f.id));
-    const lojasFavs = _todasLojas.filter(l => favIds.includes(String(l.id)));
-    if (lojasFavs.length) {
-      renderLojas(lojasFavs);
-    } else {
-      // Monta cards mínimos com dados do localStorage
-      el.innerHTML = favs.map((f, i) => {
-        const tc = ['t1','t2','t3'][i%3];
-        const thumbStyle = f.foto ? `style="background-image:url('${escUrl(f.foto)}');"` : '';
-        return `<div class="lugar" onclick="abrirLojaPorId(${Number(f.id) || 0},'${tc}')">
-          <div class="lugar-thumb ${f.foto?'':tc}" ${thumbStyle}>${f.foto ? '' : icone(iconeCat(f.cat), 28, 1.6)}</div>
-          <div class="lugar-info">
-            <div class="cat-tag">${esc(f.cat)}</div>
-            <h4>${esc(f.nome)}</h4>
-            <div class="onde">${esc(f.end)}</div>
-            <div class="meta-row"><span class="stars">Favorito</span></div>
-          </div>
-        </div>`;
-      }).join('');
-    }
+    irTab('tela-salvos', 'tab-salvos');
   }
 
   let _lojaDestaque = null;
@@ -3134,11 +3168,11 @@
   }
 
   // NAVEGAÇÃO
-  const TELAS_COM_TAB = ['tela-home','tela-agenda','tela-explorar','tela-painel'];
+  const TELAS_COM_TAB = ['tela-home','tela-agenda','tela-explorar','tela-salvos','tela-painel'];
   let telaAtual = 'tela-splash';
 
   // Aba destacada conforme a tela aberta
-  const ABA_DA_TELA = { 'tela-home': 'tab-inicio', 'tela-agenda': 'tab-agenda', 'tela-explorar': 'tab-explorar', 'tela-painel': 'tab-eu' };
+  const ABA_DA_TELA = { 'tela-home': 'tab-inicio', 'tela-agenda': 'tab-agenda', 'tela-explorar': 'tab-explorar', 'tela-salvos': 'tab-salvos' };
   function marcarTab(telaId) {
     const tabId = ABA_DA_TELA[telaId];
     if (!tabId) return;
@@ -3150,6 +3184,7 @@
 
   // Lugar ou evento sem endereço: some o "Como chegar"; sem endereço e sem site, some a barra
   function ajustarAcoes(id) {
+    atualizarBotaoSalvar(id);
     const cta = document.querySelector(`#${id} .cta-evento`);
     if (!cta) return;
     const alvo = id === 'tela-lugar' ? _lugarAtual : id === 'tela-evento' ? _eventoAtual : null;
@@ -3250,6 +3285,7 @@
   }
 
   function voltarPara(id) {
+    ajustarAcoes(id);
     if (id === telaAtual) return;
     const anterior = telaAtual;
     telaAtual = id;
@@ -3268,16 +3304,17 @@
     // Carrega agenda automaticamente ao entrar
     if (telaId === 'tela-explorar') {
       fecharCardMapa();
-      const tudo = document.querySelector('.mapa-filtro');
-      if (_mapa && tudo) filtrarMapa('todos', tudo);
+      // Vindo de "Ver tudo" ou de um endereço #/mapa/…, o mapa abre no filtro pedido; pela aba, mantém o último
+      if (_filtroMapaPendente) { aplicarFiltroMapa(_filtroMapaPendente); _filtroMapaPendente = null; }
       setTimeout(iniciarMapa, 200);
     }
+    if (telaId === 'tela-salvos') renderSalvos();
     if (telaId === 'tela-agenda') {
       // Mostra filtros de eventos ao entrar pela tab bar
       document.getElementById('filtros-agenda').style.display = 'flex';
       document.querySelector('.agenda-hero h2').innerHTML = 'Agenda de <em>eventos</em>';
       document.querySelector('.agenda-hero .sub').textContent = 'O que acontece na cidade, semana a semana.';
-      filtrarAgenda('semana', document.querySelector('#filtros-agenda .filtro'));
+      mostrarAgenda();
     }
     if (telaId === 'tela-home') {
       // Desmarca filtro ativo se estava em Descubra
@@ -4330,6 +4367,8 @@
 
     _mapa = L.map('mapa-container', { zoomControl: false, preferCanvas: false }).setView(OURO_PRETO, 15);
     L.control.zoom({ position: 'bottomright' }).addTo(_mapa);
+    adicionarBotaoLocalizar();
+    _mapa.on('zoomend', redesenharMapa);
     _mapa.on('click', fecharCardMapa);
 
     // Mapa do OpenStreetMap; o CSS tira o excesso de cor e deixa em tom de papel
@@ -4442,8 +4481,8 @@
     const marcador = L.marker([lat, lng], { icon: criarIcone(item.tipo), title: item.nome, alt: item.nome });
     marcador.itemData = item;
     marcador.on('click', () => selecionarNoMapa(marcador));
-    marcador.addTo(_mapa);
     _marcadores.push({ marcador, tipo: item.tipo });
+    agendarRedesenhoMapa();
   }
 
   // Lugar escolhido no mapa: destaca o marcador e mostra o cartão inferior
@@ -4488,19 +4527,17 @@
   }
 
   function filtrarMapa(tipo, el) {
-    document.querySelectorAll('.mapa-filtro').forEach(f => f.classList.remove('ativo'));
-    el.classList.add('ativo');
+    _filtroMapa = tipo;
+    _listaSoIds = null;
+    document.querySelectorAll('.mapa-filtro').forEach(f => {
+      const on = el ? f === el : (f.getAttribute('onclick') || '').includes(`'${tipo}'`);
+      f.classList.toggle('ativo', on);
+      f.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     // Se o lugar escolhido sair do filtro, fecha o cartão
     if (_selMapa && tipo !== 'todos' && _selMapa.itemData.tipo !== tipo) fecharCardMapa();
-    if (!_mapa) return;
-    _marcadores.forEach(({ marcador, tipo: t }) => {
-      if (tipo === 'todos' || t === tipo) {
-        marcador.addTo(_mapa);
-      } else {
-        _mapa.removeLayer(marcador);
-      }
-    });
-    if (_selMapa) _selMapa.getElement()?.querySelector('.pino')?.classList.add('sel');
+    redesenharMapa();
+    if (_modoMapa === 'lista') renderListaMapa();
   }
 
   function abrirDoMapa(tabela, id) {
@@ -4514,6 +4551,409 @@
         (window._lugaresArr || []).findIndex(x => String(x.id) === String(id))
       );
     }
+  }
+
+  // ================================================================ AGENDA COM FILTROS
+  // Quando (hoje, hoje à noite, fim de semana, esta semana, 30 dias) e onde (cidade, pelo texto do local)
+  const PERIODOS_AGENDA = { hoje: 'hoje', noite: 'hoje à noite', fim: 'neste fim de semana', semana: 'nesta semana', mes: 'nos próximos 30 dias' };
+  const CIDADES_AGENDA = { todas: 'Todas', 'ouro-preto': 'Ouro Preto', mariana: 'Mariana', arredores: 'Arredores' };
+  let _filtroAgenda = { periodo: 'semana', cidade: 'todas' };
+  let _eventosAgenda = null;
+
+  function cidadesDoEvento(ev) {
+    const t = normBusca(ev.local);
+    const c = [];
+    if (t.includes('ouro preto')) c.push('ouro-preto');
+    if (t.includes('mariana')) c.push('mariana');
+    if (!c.length) c.push('arredores');
+    return c;
+  }
+  // Horas citadas no horário ("19h", "19h30", "20:00", "das 10h às 22h")
+  function horasDoTexto(t) {
+    return [...String(t || '').matchAll(/\b(\d{1,2})\s*(?:h|:\d{2})/gi)].map(m => Number(m[1])).filter(x => x <= 23);
+  }
+  // Há algo hoje a partir das 17h? Se o texto lista datas ("19/11 às 13h; 25/11 às 19h"),
+  // só contam os trechos que citam a data de hoje
+  function temNoiteHoje(horario) {
+    const t = String(horario || '');
+    const d = new Date(hojeISO() + 'T12:00:00');
+    const dia = d.getDate(), mes = d.getMonth() + 1;
+    let trechos = [t];
+    if (/\b\d{1,2}\/\d{1,2}\b/.test(t)) {
+      const hojeNoTexto = new RegExp(`\\b0?${dia}(?:\\s*(?:e|,)\\s*\\d{1,2})*\\/0?${mes}\\b|\\b0?${dia}\\s*(?:e|,)\\s*(?:\\d{1,2}\\s*(?:e|,)\\s*)*\\d{1,2}\\/0?${mes}\\b`);
+      trechos = t.split(/[;\n]/).filter(s => hojeNoTexto.test(s));
+    }
+    return trechos.some(s => horasDoTexto(s).some(x => x >= 17) || /noite/i.test(s));
+  }
+  // Sábado e domingo desta semana (no domingo, só hoje)
+  function janelaFimDeSemana() {
+    const dia = new Date(hojeISO() + 'T12:00:00').getDay();
+    if (dia === 0) return [hojeISO(), hojeISO()];
+    if (dia === 6) return [hojeISO(), hojeISO(1)];
+    return [hojeISO(6 - dia), hojeISO(7 - dia)];
+  }
+  function eventoNoPeriodo(ev, periodo) {
+    const hoje = hojeISO();
+    const ini = String(ev.data_evento || '').slice(0, 10);
+    const fim = String(ev.data_fim || '').slice(0, 10) || ini;
+    const cruza = (a, b) => ini <= b && fim >= a;
+    if (periodo === 'hoje') return cruza(hoje, hoje);
+    if (periodo === 'noite') return cruza(hoje, hoje) && temNoiteHoje(ev.horario);
+    if (periodo === 'fim') { const [a, b] = janelaFimDeSemana(); return cruza(a, b); }
+    if (periodo === 'mes') return cruza(hoje, hojeISO(30));
+    return cruza(hoje, hojeISO(7));
+  }
+
+  async function carregarEventosAgenda() {
+    if (_eventosAgenda) return _eventosAgenda;
+    const hoje = hojeISO();
+    const r = await fetch(`${SUPA_URL}/rest/v1/eventos?ativo=eq.true&or=(data_evento.gte.${hoje},data_fim.gte.${hoje})&order=data_evento.asc&select=*`,
+      { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } });
+    const lista = await r.json();
+    if (!Array.isArray(lista)) throw new Error('resposta inesperada');
+    window._eventos = window._eventos || {};
+    lista.forEach(ev => { window._eventos[ev.id] = ev; });
+    _eventosAgenda = lista;
+    return lista;
+  }
+
+  function marcarFiltrosAgenda() {
+    document.querySelectorAll('#filtros-agenda .chip-periodo').forEach(b => b.setAttribute('aria-pressed', b.dataset.periodo === _filtroAgenda.periodo ? 'true' : 'false'));
+    document.querySelectorAll('#filtros-agenda .filtro').forEach(b => {
+      const on = b.dataset.cidade === _filtroAgenda.cidade;
+      b.classList.toggle('ativo', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  async function mostrarAgenda() {
+    const feed = document.getElementById('agenda-feed');
+    const filtros = document.getElementById('filtros-agenda');
+    filtros.style.display = 'flex';
+    document.querySelector('.agenda-hero h2').innerHTML = 'Agenda de <em>eventos</em>';
+    document.querySelector('.agenda-hero .sub').textContent = 'O que acontece em Ouro Preto e nos arredores.';
+    marcarFiltrosAgenda();
+    if (!_eventosAgenda) feed.innerHTML = '<div class="carregando">Carregando…</div>';
+    let eventos;
+    try { eventos = await carregarEventosAgenda(); }
+    catch (e) { feed.innerHTML = avisoErro(() => mostrarAgenda()); return; }
+    // Enquanto carregava, a tela pode ter passado a mostrar igrejas, museus…
+    if (filtros.style.display === 'none') return;
+    const { periodo, cidade } = _filtroAgenda;
+    const lista = eventos.filter(ev => eventoNoPeriodo(ev, periodo) && (cidade === 'todas' || cidadesDoEvento(ev).includes(cidade)));
+    if (!lista.length) {
+      const onde = cidade === 'todas' ? '' : cidade === 'arredores' ? ' nos arredores' : ' em ' + CIDADES_AGENDA[cidade];
+      const botoes = [];
+      if (cidade !== 'todas') botoes.push(`<button type="button" onclick="filtrarAgendaPor('cidade','todas')">Todas as cidades</button>`);
+      if (periodo !== 'mes') botoes.push(`<button type="button" onclick="filtrarAgendaPor('periodo','mes')">Próximos 30 dias</button>`);
+      feed.innerHTML = `<div class="agenda-vazia">Nenhum evento${onde} ${PERIODOS_AGENDA[periodo]}.${botoes.length ? `<div class="busca-sugestoes">${botoes.join('')}</div>` : ''}</div>`;
+      return;
+    }
+    feed.innerHTML = renderAgenda(lista);
+  }
+
+  function filtrarAgendaPor(tipo, valor) {
+    if (tipo === 'periodo' && PERIODOS_AGENDA[valor]) _filtroAgenda.periodo = valor;
+    if (tipo === 'cidade' && CIDADES_AGENDA[valor]) _filtroAgenda.cidade = valor;
+    return mostrarAgenda();
+  }
+
+  // Arquivo de calendário (.ics) do evento aberto: o celular oferece guardar na agenda dele
+  function adicionarAoCalendario() {
+    const ev = _eventoAtual;
+    if (!ev) return;
+    const ini = String(ev.data_evento || '').slice(0, 10);
+    if (!ini) return;
+    const fim = String(ev.data_fim || '').slice(0, 10) || ini;
+    const semTraco = s => s.replace(/-/g, '');
+    const utc = d => d.toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    const texto = s => String(s || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/([,;])/g, '\\$1');
+    // Linhas longas são dobradas, como pede o formato
+    const dobrar = l => l.length <= 70 ? l : l.match(/.{1,70}/g).join('\r\n ');
+    const hora = String(ev.horario || '').match(/\b(\d{1,2})\s*(?:h|:)\s*(\d{2})?/i);
+    let quando;
+    if (hora && ini === fim && Number(hora[1]) <= 23) {
+      // Ouro Preto fica em UTC-3 o ano todo; sem hora de término, conta 2 horas
+      const comeco = new Date(`${ini}T${String(hora[1]).padStart(2, '0')}:${hora[2] || '00'}:00-03:00`);
+      quando = [`DTSTART:${utc(comeco)}`, `DTEND:${utc(new Date(comeco.getTime() + 2 * 3600000))}`];
+    } else {
+      const depois = new Date(fim + 'T12:00:00');
+      depois.setDate(depois.getDate() + 1);
+      quando = [`DTSTART;VALUE=DATE:${semTraco(ini)}`, `DTEND;VALUE=DATE:${semTraco(depois.toISOString().slice(0, 10))}`];
+    }
+    const url = 'https://guiadicadeouro.com.br/#/evento/' + ev.id;
+    const linhas = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Dica de Ouro//Agenda//PT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'BEGIN:VEVENT',
+      `UID:${ev.id}@guiadicadeouro.com.br`, `DTSTAMP:${utc(new Date())}`, ...quando,
+      `SUMMARY:${texto(ev.nome)}`,
+      ev.local ? `LOCATION:${texto(ev.local)}` : '',
+      `DESCRIPTION:${texto([ev.horario, String(ev.descricao || '').slice(0, 400), url].filter(Boolean).join('\n'))}`,
+      `URL:${url}`, 'END:VEVENT', 'END:VCALENDAR'
+    ].filter(Boolean).map(dobrar);
+    const arquivo = new Blob([linhas.join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(arquivo);
+    a.download = (normBusca(ev.nome).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'evento') + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    registrarAcesso('calendario', ev.id, ev.nome);
+  }
+
+  // ================================================================ SALVOS
+  // Igrejas, museus, eventos, itens da UFOP, repúblicas e negócios guardados neste aparelho
+  const chaveSalvo = f => (f.tipo || 'loja') + ':' + f.id;
+  function estaSalvo(tipo, id) { return getFavoritos().some(f => (f.tipo || 'loja') === tipo && String(f.id) === String(id)); }
+  function itemDaTela(tela = telaAtual) {
+    if (tela === 'tela-evento' && _eventoAtual) {
+      const ev = _eventoAtual;
+      return { tipo: 'evento', id: String(ev.id), nome: ev.nome || '—', cat: 'Evento', end: ev.local || '', foto: ev.foto || null,
+               data: String(ev.data_fim || ev.data_evento || '').slice(0, 10) };
+    }
+    if (tela === 'tela-lugar' && _lugarAtual) {
+      const l = _lugarAtual;
+      const tipo = l.categoria === 'UFOP' ? 'ufop' : l.categoria === 'República' ? 'republica' : 'lugar';
+      return { tipo, id: String(l.id), nome: l.nome || l.titulo || '—', cat: l.categoria || '', end: l.endereco || l.unidade || '', foto: l.foto || null };
+    }
+    return null;
+  }
+  function atualizarBotaoSalvar(tela = telaAtual) {
+    const item = itemDaTela(tela);
+    document.querySelectorAll(`#${tela} .btn-salvar-tela`).forEach(b => {
+      const on = !!item && estaSalvo(item.tipo, item.id);
+      b.classList.toggle('curtido', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-label', on ? 'Remover dos salvos' : 'Salvar');
+    });
+  }
+  function salvarTela() {
+    const item = itemDaTela();
+    if (!item) return;
+    const favs = getFavoritos();
+    const i = favs.findIndex(f => chaveSalvo(f) === chaveSalvo(item));
+    if (i >= 0) { favs.splice(i, 1); avisar('Removido dos salvos'); }
+    else { favs.unshift({ ...item, salvoEm: Date.now() }); registrarAcesso('salvar', item.id, item.nome); avisar('Salvo. Está na aba Salvos.'); }
+    setFavoritos(favs);
+    atualizarBotaoSalvar();
+  }
+  function removerSalvo(chave) {
+    setFavoritos(getFavoritos().filter(f => chaveSalvo(f) !== chave));
+    avisar('Removido dos salvos');
+    renderSalvos();
+  }
+  function abrirSalvo(chave) {
+    const f = getFavoritos().find(x => chaveSalvo(x) === chave);
+    if (!f) return;
+    const id = String(f.id);
+    const rota = { loja: '#/loja/' + id, evento: '#/evento/' + id, ufop: '#/ufop/' + id,
+                   republica: '#/republica/' + id.slice(0, 6), lugar: '#/lugar/' + id.slice(0, 6) }[f.tipo || 'loja'];
+    if (typeof window.abrirRotaGuia === 'function') window.abrirRotaGuia(rota);
+    else if ((f.tipo || 'loja') === 'loja') abrirLojaPorId(Number(id) || 0, 't1');
+  }
+  function renderSalvos() {
+    const el = document.getElementById('salvos-lista');
+    if (!el) return;
+    const favs = getFavoritos();
+    if (!favs.length) {
+      el.innerHTML = `<div class="salvos-vazio"><img src="img/cat-servicos.webp" alt="" width="600" height="400" decoding="async">
+        <p>Nada salvo ainda. Toque no coração de uma igreja, museu, evento ou negócio para guardar aqui.</p>
+        <div class="busca-sugestoes">
+          <button type="button" onclick="irTab('tela-agenda','tab-agenda')">Agenda</button>
+          <button type="button" onclick="abrirLugaresPorCat('Igrejas')">Igrejas</button>
+          <button type="button" onclick="abrirLugaresPorCat('Museus')">Museus</button>
+        </div></div>`;
+      return;
+    }
+    const hoje = hojeISO();
+    const grupos = [['lugar', 'Lugares'], ['evento', 'Eventos'], ['republica', 'Repúblicas'], ['ufop', 'UFOP'], ['loja', 'Negócios']];
+    let html = '';
+    grupos.forEach(([tipo, titulo]) => {
+      const itens = favs.filter(f => (f.tipo || 'loja') === tipo);
+      if (!itens.length) return;
+      html += `<div class="grupo-busca">${titulo} · ${itens.length}</div>`;
+      itens.forEach(f => {
+        const passou = tipo === 'evento' && f.data && f.data < hoje;
+        const foto = f.foto && String(f.foto).startsWith('http') ? f.foto : '';
+        const ic = tipo === 'evento' ? 'calendario' : tipo === 'loja' ? iconeCat(f.cat) : tipo === 'ufop' ? 'ufop' : (IC_LUGAR[f.cat] || 'pin');
+        const chave = esc(chaveSalvo(f));
+        html += `<div class="salvo">
+          <div class="lugar" onclick="abrirSalvo('${chave}')">
+            <div class="lugar-thumb ${foto ? '' : 't1'}" style="${foto ? `background-image:url('${escUrl(foto)}');` : ''}">${foto ? '' : icone(ic, 28, 1.6)}</div>
+            <div class="lugar-info"><div class="cat-tag">${esc(passou ? 'Já aconteceu' : (f.cat || ''))}</div><h4>${esc(f.nome)}</h4><div class="onde">${esc(f.end || '')}</div></div>
+          </div>
+          <button type="button" class="salvo-remover" onclick="removerSalvo('${chave}')" aria-label="Remover ${esc(f.nome)} dos salvos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>`;
+      });
+    });
+    el.innerHTML = html;
+  }
+
+  // "Anunciar" no topo da home: quem já anuncia vai para o painel; os demais, para o cadastro
+  function abrirAnunciar() {
+    if (localStorage.getItem('dica_token')) abrirAreaAnunciante();
+    else irPara('tela-cadastro');
+  }
+
+  // ================================================================ MAPA ÚTIL
+  // Filtro atual, lista alternativa, minha localização e pinos agrupados quando ficam um sobre o outro
+  let _filtroMapa = 'todos';
+  let _filtroMapaPendente = null;
+  let _modoMapa = 'mapa';
+  let _listaSoIds = null;
+  let _gruposMapa = [];
+  let _redesenhoMapa = null;
+  let _minhaPosicao = null, _marcadorEu = null, _circuloEu = null;
+
+  function aplicarFiltroMapa(tipo) {
+    const b = [...document.querySelectorAll('.mapa-filtro')].find(f => (f.getAttribute('onclick') || '').includes(`'${tipo}'`));
+    filtrarMapa(tipo, b || null);
+  }
+  // "Ver tudo" e o botão de mapa da busca: nas categorias de comércio, o mapa abre só com os negócios
+  function verTudoNoMapa() {
+    const ativo = document.querySelector('#cats-home .cat.ativo');
+    const cat = ativo ? (((ativo.getAttribute('onclick') || '').match(/'([^']+)'/) || [])[1] || 'Tudo') : 'Tudo';
+    _filtroMapaPendente = ['Comer', 'Beber', 'Hospedar', 'Comprar', 'Serviços', 'Saúde'].includes(cat) ? 'lojas' : 'todos';
+    irTab('tela-explorar', 'tab-explorar');
+  }
+
+  function agendarRedesenhoMapa() {
+    clearTimeout(_redesenhoMapa);
+    _redesenhoMapa = setTimeout(redesenharMapa, 120);
+  }
+  // Pinos a menos de 44 px um do outro viram um grupo com a contagem; tocar no grupo aproxima
+  function redesenharMapa() {
+    if (!_mapa) return;
+    _gruposMapa.forEach(g => _mapa.removeLayer(g));
+    _gruposMapa = [];
+    const zoom = _mapa.getZoom();
+    const pontos = [];
+    _marcadores.forEach(({ marcador, tipo }) => {
+      if (!(_filtroMapa === 'todos' || tipo === _filtroMapa)) { _mapa.removeLayer(marcador); return; }
+      if (marcador === _selMapa) { marcador.addTo(_mapa); return; }
+      pontos.push({ marcador, p: _mapa.project(marcador.getLatLng(), zoom) });
+    });
+    const usados = new Set();
+    pontos.forEach((a, i) => {
+      if (usados.has(i)) return;
+      usados.add(i);
+      const grupo = [a];
+      pontos.forEach((b, j) => { if (!usados.has(j) && a.p.distanceTo(b.p) < 44) { usados.add(j); grupo.push(b); } });
+      if (grupo.length === 1) { a.marcador.addTo(_mapa); return; }
+      grupo.forEach(g => _mapa.removeLayer(g.marcador));
+      const pos = grupo.map(g => g.marcador.getLatLng());
+      const centro = [pos.reduce((s, x) => s + x.lat, 0) / pos.length, pos.reduce((s, x) => s + x.lng, 0) / pos.length];
+      const limites = L.latLngBounds(pos);
+      const grupoMarcador = L.marker(centro, {
+        icon: L.divIcon({ html: `<div class="pino pino-grupo"><span>${grupo.length}</span></div>`, className: 'pino-wrap', iconSize: [48, 48], iconAnchor: [24, 24] }),
+        title: `${grupo.length} lugares aqui. Toque para aproximar`, alt: `${grupo.length} lugares`, zIndexOffset: 500
+      });
+      grupoMarcador.on('click', () => {
+        // Todos no mesmo ponto (endereço igual): mostra a lista deles
+        if (limites.getNorthEast().distanceTo(limites.getSouthWest()) < 40 || zoom >= _mapa.getMaxZoom()) {
+          _listaSoIds = new Set(grupo.map(g => String(g.marcador.itemData.tabela + ':' + g.marcador.itemData.id)));
+          modoMapa('lista', true);
+        } else {
+          _mapa.flyToBounds(limites.pad(0.4), { maxZoom: 18 });
+        }
+      });
+      grupoMarcador.addTo(_mapa);
+      _gruposMapa.push(grupoMarcador);
+    });
+    if (_selMapa) _selMapa.getElement()?.querySelector('.pino')?.classList.add('sel');
+  }
+
+  function modoMapa(modo, manterGrupo) {
+    _modoMapa = modo === 'lista' ? 'lista' : 'mapa';
+    if (!manterGrupo) _listaSoIds = null;
+    document.querySelectorAll('.mapa-modo button').forEach(b => b.setAttribute('aria-pressed', b.dataset.modo === _modoMapa ? 'true' : 'false'));
+    const lista = document.getElementById('mapa-lista');
+    lista.hidden = _modoMapa !== 'lista';
+    if (_modoMapa === 'lista') { fecharCardMapa(); renderListaMapa(); lista.scrollTop = 0; }
+    else if (_mapa) setTimeout(() => _mapa.invalidateSize(), 50);
+  }
+
+  function distanciaKm(lat1, lng1, lat2, lng2) {
+    const rad = x => x * Math.PI / 180;
+    const a = Math.sin(rad(lat2 - lat1) / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(rad(lng2 - lng1) / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(a));
+  }
+  function textoDistancia(km) {
+    return km < 1 ? (Math.round(km * 100) * 10) + ' m' : km.toFixed(1).replace('.', ',') + ' km';
+  }
+
+  function renderListaMapa() {
+    const lista = document.getElementById('mapa-lista');
+    if (!lista || lista.hidden) return;
+    const cab = document.getElementById('mapa-header');
+    lista.style.paddingTop = (cab.offsetTop + cab.offsetHeight + 12) + 'px';
+    if (!_dadosMapa.length) {
+      // Os lugares chegam junto com o mapa; enquanto isso, tenta de novo em instantes
+      lista.innerHTML = '<div class="carregando">Carregando os lugares…</div>';
+      if (!_mapaCarregado) iniciarMapa();
+      setTimeout(renderListaMapa, 800);
+      return;
+    }
+    let itens = _dadosMapa.filter(it => (_filtroMapa === 'todos' || it.tipo === _filtroMapa) &&
+      (!_listaSoIds || _listaSoIds.has(String(it.tabela + ':' + it.id))));
+    itens = itens.map(it => ({ it, km: _minhaPosicao && it.lat ? distanciaKm(_minhaPosicao[0], _minhaPosicao[1], it.lat, it.lng) : null }));
+    itens.sort((a, b) => ((a.km ?? 1e9) - (b.km ?? 1e9)) || String(a.it.nome).localeCompare(String(b.it.nome), 'pt-BR'));
+    const contagem = `${itens.length} lugar${itens.length === 1 ? '' : 'es'}`;
+    const topo = _listaSoIds
+      ? `${contagem} no mesmo ponto do mapa · <button type="button" class="link-inline" onclick="_listaSoIds = null; renderListaMapa()">ver todos</button>`
+      : _minhaPosicao
+        ? `${contagem}, do mais perto ao mais longe de você`
+        : `${contagem} em ordem alfabética · <button type="button" class="link-inline" onclick="localizarMe()">ordenar pela distância</button>`;
+    lista.innerHTML = `<div class="mapa-lista-topo">${topo}</div><div class="lugares">` + itens.map(({ it, km }) => {
+      const foto = it.foto && String(it.foto).startsWith('http') ? it.foto : '';
+      return `<div class="lugar" onclick="abrirDoMapa('${esc(it.tabela)}','${esc(it.id)}')">
+        <div class="lugar-thumb ${foto ? '' : 't1'}" style="${foto ? `background-image:url('${escUrl(foto)}');` : ''}">${foto ? '' : icone(IC_MAPA[it.tipo] || 'pin', 28, 1.6)}</div>
+        <div class="lugar-info"><div class="cat-tag">${esc(it.cat || '')}${km != null ? ` · <span class="dist">${textoDistancia(km)}</span>` : ''}</div><h4>${esc(it.nome)}</h4><div class="onde">${esc(it.end || '')}</div></div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  function adicionarBotaoLocalizar() {
+    const Localizar = L.Control.extend({
+      options: { position: 'bottomright' },
+      onAdd() {
+        const b = L.DomUtil.create('button', 'btn-localizar');
+        b.type = 'button';
+        b.title = 'Minha localização';
+        b.setAttribute('aria-label', 'Mostrar minha localização no mapa');
+        b.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>';
+        L.DomEvent.disableClickPropagation(b);
+        L.DomEvent.on(b, 'click', localizarMe);
+        return b;
+      }
+    });
+    new Localizar().addTo(_mapa);
+  }
+
+  function localizarMe() {
+    if (!navigator.geolocation) { avisar('Este navegador não informa a localização.', 'erro'); return; }
+    avisar('Procurando você no mapa…');
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+      _minhaPosicao = [lat, lng];
+      if (_mapa) {
+        if (!_marcadorEu) {
+          _marcadorEu = L.marker([lat, lng], {
+            icon: L.divIcon({ html: '<div class="pino-eu"></div>', className: 'pino-wrap', iconSize: [24, 24], iconAnchor: [12, 12] }),
+            title: 'Você está aqui', alt: 'Você está aqui', keyboard: false, zIndexOffset: 900
+          }).addTo(_mapa);
+          _circuloEu = L.circle([lat, lng], { radius: accuracy, color: '#2563eb', weight: 1, fillOpacity: 0.08, interactive: false }).addTo(_mapa);
+        } else {
+          _marcadorEu.setLatLng([lat, lng]);
+          _circuloEu.setLatLng([lat, lng]).setRadius(accuracy);
+        }
+        const km = distanciaKm(lat, lng, OURO_PRETO[0], OURO_PRETO[1]);
+        if (km > 40) avisar(`Você está a ${Math.round(km)} km de Ouro Preto. O mapa continua na cidade.`);
+        else _mapa.flyTo([lat, lng], Math.max(_mapa.getZoom(), 16));
+      }
+      if (_modoMapa === 'lista') renderListaMapa();
+    }, () => avisar('Não foi possível ver sua localização. Confira a permissão do navegador.', 'erro'),
+    { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
   }
 
   // VISUALIZADOR DE IMAGEM
@@ -5244,6 +5684,16 @@
   function slug(s) { return normBusca(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60); }
   var CATS_HOME = ['Descubra', 'Comer', 'Beber', 'Hospedar', 'Comprar', 'Serviços', 'Saúde', 'Republicas', 'UFOP'];
   var CATS_LUGAR = ['Igrejas', 'Museus', 'Minas', 'Parques e Cachoeiras'];
+  // Agenda e mapa guardam os filtros no endereço (#/agenda/hoje-a-noite/ouro-preto, #/mapa/igrejas)
+  var PERIODO_SLUG = { hoje: 'hoje', noite: 'hoje-a-noite', fim: 'fim-de-semana', semana: 'esta-semana', mes: 'proximos-30-dias' };
+  var MAPA_SLUG = { lojas: 'negocios', Igrejas: 'igrejas', Museus: 'museus', Minas: 'minas', 'Parques e Cachoeiras': 'parques' };
+  function rotaDaAgenda() {
+    var f = _filtroAgenda, r = '#/agenda';
+    if (f.periodo !== 'semana' || f.cidade !== 'todas') r += '/' + PERIODO_SLUG[f.periodo];
+    if (f.cidade !== 'todas') r += '/' + f.cidade;
+    return r;
+  }
+  function rotaDoMapa() { return MAPA_SLUG[_filtroMapa] ? '#/mapa/' + MAPA_SLUG[_filtroMapa] : '#/mapa'; }
   function porSlug(lista, s) {
     for (var i = 0; i < lista.length; i++) if (slug(lista[i]) === s) return lista[i];
     return null;
@@ -5259,7 +5709,8 @@
     switch (id) {
       case 'tela-home': return rotaHome;
       case 'tela-agenda': return rotaAgenda;
-      case 'tela-explorar': return '#/mapa';
+      case 'tela-explorar': return rotaDoMapa();
+      case 'tela-salvos': return '#/salvos';
       case 'tela-lugar': return rotaLugar(_lugarAtual);
       case 'tela-evento': return _eventoAtual ? '#/evento/' + _eventoAtual.id : '#/agenda';
       case 'tela-detalhe': return window._lojaAtual && window._lojaAtual.id ? '#/loja/' + window._lojaAtual.id : '#/';
@@ -5278,6 +5729,7 @@
       case 'tela-home': c = porSlug(CATS_HOME, rotaHome.split('/')[2] || ''); return c === 'Republicas' ? 'Repúblicas' : (c || '');
       case 'tela-agenda': return porSlug(CATS_LUGAR, rotaAgenda.split('/')[2] || '') || 'Agenda';
       case 'tela-explorar': return 'Mapa';
+      case 'tela-salvos': return 'Salvos';
       case 'tela-lugar': return _lugarAtual ? (_lugarAtual.nome || _lugarAtual.titulo || '') : '';
       case 'tela-evento': return _eventoAtual ? (_eventoAtual.nome || '') : '';
       case 'tela-detalhe': c = window._lojaAtual; return c ? (c['NOME'] || c.nome || '') : '';
@@ -5328,7 +5780,7 @@
   };
   var irTabOriginal = window.irTab;
   window.irTab = function (telaId) {
-    if (telaId === 'tela-agenda') rotaAgenda = '#/agenda';
+    if (telaId === 'tela-agenda') rotaAgenda = rotaDaAgenda();
     var antes = telaAtual;
     var r = irTabOriginal.apply(this, arguments);
     if (telaAtual === antes) marcarRota('replace');
@@ -5352,6 +5804,20 @@
     var antes = telaAtual;
     var r = abrirLugaresPorCatOriginal.apply(this, arguments);
     if (telaAtual === antes) marcarRota('replace');
+    return r;
+  };
+
+  var filtrarAgendaPorOriginal = window.filtrarAgendaPor;
+  window.filtrarAgendaPor = function () {
+    var r = filtrarAgendaPorOriginal.apply(this, arguments);
+    rotaAgenda = rotaDaAgenda();
+    if (telaAtual === 'tela-agenda') marcarRota('replace');
+    return r;
+  };
+  var filtrarMapaOriginal = window.filtrarMapa;
+  window.filtrarMapa = function () {
+    var r = filtrarMapaOriginal.apply(this, arguments);
+    if (telaAtual === 'tela-explorar') marcarRota('replace');
     return r;
   };
 
@@ -5455,8 +5921,17 @@
       if (cat && chipHome(cat)) filtrarLojas(cat, chipHome(cat));
       return;
     }
-    if (rota === '#/agenda') return irTab('tela-agenda', 'tab-agenda');
-    if (rota === '#/mapa') return irTab('tela-explorar', 'tab-explorar');
+    if ((m = /^#\/agenda(?:\/([a-z0-9-]+))?(?:\/([a-z0-9-]+))?$/.exec(rota))) {
+      Object.keys(PERIODO_SLUG).forEach(function (k) { if (PERIODO_SLUG[k] === m[1]) _filtroAgenda.periodo = k; });
+      if (m[2] && CIDADES_AGENDA[m[2]]) _filtroAgenda.cidade = m[2];
+      return irTab('tela-agenda', 'tab-agenda');
+    }
+    if ((m = /^#\/mapa(?:\/([a-z-]+))?$/.exec(rota))) {
+      _filtroMapaPendente = 'todos';
+      Object.keys(MAPA_SLUG).forEach(function (k) { if (MAPA_SLUG[k] === m[1]) _filtroMapaPendente = k; });
+      return irTab('tela-explorar', 'tab-explorar');
+    }
+    if (rota === '#/salvos') return irTab('tela-salvos', 'tab-salvos');
     if (rota === '#/anunciar') return irPara('tela-cadastro');
     if ((m = /^#\/lugares\/([a-z0-9-]+)$/.exec(rota)) && porSlug(CATS_LUGAR, m[1])) return abrirLugaresPorCat(porSlug(CATS_LUGAR, m[1]));
     if ((m = /^#\/evento\/([0-9a-f-]{8,})$/.exec(rota))) return abrirEventoCompleto(m[1]);
@@ -5475,6 +5950,9 @@
     // Endereço desconhecido ou ficha que saiu do ar: fica na home
     irParaHome();
   }
+
+  // Abrir um endereço do guia a partir de um botão (aba Salvos): cria a volta normalmente
+  window.abrirRotaGuia = function (rota) { return abrirRota(rota); };
 
   // Voltar e avançar do navegador (e do celular)
   window.addEventListener('popstate', function (e) {
