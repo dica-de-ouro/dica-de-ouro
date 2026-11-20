@@ -795,6 +795,61 @@
     /* Formulários e telas de anunciante: coluna de leitura de 560 px */
     #tela-avaliar, #tela-cadastro, #tela-login, #tela-painel, #tela-pagamento, #tela-admin { padding-left: calc(50% - 280px); padding-right: calc(50% - 280px); }
   }
+  /* Lote 5 (nov/2026): aba Mobilidade */
+  .tab { white-space: nowrap; }
+  .mob-atalhos { padding-top: 16px; padding-bottom: 4px; }
+  .mob-corpo { display: flex; flex-direction: column; gap: 32px; padding: 20px 20px 8px; }
+  .mob-secao { scroll-margin-top: 12px; }
+  .mob-secao h3 { margin-bottom: 10px; font-family: var(--serif); font-weight: 400; font-size: 26px; line-height: 1.15; letter-spacing: -0.01em; }
+  .mob-secao h3 em { font-style: italic; color: var(--ouro-texto); }
+  .mob-secao > p { font-size: 15px; line-height: 1.55; color: var(--texto-corpo); }
+  .mob-destaque { display: flex; align-items: baseline; gap: 10px; margin: 2px 0 8px; }
+  .mob-destaque b { flex-shrink: 0; white-space: nowrap; font-family: var(--serif); font-size: 44px; font-weight: 400; line-height: 1; color: var(--ink); }
+  .mob-destaque span { font-size: 14px; line-height: 1.35; color: var(--texto-2); }
+  .mob-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .mob-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--borda-forte); background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .mob-btn svg { color: var(--ouro-texto); }
+  .mob-btn.prim { background: var(--ink); border-color: var(--ink); color: var(--cal); }
+  .mob-btn.prim svg { color: var(--gold-bright); }
+  .mob-linhas { margin-top: 14px; }
+  a.info-linha { color: inherit; text-decoration: none; }
+  a.info-linha .cnt .lbl, a.info-linha .cnt .val { display: block; }
+  .info-linha .acao { margin-left: auto; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f1e8d6; color: var(--ouro-texto); }
+  .mob-extra { display: block; font-size: 13px; color: var(--texto-2); }
+  .mob-alerta { margin-top: 16px; padding: 16px; border-radius: 18px; background: #f7ebe3; border: 1px solid #e8cdbd; }
+  .mob-alerta h4 { font-size: 16px; font-weight: 700; color: var(--rust); }
+  .mob-alerta p { margin-top: 4px; font-size: 14px; line-height: 1.5; color: var(--texto-corpo); }
+  .mob-alerta .info-linhas { background: var(--card); }
+  .mob-lista { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; list-style: none; }
+  .mob-lista li { position: relative; padding-left: 18px; font-size: 15px; line-height: 1.5; color: var(--texto-corpo); }
+  .mob-lista li::before { content: ''; position: absolute; left: 2px; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+  .mob-apps { display: grid; gap: 10px; margin-top: 14px; }
+  .mob-app { padding: 16px; border-radius: 18px; border: 1px solid var(--borda); background: var(--card); }
+  .mob-app h4 { font-size: 17px; font-weight: 700; }
+  .mob-app p { margin-top: 2px; font-size: 14px; line-height: 1.45; color: var(--texto-2); }
+  .mob-app .mob-acoes { margin-top: 12px; }
+  .mob-grupo { margin: 20px 0 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-2); }
+  .mob-secao h3 + .mob-grupo { margin-top: 4px; }
+  .mob-emergencia { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .mob-emergencia a { min-height: 76px; padding: 8px 4px; border-radius: 16px; background: var(--ink); color: var(--cal); text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; }
+  .mob-emergencia b { font-family: var(--serif); font-size: 26px; font-weight: 400; line-height: 1.1; color: var(--gold-bright); }
+  .mob-emergencia span { font-size: 12px; line-height: 1.2; }
+  .mob-fones { margin-top: 0; }
+  .mob-fonte { margin-top: 12px; font-size: 13px; line-height: 1.5; color: var(--texto-2); }
+  .mob-fonte a { color: var(--ouro-texto); font-weight: 600; }
+  @media (min-width: 1024px) {
+    #tela-mobilidade { padding: 64px var(--margem) 56px; }
+    #tela-mobilidade .agenda-hero { margin: 0 calc(-1 * var(--margem)); padding-left: var(--margem); padding-right: var(--margem); }
+    .mob-atalhos { padding-left: 0; padding-right: 0; }
+    .mob-corpo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding: 24px 0 0; align-items: start; }
+    .mob-secao { height: 100%; padding: 24px; border-radius: 24px; border: 1px solid var(--borda); background: var(--paper); }
+    .mob-secao-larga { grid-column: 1 / -1; }
+    #mob-apps { grid-column: 1 / -1; }
+    .mob-apps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mob-fones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+    .mob-fones .info-linha:nth-child(2) { border-top: none; }
+    .mob-emergencia { grid-template-columns: repeat(4, minmax(0, 160px)); }
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   }
@@ -1121,6 +1176,122 @@
       <button type="button" class="dialogo-cancelar" onclick="abrirAreaAnunciante()">Já anuncio: entrar</button>
     </div>
   </section>
+</div>
+
+<!-- TELA 5.5: MOBILIDADE (Lote 5). Conteúdo conferido em 20/11/2026: lista de telefones da Prefeitura,
+     páginas da OuroTran e do Consórcio Rota Real, Decreto 8.908/2025 (tarifa única) e decreto de abr/2024 (táxi lotação). -->
+<div id="tela-mobilidade" class="tela oculta">
+  <div class="agenda-hero">
+    <img class="hero-arte" src="imagembase.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">
+    <div class="eyebrow-ouro">Ouro Preto</div>
+    <h2>Como se <em>locomover</em></h2>
+    <div class="sub">Ônibus, táxi, lotação, aplicativos e telefones úteis.</div>
+  </div>
+  <nav class="chips-periodo mob-atalhos" aria-label="Seções da página">
+    <button type="button" class="chip-periodo" onclick="irSecaoMob('mob-onibus')">Ônibus</button>
+    <button type="button" class="chip-periodo" onclick="irSecaoMob('mob-taxi')">Táxi</button>
+    <button type="button" class="chip-periodo" onclick="irSecaoMob('mob-lotacao')">Táxi lotação</button>
+    <button type="button" class="chip-periodo" onclick="irSecaoMob('mob-apps')">Aplicativos</button>
+    <button type="button" class="chip-periodo" onclick="irSecaoMob('mob-telefones')">Telefones</button>
+  </nav>
+  <div class="mob-corpo">
+    <section class="mob-secao" id="mob-onibus" aria-labelledby="mob-onibus-t">
+      <h3 id="mob-onibus-t">Ônibus na <em>cidade</em></h3>
+      <div class="mob-destaque"><b>R$ 2</b><span>por viagem, em qualquer linha urbana ou distrital</span></div>
+      <p>Os ônibus da sede e dos distritos são do Consórcio Rota Real. Desde julho de 2025 a passagem é a mesma em todas as linhas, com subsídio da Prefeitura (Decreto nº 8.908/2025).</p>
+      <div class="mob-acoes">
+        <a class="mob-btn prim" href="https://consorciorotareal.com.br/horarios/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Ver horários e linhas</a>
+        <a class="mob-btn" href="https://wa.me/553135511650" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>WhatsApp da central</a>
+        <a class="mob-btn" href="tel:+553135516136"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Ligar</a>
+      </div>
+    </section>
+
+    <section class="mob-secao" id="mob-viagem" aria-labelledby="mob-viagem-t">
+      <h3 id="mob-viagem-t">Para outras <em>cidades</em></h3>
+      <p>Os ônibus para Mariana, Belo Horizonte e outras cidades saem do Terminal Rodoviário 8 de Julho, na Rua Padre Rolim, 661, São Cristóvão.</p>
+      <div class="info-linhas mob-linhas">
+        <a class="info-linha" href="tel:+553135593252"><span class="cnt"><span class="lbl">Rodoviária</span><span class="val">(31) 3559-3252</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135571810"><span class="cnt"><span class="lbl">Transcotta · Mariana e distritos</span><span class="val">(31) 3557-1810<span class="mob-extra">seg a sex, 8h às 17h</span></span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+      </div>
+      <div class="mob-acoes">
+        <a class="mob-btn" href="https://www.google.com/maps/search/?api=1&query=Terminal+Rodovi%C3%A1rio+8+de+Julho+Rua+Padre+Rolim+661+Ouro+Preto" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8-8-2z"/></svg>Como chegar à rodoviária</a>
+        <a class="mob-btn" href="https://www.transcotta.com.br/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Horários da Transcotta</a>
+      </div>
+      <p class="mob-fonte">Para Belo Horizonte, a linha é da Pássaro Verde; as passagens são vendidas na rodoviária e em sites de venda de passagem.</p>
+    </section>
+
+    <section class="mob-secao" id="mob-taxi" aria-labelledby="mob-taxi-t">
+      <h3 id="mob-taxi-t">Táxi <em>comum</em></h3>
+      <p>Os táxis de Ouro Preto são autorizados pela Prefeitura e cobram os valores oficiais: pelo taxímetro e, em alguns trajetos, por uma tabela de preços. Antes de sair, pergunte quanto vai custar e, se quiser, peça para ver a tabela.</p>
+      <div class="mob-alerta" role="note">
+        <h4>Cobraram a mais?</h4>
+        <p>Anote a placa e o número do táxi e avise a Prefeitura. A OuroTran cuida do trânsito e do transporte; o Procon recebe queixas de consumidor.</p>
+        <div class="info-linhas mob-linhas">
+          <a class="info-linha" href="tel:+553135526858"><span class="cnt"><span class="lbl">OuroTran · trânsito e transporte</span><span class="val">(31) 3552-6858</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+          <a class="info-linha" href="tel:+553135593290"><span class="cnt"><span class="lbl">Procon Ouro Preto</span><span class="val">(31) 3559-3290</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        </div>
+        <div class="mob-acoes">
+          <a class="mob-btn" href="mailto:ourotran@ouropreto.mg.gov.br?subject=Reclama%C3%A7%C3%A3o%20sobre%20t%C3%A1xi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>E-mail da OuroTran</a>
+          <a class="mob-btn" href="https://www.ouropreto.mg.gov.br/transparencia/ouvidoria" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Ouvidoria da Prefeitura</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="mob-secao" id="mob-lotacao" aria-labelledby="mob-lotacao-t">
+      <h3 id="mob-lotacao-t">Táxi <em>lotação</em></h3>
+      <div class="mob-destaque"><b>R$ 4</b><span>por passageiro, preço fixo</span></div>
+      <p>É um jeito bem de Ouro Preto de andar pela cidade, em funcionamento desde 1996.</p>
+      <ul class="mob-lista">
+        <li>É um táxi que faz o caminho de uma linha de ônibus e leva várias pessoas ao mesmo tempo.</li>
+        <li>Cada passageiro paga a sua passagem, sem taxímetro: R$ 4,00, valor fixado pela Prefeitura em abril de 2024.</li>
+        <li>Com menos gente e menos paradas, costuma chegar antes do ônibus.</li>
+        <li>A tarifa de R$ 2 vale só para o ônibus: o lotação não entra no subsídio.</li>
+      </ul>
+    </section>
+
+    <section class="mob-secao" id="mob-apps" aria-labelledby="mob-apps-t">
+      <h3 id="mob-apps-t">Aplicativos de <em>corrida</em></h3>
+      <p>A Uber não funciona em Ouro Preto. Para chamar um carro pelo celular, use um destes:</p>
+      <div class="mob-apps">
+        <div class="mob-app"><h4>99</h4><p>Em Ouro Preto tem carro particular (99Pop) e táxi (99Táxi).</p><div class="mob-acoes"><a class="mob-btn" href="https://99app.com/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Abrir 99</a></div></div>
+        <div class="mob-app"><h4>PamPam</h4><p>Aplicativo de motoristas de Ouro Preto.</p><div class="mob-acoes"><a class="mob-btn" href="https://play.google.com/store/apps/details?id=br.com.pampam.passenger.drivermachine" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Android</a><a class="mob-btn" href="https://apps.apple.com/br/app/pampam-passageiros/id6447082930" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>iPhone</a></div></div>
+        <div class="mob-app"><h4>OP Expert</h4><p>Aplicativo local de corridas.</p><div class="mob-acoes"><a class="mob-btn" href="https://play.google.com/store/apps/details?id=br.com.oexpert.passenger.drivermachine" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Android</a><a class="mob-btn" href="https://apps.apple.com/br/app/op-expert/id6444106710" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>iPhone</a></div></div>
+      </div>
+    </section>
+
+    <section class="mob-secao mob-secao-larga" id="mob-telefones" aria-labelledby="mob-telefones-t">
+      <h3 id="mob-telefones-t">Telefones <em>úteis</em></h3>
+      <div class="mob-grupo">Emergência</div>
+      <div class="mob-emergencia">
+        <a href="tel:190"><b>190</b><span>Polícia Militar</span></a>
+        <a href="tel:192"><b>192</b><span>SAMU</span></a>
+        <a href="tel:193"><b>193</b><span>Bombeiros</span></a>
+        <a href="tel:199"><b>199</b><span>Defesa Civil</span></a>
+      </div>
+      <div class="mob-grupo">Prefeitura de Ouro Preto</div>
+      <div class="info-linhas mob-linhas mob-fones">
+        <a class="info-linha" href="tel:+553135593200"><span class="cnt"><span class="lbl">Prefeitura (geral)</span><span class="val">(31) 3559-3200<span class="mob-extra">seg a sex, 9h às 18h</span></span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593026"><span class="cnt"><span class="lbl">Guarda Civil Municipal</span><span class="val">(31) 3559-3026</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135524010"><span class="cnt"><span class="lbl">Defesa Civil municipal</span><span class="val">(31) 3552-4010</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135526858"><span class="cnt"><span class="lbl">OuroTran · trânsito e transporte</span><span class="val">(31) 3552-6858</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593291"><span class="cnt"><span class="lbl">UPA Ouro Preto</span><span class="val">(31) 3559-3291</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593131"><span class="cnt"><span class="lbl">Policlínica</span><span class="val">(31) 3559-3131</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593280"><span class="cnt"><span class="lbl">Secretaria de Saúde</span><span class="val">(31) 3559-3280</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593290"><span class="cnt"><span class="lbl">Procon</span><span class="val">(31) 3559-3290</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135517329"><span class="cnt"><span class="lbl">Cultura e Turismo</span><span class="val">(31) 3551-7329</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593248"><span class="cnt"><span class="lbl">Desenvolvimento Social</span><span class="val">(31) 3559-3248</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593207"><span class="cnt"><span class="lbl">Conselho Tutelar</span><span class="val">(31) 3559-3207</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135592918"><span class="cnt"><span class="lbl">Limpeza urbana</span><span class="val">(31) 3559-2918</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:+553135593252"><span class="cnt"><span class="lbl">Rodoviária</span><span class="val">(31) 3559-3252</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+      </div>
+      <div class="mob-grupo">Água e luz</div>
+      <div class="info-linhas mob-linhas mob-fones">
+        <a class="info-linha" href="tel:08000021741"><span class="cnt"><span class="lbl">Saneouro · água e esgoto</span><span class="val">0800 002 1741</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+        <a class="info-linha" href="tel:116"><span class="cnt"><span class="lbl">Cemig · energia</span><span class="val">116</span></span><span class="acao" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+      </div>
+      <p class="mob-fonte">Telefones da lista oficial da Prefeitura, conferidos em novembro de 2026. <a href="https://ouropreto.mg.gov.br/transparencia/telefones" target="_blank" rel="noopener">Ver a lista completa</a></p>
+    </section>
+  </div>
 </div>
 
 <!-- TELA 6: CADASTRO ANUNCIANTE -->
@@ -1511,6 +1682,10 @@
   <button type="button" class="tab" id="tab-explorar" onclick="irTab('tela-explorar','tab-explorar')">
     <div class="tab-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12a10 10 0 1 1-20 0a10 10 0 1 1 20 0zM16.2 7.8l-2.1 6.3-6.3 2.1 2.1-6.3z"/></svg></div>
     Explorar
+  </button>
+  <button type="button" class="tab" id="tab-mobilidade" onclick="irTab('tela-mobilidade','tab-mobilidade')">
+    <div class="tab-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM5 11h14M8 19v2M16 19v2M8.5 15h.01M15.5 15h.01"/></svg></div>
+    Mobilidade
   </button>
   <button type="button" class="tab" id="tab-salvos" onclick="irTab('tela-salvos','tab-salvos')">
     <div class="tab-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
@@ -3242,11 +3417,11 @@
   }
 
   // NAVEGAÇÃO
-  const TELAS_COM_TAB = ['tela-home','tela-agenda','tela-explorar','tela-salvos','tela-painel'];
+  const TELAS_COM_TAB = ['tela-home','tela-agenda','tela-explorar','tela-mobilidade','tela-salvos','tela-painel'];
   let telaAtual = 'tela-splash';
 
   // Aba destacada conforme a tela aberta
-  const ABA_DA_TELA = { 'tela-home': 'tab-inicio', 'tela-agenda': 'tab-agenda', 'tela-explorar': 'tab-explorar', 'tela-salvos': 'tab-salvos' };
+  const ABA_DA_TELA = { 'tela-home': 'tab-inicio', 'tela-agenda': 'tab-agenda', 'tela-explorar': 'tab-explorar', 'tela-mobilidade': 'tab-mobilidade', 'tela-salvos': 'tab-salvos' };
   function marcarTab(telaId) {
     const tabId = ABA_DA_TELA[telaId];
     if (!tabId) return;
@@ -3384,6 +3559,7 @@
       setTimeout(renderListaMapa, 250);
     }
     if (telaId === 'tela-salvos') renderSalvos();
+    if (telaId === 'tela-mobilidade') document.getElementById('tela-mobilidade').scrollTop = 0;
     if (telaId === 'tela-agenda') {
       // Mostra filtros de eventos ao entrar pela tab bar
       document.getElementById('filtros-agenda').style.display = 'flex';
@@ -5379,6 +5555,14 @@
   }).observe(document.body, { childList: true, subtree: true });
   prepararClicaveis();
 
+  // Mobilidade: atalhos para as seções da página
+  function irSecaoMob(id) {
+    const alvo = document.getElementById(id);
+    if (!alvo) return;
+    const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    alvo.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' });
+  }
+
   // Computador: ao cruzar 1.024 px, o mapa recalcula o tamanho e a lista do Explorar aparece
   let _redimensiona = null;
   window.addEventListener('resize', () => {
@@ -5806,6 +5990,7 @@
       case 'tela-agenda': return rotaAgenda;
       case 'tela-explorar': return rotaDoMapa();
       case 'tela-salvos': return '#/salvos';
+      case 'tela-mobilidade': return '#/mobilidade';
       case 'tela-lugar': return rotaLugar(_lugarAtual);
       case 'tela-evento': return _eventoAtual ? '#/evento/' + _eventoAtual.id : '#/agenda';
       case 'tela-detalhe': return window._lojaAtual && window._lojaAtual.id ? '#/loja/' + window._lojaAtual.id : '#/';
@@ -5825,6 +6010,7 @@
       case 'tela-agenda': return porSlug(CATS_LUGAR, rotaAgenda.split('/')[2] || '') || 'Agenda';
       case 'tela-explorar': return 'Mapa';
       case 'tela-salvos': return 'Salvos';
+      case 'tela-mobilidade': return 'Mobilidade';
       case 'tela-lugar': return _lugarAtual ? (_lugarAtual.nome || _lugarAtual.titulo || '') : '';
       case 'tela-evento': return _eventoAtual ? (_eventoAtual.nome || '') : '';
       case 'tela-detalhe': c = window._lojaAtual; return c ? (c['NOME'] || c.nome || '') : '';
@@ -6027,6 +6213,7 @@
       return irTab('tela-explorar', 'tab-explorar');
     }
     if (rota === '#/salvos') return irTab('tela-salvos', 'tab-salvos');
+    if (rota === '#/mobilidade') return irTab('tela-mobilidade', 'tab-mobilidade');
     if (rota === '#/anunciar') return irPara('tela-cadastro');
     if ((m = /^#\/lugares\/([a-z0-9-]+)$/.exec(rota)) && porSlug(CATS_LUGAR, m[1])) return abrirLugaresPorCat(porSlug(CATS_LUGAR, m[1]));
     if ((m = /^#\/evento\/([0-9a-f-]{8,})$/.exec(rota))) return abrirEventoCompleto(m[1]);
