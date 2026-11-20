@@ -1,0 +1,8 @@
+{
+  "name": "dica-de-ouro-testes",
+  "private": true,
+  "description": "Testes do guia em Chrome sem janela. Não gravam nada no Supabase.",
+  "dependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}
