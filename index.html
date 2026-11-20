@@ -14,10 +14,12 @@
 <meta property="og:url" content="https://guiadicadeouro.com.br/">
 <meta property="og:title" content="Dica de Ouro — Ouro Preto">
 <meta property="og:description" content="O que ver e fazer em Ouro Preto hoje: igrejas, museus, agenda de eventos e mapa. Negócios locais: perfil grátis por 90 dias.">
-<meta property="og:image" content="https://guiadicadeouro.com.br/og-image.jpg">
+<meta property="og:image" content="https://guiadicadeouro.com.br/img/og-guia.jpg">
+<meta property="og:image:alt" content="Dica de Ouro: o que ver e fazer em Ouro Preto hoje, com gravura de igreja barroca à noite">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://guiadicadeouro.com.br/img/og-guia.jpg">
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
@@ -645,6 +647,48 @@
   .dica-banner:has(+ .carregando:last-child) h4 { margin: 0 0 4px; font-size: 18px; }
   .dica-banner:has(+ .carregando:last-child) p { display: block; }
   .dica-banner:has(+ .carregando:last-child) .btn-primario { padding: 10px 18px; }
+  /* Lote 2A (nov/2026): gravura do dia, "Acontece hoje", erros e categorias vazias */
+  .hero-hoje { padding-bottom: 226px; }
+  .hero-hoje[data-periodo="manha"] { background: #f3e9d9; color: var(--ink); }
+  .hero-hoje[data-periodo="tarde"] { background: #ebddc4; color: var(--ink); }
+  .hero-hoje[data-periodo="noite"] { background: #1a110d; }
+  .hero .hero-gravura { position: absolute; left: 50%; bottom: 0; width: max(100%, 540px); height: auto; transform: translateX(-52%); pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%); mask-image: linear-gradient(to bottom, transparent, #000 28%); }
+  .hero-hoje:not([data-periodo="noite"]) .marca b, .hero-hoje:not([data-periodo="noite"]) .hero-titulo em { color: var(--gold-deep); }
+  .hero-hoje:not([data-periodo="noite"]) .hero-saudacao { color: var(--texto-2); }
+  .hero-hoje:not([data-periodo="noite"]) .btn-fav-home:not(.curtido) { border-color: #1a141033; background: #fffcf6b3; color: var(--ink); }
+  .busca.busca-hoje { position: relative; z-index: 1; margin: -27px 20px 0; box-shadow: 0 10px 28px #1a141029; }
+  .filtros.filtros-hoje { margin: 0 0 12px; }
+  #secao-destaque > .destaque { margin: 20px 0 24px; }
+  .home-corpo:has(#cats-home .cat.ativo:not(:first-child)) #sec-lista-titulo { display: none; }
+  .ev-data.hoje .d, .ev-data.hoje .m { color: var(--rust); }
+  .link-inline { display: inline; min-height: 0; padding: 0; border: none; background: none; color: var(--ouro-texto); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+  .erro-carga { line-height: 1.6; }
+  .btn-tentar { margin-top: 12px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--borda-forte); background: var(--card); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .vazio-cat { text-align: center; padding: 6px 0 2px; }
+  .vazio-cat-arte { display: block; width: min(100%, 320px); height: auto; margin: 0 auto 8px; }
+  .vazio-cat p { font-size: 15px; line-height: 1.5; color: var(--texto-2); }
+  .vazio-cat-atalhos { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 12px 0 18px; }
+  .vazio-cat-atalhos button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--borda-forte); background: var(--card); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+  /* Lote 2C (nov/2026): avisos e diálogo próprios, card compacto da UFOP */
+  .aviso-toast { position: fixed; left: 50%; bottom: calc(var(--tabbar) + var(--safe-bottom) + 16px); z-index: 1000; max-width: min(440px, calc(100% - 32px)); padding: 12px 18px; border-radius: 14px; background: var(--ink); color: var(--cal); font-size: 14px; line-height: 1.4; box-shadow: 0 10px 28px #1a14104d; opacity: 0; transform: translate(-50%, 12px); transition: opacity .2s ease, transform .2s ease; pointer-events: none; }
+  .aviso-toast.visivel { opacity: 1; transform: translate(-50%, 0); }
+  .aviso-toast.erro { background: var(--rust); color: #fff; }
+  .dialogo { margin: auto; width: min(420px, calc(100% - 32px)); padding: 24px 22px 18px; border: none; border-radius: 22px; background: var(--card); color: var(--ink); box-shadow: 0 24px 60px #1a141059; }
+  .dialogo::backdrop { background: #1a1410a6; }
+  .dialogo h2 { margin: 0 0 8px; font-family: var(--serif); font-weight: 400; font-size: 22px; line-height: 1.2; }
+  .dialogo p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--texto-2); }
+  .dialogo-campo { display: block; margin-top: 16px; font-size: 14px; color: var(--texto-2); }
+  .dialogo-campo input { display: block; width: 100%; height: 48px; margin-top: 8px; padding: 0 14px; border-radius: 12px; border: 1px solid #a08f7a; background: #fff; color: var(--ink); font: inherit; font-size: 16px; letter-spacing: 0.08em; }
+  .dialogo-acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+  .dialogo-acoes button { min-height: 44px; padding: 0 18px; border-radius: 12px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .dialogo-cancelar { border: 1px solid var(--borda-forte); background: transparent; color: var(--ink); }
+  .dialogo-ok { border: none; background: var(--ink); color: var(--gold-bright); }
+  .dialogo-ok.perigo { background: var(--rust); color: #fff; }
+  .dialogo-ok:disabled { opacity: .45; cursor: not-allowed; }
+  .lugar-card-compacto { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; }
+  .lugar-card-compacto .lugar-card-body { flex: 1; min-width: 0; padding: 0; }
+  .lugar-card-compacto h4 { font-size: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .lugar-card-icone { flex: 0 0 44px; height: 44px; border-radius: 12px; background: var(--ouro-claro); color: var(--ouro-texto); display: flex; align-items: center; justify-content: center; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   }
@@ -671,19 +715,19 @@
 
 <!-- TELA 2: HOME -->
 <div id="tela-home" class="tela oculta">
-  <div class="hero">
-    <img class="hero-arte" src="imagembase.webp" alt="" aria-hidden="true">
+  <div class="hero hero-hoje" data-periodo="noite">
+    <img class="hero-gravura" id="hero-gravura" alt="" aria-hidden="true" decoding="async">
     <div class="hero-topo">
       <div class="marca">Dica de <b>Ouro</b></div>
       <button type="button" id="btn-favoritos" class="btn-fav-home" onclick="abrirFavoritos()" aria-label="Meus favoritos" title="Meus favoritos"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></button>
     </div>
     <p class="hero-saudacao" id="hero-saudacao">Bom dia, viajante</p>
     <h1 class="hero-titulo">O que ver e fazer em Ouro Preto <em>hoje</em>.</h1>
-    <div class="busca">
-      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11a7 7 0 1 1-14 0a7 7 0 0 1 14 0zM21 21l-4.3-4.3"/></svg>
-      <input id="input-busca" type="search" aria-label="Buscar em Ouro Preto" enterkeyhint="search" autocomplete="off" oninput="agendarBusca(this.value)" onkeydown="teclaBusca(event)" placeholder="Igrejas, museus, eventos…"><span id="aviso-busca" class="sr-only" aria-live="polite"></span>
-      <button type="button" class="busca-mapa" onclick="irTab('tela-explorar','tab-explorar')" aria-label="Ver no mapa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0ZM15 6.5v15M9 3.8v15"/></svg></button>
-    </div>
+  </div>
+  <div class="busca busca-hoje">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11a7 7 0 1 1-14 0a7 7 0 0 1 14 0zM21 21l-4.3-4.3"/></svg>
+    <input id="input-busca" type="search" aria-label="Buscar em Ouro Preto" enterkeyhint="search" autocomplete="off" oninput="agendarBusca(this.value)" onkeydown="teclaBusca(event)" placeholder="Igrejas, museus, eventos…"><span id="aviso-busca" class="sr-only" aria-live="polite"></span>
+    <button type="button" class="busca-mapa" onclick="irTab('tela-explorar','tab-explorar')" aria-label="Ver no mapa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0ZM15 6.5v15M9 3.8v15"/></svg></button>
   </div>
   <div class="home-corpo">
     <nav class="cats" id="cats-home" aria-label="Categorias">
@@ -701,6 +745,21 @@
 
     <!-- Seção principal — reordenável -->
     <div id="secao-destaque">
+      <div class="sec-topo sec-hoje">
+        <div>
+          <div class="eyebrow" id="hoje-data">Hoje</div>
+          <h2 id="hoje-titulo">Acontece <em>hoje</em></h2>
+        </div>
+        <a href="#" onclick="irTab('tela-agenda','tab-agenda');return false;">Ver agenda<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="filtros filtros-hoje" role="group" aria-label="Eventos de onde">
+        <button type="button" class="filtro ativo" aria-pressed="true" onclick="filtrarHoje(false)">Em Ouro Preto</button>
+        <button type="button" class="filtro" aria-pressed="false" onclick="filtrarHoje(true)">Com arredores</button>
+      </div>
+      <div class="ev-lista" id="card-ev-lista">
+        <div class="ev-vazio">Carregando…</div>
+      </div>
+
       <div class="destaque" id="card-destaque" onclick="abrirDestaque()">
         <div class="destaque-img" id="destaque-img"><div class="destaque-badge">Dica do dia</div></div>
         <div class="destaque-corpo">
@@ -712,17 +771,6 @@
             <div class="fresco" id="destaque-fresco"><span class="dot verde"></span> —</div>
           </div>
         </div>
-      </div>
-
-      <div class="sec-topo">
-        <div>
-          <div class="eyebrow">Próximos eventos</div>
-          <h2>Agenda de <em>Ouro Preto</em></h2>
-        </div>
-        <a href="#" onclick="irTab('tela-agenda','tab-agenda');return false;">Ver agenda<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
-      </div>
-      <div class="ev-lista" id="card-ev-lista">
-        <div class="ev-vazio">Carregando…</div>
       </div>
 
       <section class="promo-faixa" aria-label="Promoção para empresas">
@@ -815,7 +863,7 @@
 <!-- TELA 4: AVALIAR -->
 <div id="tela-avaliar" class="tela oculta">
   <div class="aval-header">
-    <button type="button" class="btn-redondo claro" onclick="voltarPara('tela-detalhe')" aria-label="Voltar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+    <button type="button" class="btn-redondo claro" onclick="voltar('tela-detalhe')" aria-label="Voltar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <div><div class="eyebrow">Avaliar</div><h2 id="aval-nome-loja">—</h2></div>
   </div>
   <div class="aval-corpo">
@@ -823,7 +871,7 @@
 
     <div class="aval-bloco">
       <div class="lbl-row"><div><h4><label for="aval-nome">Seu nome</label></h4><div class="hint">Aparece junto da sua avaliação.</div></div></div>
-      <input id="aval-nome" class="campo-claro" type="text" placeholder="Como você se chama?">
+      <input id="aval-nome" class="campo-claro" type="text" placeholder="Como você se chama?" autocomplete="given-name" autocapitalize="words">
     </div>
 
     <div class="aval-bloco">
@@ -874,6 +922,7 @@
     <div class="evento-hero-foto" id="lugar-foto" onclick="abrirViewerLugar()"></div>
     <div class="detalhe-nav">
       <button type="button" class="btn-redondo" onclick="voltarOrigem('tela-agenda')" aria-label="Voltar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <button type="button" class="btn-redondo" onclick="compartilharTela()" aria-label="Compartilhar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM9 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM21 19a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
     </div>
     <div class="evento-fundo">
       <div class="data-chip" id="lugar-cat-chip">—</div>
@@ -896,6 +945,7 @@
     <div class="evento-hero-foto" id="evento-foto" onclick="abrirViewerEvento()"></div>
     <div class="detalhe-nav">
       <button type="button" class="btn-redondo" onclick="voltarOrigem('tela-home')" aria-label="Voltar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <button type="button" class="btn-redondo" onclick="compartilharTela()" aria-label="Compartilhar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM9 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM21 19a3 3 0 1 1-6 0a3 3 0 0 1 6 0zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
     </div>
     <div class="evento-fundo">
       <div class="data-chip" id="evento-data-chip">—</div>
@@ -988,7 +1038,7 @@
       <div id="cad-campos-loja">
         <div class="campo-grupo">
           <label for="cad-nome">Nome do negócio</label>
-          <input id="cad-nome" type="text" placeholder="ex: Café das Pedras">
+          <input id="cad-nome" type="text" placeholder="ex: Café das Pedras" autocomplete="organization" autocapitalize="words">
         </div>
         <div class="campo-grupo">
           <span class="campo-rotulo">Categoria</span>
@@ -1001,7 +1051,7 @@
           <button type="button" class="chip-escuro" data-cat="Saúde" onclick="selecionarCatCad(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM12 8v8M8 12h8"/></svg>Saúde</button>
           </div>
           <input id="cad-categoria" type="hidden">
-          <input id="cad-subcategoria" type="text" aria-label="Detalhe da categoria" placeholder="Detalhe: ex. cachaça artesanal" style="margin-top:10px;">
+          <input id="cad-subcategoria" type="text" aria-label="Detalhe da categoria" placeholder="Detalhe: ex. cachaça artesanal" style="margin-top:10px;" autocomplete="off">
         </div>
         <div class="campo-grupo">
           <label for="cad-descricao">Breve descrição</label>
@@ -1009,15 +1059,15 @@
         </div>
         <div class="campo-grupo">
           <label for="cad-endereco">Endereço</label>
-          <input id="cad-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro">
+          <input id="cad-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro" autocomplete="street-address">
         </div>
         <div class="campo-grupo">
           <label for="cad-telefone">WhatsApp <small>(opcional)</small></label>
-          <input id="cad-telefone" type="tel" placeholder="(31) 9 9999-9999">
+          <input id="cad-telefone" type="tel" placeholder="(31) 9 9999-9999" autocomplete="tel" inputmode="tel">
         </div>
         <div class="campo-grupo">
           <label for="cad-site">Site ou Instagram <small>(opcional)</small></label>
-          <input id="cad-site" type="text" placeholder="instagram.com/seunegocio">
+          <input id="cad-site" type="text" placeholder="instagram.com/seunegocio" autocomplete="url" inputmode="url" autocapitalize="off" spellcheck="false">
         </div>
       </div>
 
@@ -1025,7 +1075,7 @@
       <div id="cad-campos-republica" style="display:none;">
         <div class="campo-grupo">
           <label for="cad-rep-nome">Nome da república</label>
-          <input id="cad-rep-nome" type="text" placeholder="ex: República dos Pinheiros">
+          <input id="cad-rep-nome" type="text" placeholder="ex: República dos Pinheiros" autocomplete="organization" autocapitalize="words">
         </div>
         <div class="campo-grupo">
           <label for="cad-rep-descricao">Breve descrição</label>
@@ -1042,15 +1092,15 @@
         </div>
         <div class="campo-grupo">
           <label for="cad-rep-endereco">Endereço</label>
-          <input id="cad-rep-endereco" type="text" placeholder="ex: R. das Flores, 10 — Centro">
+          <input id="cad-rep-endereco" type="text" placeholder="ex: R. das Flores, 10 — Centro" autocomplete="street-address">
         </div>
         <div class="campo-grupo">
           <label for="cad-rep-telefone">WhatsApp <small>(opcional)</small></label>
-          <input id="cad-rep-telefone" type="tel" placeholder="(31) 9 9999-9999">
+          <input id="cad-rep-telefone" type="tel" placeholder="(31) 9 9999-9999" autocomplete="tel" inputmode="tel">
         </div>
         <div class="campo-grupo">
           <label for="cad-rep-site">Site ou Instagram <small>(opcional)</small></label>
-          <input id="cad-rep-site" type="text" placeholder="instagram.com/republica...">
+          <input id="cad-rep-site" type="text" placeholder="instagram.com/republica..." autocomplete="url" inputmode="url" autocapitalize="off" spellcheck="false">
         </div>
       </div>
 
@@ -1058,7 +1108,7 @@
       <div id="cad-campos-ufop" style="display:none;">
         <div class="campo-grupo">
           <label for="cad-ufop-titulo">Título da oportunidade ou conteúdo</label>
-          <input id="cad-ufop-titulo" type="text" placeholder="ex: Vaga de IC em Química Analítica">
+          <input id="cad-ufop-titulo" type="text" placeholder="ex: Vaga de IC em Química Analítica" autocomplete="off">
         </div>
         <div class="campo-grupo">
           <span class="campo-rotulo">Subcategoria</span>
@@ -1079,7 +1129,7 @@
         </div>
         <div class="campo-grupo">
           <label for="cad-ufop-link">Link <small>(opcional)</small></label>
-          <input id="cad-ufop-link" type="url" placeholder="https://ufop.br/...">
+          <input id="cad-ufop-link" type="url" placeholder="https://ufop.br/..." autocomplete="url" autocapitalize="off" spellcheck="false">
         </div>
         <div class="campo-grupo">
           <label for="cad-ufop-encerramento">Data de encerramento <small>(opcional)</small></label>
@@ -1120,7 +1170,7 @@
 <!-- TELA 7: LOGIN ANUNCIANTE -->
 <div id="tela-login" class="tela oculta escura">
   <div class="login-content">
-    <button type="button" class="btn-redondo escuro" onclick="voltarPara('tela-home')" aria-label="Voltar para o app"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+    <button type="button" class="btn-redondo escuro" onclick="voltar('tela-home')" aria-label="Voltar para o app"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <div class="login-eyebrow">Área do anunciante</div>
     <h2 class="login-titulo">Entrar no <em>Dica de Ouro</em></h2>
     <p class="login-sub">Gerencie seu perfil e mantenha as informações frescas.</p>
@@ -1136,7 +1186,7 @@
     <div class="login-erro" id="login-erro" role="alert"></div>
     <div class="login-voltar">
       <button type="button" class="btn-texto ouro" onclick="irPara('tela-cadastro')">Não tenho conta — cadastrar</button>
-      <button type="button" class="btn-texto" onclick="voltarPara('tela-home')">Voltar para o app</button>
+      <button type="button" class="btn-texto" onclick="voltar('tela-home')">Voltar para o app</button>
     </div>
   </div>
 </div>
@@ -1196,7 +1246,7 @@
       </div>
       <div class="campo-editar">
         <label for="painel-horario">Horário de funcionamento</label>
-        <input id="painel-horario" type="text" placeholder="ex: 11h às 23h — fechado às 2ª">
+        <input id="painel-horario" type="text" placeholder="ex: 11h às 23h — fechado às 2ª" autocomplete="off">
       </div>
     </div>
 
@@ -1214,7 +1264,7 @@
         </div>
         <div class="campo-editar">
           <label for="painel-nome">Nome</label>
-          <input id="painel-nome" type="text" placeholder="Nome do estabelecimento">
+          <input id="painel-nome" type="text" placeholder="Nome do estabelecimento" autocomplete="organization" autocapitalize="words">
         </div>
         <div class="campo-editar">
           <label>Categoria</label>
@@ -1236,19 +1286,19 @@
             <button type="button" class="cat-option ufop" style="display:none;" data-cat="concursos" onclick="selecionarCat(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1zM17 9a4 4 0 0 1 0 6"/></svg>Concursos</button>
           </div>
           <input type="hidden" id="painel-categoria">
-          <input id="painel-subcategoria" class="campo-sub" type="text" aria-label="Detalhe da categoria" placeholder="Detalhe opcional: ex. cachaça artesanal">
+          <input id="painel-subcategoria" class="campo-sub" type="text" aria-label="Detalhe da categoria" placeholder="Detalhe opcional: ex. cachaça artesanal" autocomplete="off">
         </div>
         <div class="campo-editar">
           <label for="painel-endereco">Endereço</label>
-          <input id="painel-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro">
+          <input id="painel-endereco" type="text" placeholder="ex: R. Direita, 42 — Centro" autocomplete="street-address">
         </div>
         <div class="campo-editar">
           <label for="painel-telefone">WhatsApp</label>
-          <input id="painel-telefone" type="tel" placeholder="(31) 9 9999-9999">
+          <input id="painel-telefone" type="tel" placeholder="(31) 9 9999-9999" autocomplete="tel" inputmode="tel">
         </div>
         <div class="campo-editar">
           <label for="painel-site">Site ou Instagram</label>
-          <input id="painel-site" type="text" placeholder="Adicionar link">
+          <input id="painel-site" type="text" placeholder="Adicionar link" autocomplete="url" inputmode="url" autocapitalize="off" spellcheck="false">
         </div>
       </div>
     </div>
@@ -1345,6 +1395,72 @@
 
   // PROMOÇÃO DE LANÇAMENTO (90 dias grátis)
   // Data local no formato AAAA-MM-DD
+  // Aviso curto no rodapé, no estilo do guia (no lugar de alert)
+  let _avisoTempo = null;
+  function avisar(texto, tipo = '') {
+    const el = document.getElementById('aviso-toast');
+    if (!el) return;
+    el.textContent = texto;
+    el.className = 'aviso-toast' + (tipo ? ' ' + tipo : '');
+    el.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visivel')));
+    clearTimeout(_avisoTempo);
+    _avisoTempo = setTimeout(() => {
+      el.classList.remove('visivel');
+      setTimeout(() => { el.hidden = true; }, 250);
+    }, 4000);
+  }
+
+  // Confirmação no estilo do guia (no lugar de confirm e prompt); com palavra, só libera digitando-a
+  function confirmar({ titulo, texto, botao = 'Confirmar', perigo = false, palavra = '' }) {
+    return new Promise(resolve => {
+      const d = document.getElementById('dialogo-confirmar');
+      if (!d || typeof d.showModal !== 'function') { resolve(false); return; }
+      const campo = document.getElementById('dialogo-campo');
+      const ok = document.getElementById('dialogo-ok');
+      document.getElementById('dialogo-titulo').textContent = titulo;
+      document.getElementById('dialogo-texto').textContent = texto;
+      document.getElementById('dialogo-palavra').textContent = palavra;
+      document.getElementById('dialogo-rotulo-campo').hidden = !palavra;
+      ok.textContent = botao;
+      ok.classList.toggle('perigo', !!perigo);
+      campo.value = '';
+      const confere = () => !palavra || campo.value.trim().toUpperCase() === palavra;
+      campo.oninput = () => { ok.disabled = !confere(); };
+      ok.disabled = !confere();
+      d.returnValue = '';
+      d.onclose = () => resolve(d.returnValue === 'ok' && confere());
+      d.showModal();
+      (palavra ? campo : d.querySelector('.dialogo-cancelar')).focus();
+    });
+  }
+
+  // Falha de carga: mensagem clara e um botão que tenta de novo no mesmo lugar
+  const _repetir = {};
+  let _repetirN = 0;
+  function avisoErro(repetir, classe = 'carregando') {
+    const id = 'r' + (++_repetirN);
+    _repetir[id] = repetir;
+    return `<div class="${classe} erro-carga" role="alert">Não conseguimos carregar agora.<br><button type="button" class="btn-tentar" onclick="tentarDeNovo('${id}')">Tentar de novo</button></div>`;
+  }
+  function tentarDeNovo(id) {
+    const f = _repetir[id];
+    delete _repetir[id];
+    if (typeof f === 'function') f();
+  }
+
+  // Selo de origem dos eventos: "Fonte: Prefeitura de Ouro Preto" ou "Curadoria Dica de Ouro"
+  function rotuloFonte(f) {
+    let t = String(f || '').trim();
+    if (!t || /^dica de ouro$/i.test(t)) return 'Curadoria Dica de Ouro';
+    t = t.replace(/^fonte:\s*/i, '');
+    if (/^(https?:\/\/|www\.)/i.test(t) || /^[\w-]+(\.[\w-]+)+(\/|$)/.test(t)) {
+      try { t = new URL(/^https?:/i.test(t) ? t : 'https://' + t).hostname.replace(/^www\./, ''); } catch (e) {}
+    }
+    t = t.replace(/^instagram:?\s*/i, 'Instagram ');
+    return 'Fonte: ' + t;
+  }
+
   function hojeISO(maisDias = 0) {
     const d = new Date();
     d.setDate(d.getDate() + maisDias);
@@ -1505,6 +1621,25 @@
   // Selo com ícone (categoria do lugar, data do evento)
   function selo(ic, texto) { return icone(ic, 14, 2) + esc(texto); }
   const notaBR = n => Number(n).toFixed(1).replace('.', ',');
+  // Gravura do topo da home conforme a hora (mesmas faixas da saudação)
+  function periodoDoDia() {
+    const h = new Date().getHours();
+    return h >= 5 && h < 12 ? 'manha' : h >= 12 && h < 18 ? 'tarde' : 'noite';
+  }
+  function aplicarGravura() {
+    const hero = document.querySelector('#tela-home .hero-hoje');
+    const img = document.getElementById('hero-gravura');
+    if (!hero || !img) return;
+    const p = periodoDoDia();
+    if (hero.dataset.periodo === p && img.getAttribute('src')) return;
+    hero.dataset.periodo = p;
+    // Na primeira visita a abertura vem antes; a gravura carrega sem disputar com ela
+    img.fetchPriority = telaAtual === 'tela-splash' ? 'low' : 'high';
+    img.sizes = '540px';
+    img.srcset = `img/hoje-${p}-960.webp 960w, img/hoje-${p}-1536.webp 1536w`;
+    img.src = `img/hoje-${p}-960.webp`;
+  }
+
   function saudacao() {
     const h = new Date().getHours();
     return (h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite') + ', viajante';
@@ -1694,7 +1829,7 @@
         </div>`;
       }).join('');
     } catch(e) {
-      container.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+      container.innerHTML = avisoErro(() => abrirRepublicas());
     }
   }
 
@@ -1726,7 +1861,7 @@
     feed.innerHTML = '<div class="carregando">Carregando repúblicas…</div>';
     try {
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/republicas?order=nome.asc&select=id,nome,descricao,endereco,foto`,
+        `${SUPA_URL}/rest/v1/republicas?order=nome.asc&select=*`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
       const reps = await r.json();
@@ -1745,7 +1880,7 @@
           </div>
         </div>`;
       }).join('');
-    } catch(e) { feed.innerHTML='<div class="carregando">Erro ao carregar.</div>'; }
+    } catch(e) { feed.innerHTML = avisoErro(() => carregarRepublicasAgenda()); }
   }
 
   // UFOP
@@ -1763,6 +1898,17 @@
   function cardUFOP(item, label) {
     const enc = item.data_encerramento ? new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'short'}) : '';
     const fotoStyle = item.foto ? `background-image:url('${escUrl(item.foto)}');` : '';
+    // Sem foto: card compacto (ícone, título e unidade), sem o cabeçalho escuro vazio
+    if (!item.foto) {
+      const ic = ICONES[item.subcategoria] ? item.subcategoria : 'ufop';
+      return `<div class="lugar-card lugar-card-compacto" onclick="abrirUFOPItem('${esc(item.id)}')">
+      <div class="lugar-card-icone">${icone(ic, 22, 1.7)}</div>
+      <div class="lugar-card-body">
+        <h4>${esc(item.titulo)}</h4>
+        <div class="horario">${enc ? icone('calendario', 14, 2) + 'Encerra ' + enc : ''}</div>
+      </div>
+    </div>`;
+    }
     return `<div class="lugar-card" onclick="abrirUFOPItem('${esc(item.id)}')">
       <div class="lugar-card-hero" style="${fotoStyle}">
         <div class="lugar-card-cat">${selo('ufop', label)}</div>
@@ -1804,7 +1950,7 @@
       }
       container.innerHTML = items.map(item => cardUFOP(item, label)).join('');
     } catch(e) {
-      container.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+      container.innerHTML = avisoErro(() => abrirUFOPSubcat(subcat, label));
     }
   }
 
@@ -1860,7 +2006,7 @@
       items.forEach(i => window._ufop[i.id] = i);
       if (!items.length) { feed.innerHTML=`<div class="carregando">Nenhum conteúdo em ${esc(label)} ainda.</div>`; return; }
       feed.innerHTML = items.map(item => cardUFOP(item, label)).join('');
-    } catch(e) { feed.innerHTML='<div class="carregando">Erro ao carregar.</div>'; }
+    } catch(e) { feed.innerHTML = avisoErro(() => abrirUFOPSubcatAgenda(subcat, label)); }
   }
 
   function filtrarLojas(cat, el) {
@@ -1973,7 +2119,7 @@
         return cardLugar(l, cat, `abrirLugarIdx(${arrIdx})`);
       }).join('');
     } catch(e) {
-      feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+      feed.innerHTML = avisoErro(() => abrirLugaresPorCat(cat));
     }
   }
 
@@ -2020,14 +2166,19 @@
 
     // Data formatada
     const data = new Date(ev.data_evento + 'T12:00:00');
-    const dataStr = data.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+    // Evento de vários dias mostra o período inteiro ("6 de nov a 6 de jan")
+    const fimEv = String(ev.data_fim || '').slice(0, 10);
+    const curta = d => d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '');
+    const dataStr = fimEv && fimEv > String(ev.data_evento).slice(0, 10)
+      ? `${curta(data)} a ${curta(new Date(fimEv + 'T12:00:00'))}`
+      : data.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
     document.getElementById('evento-data-chip').innerHTML = selo('calendario', dataStr);
 
     // Nome
     document.getElementById('evento-nome').innerHTML = nomeComEm(ev.nome);
 
     // Fonte
-    document.getElementById('evento-fonte').textContent = ev.fonte || 'Dica de Ouro';
+    document.getElementById('evento-fonte').textContent = rotuloFonte(ev.fonte);
 
     // Descrição
     document.getElementById('evento-desc').textContent = ev.descricao || '';
@@ -2088,7 +2239,7 @@
     const horaCurta = ev.horario && String(ev.horario).length <= 16;
     return `<article class="ev-card" onclick="abrirEventoCompleto('${esc(ev.id)}')">
       <div class="ev-corpo">
-        <div class="ev-chips">${horaCurta ? `<span class="chip-hora">${esc(ev.horario)}</span>` : ''}<span class="chip-fonte">${esc(ev.fonte || 'Dica de Ouro')}</span>${ate}</div>
+        <div class="ev-chips">${horaCurta ? `<span class="chip-hora">${esc(ev.horario)}</span>` : ''}<span class="chip-fonte">${esc(rotuloFonte(ev.fonte))}</span>${ate}</div>
         <h4>${esc(ev.nome)}</h4>
         ${ev.horario && !horaCurta ? `<div class="local-row ev-horario">${icone('relogio', 15, 2)}<span>${esc(ev.horario)}</span></div>` : ''}
         ${ev.local ? `<div class="local-row">${icone('pin', 15, 2)}${esc(ev.local)}</div>` : ''}
@@ -2149,7 +2300,7 @@
         }
         feed.innerHTML = renderAgenda(eventos);
       } catch(e) {
-        feed.innerHTML = '<div class="carregando">Erro ao carregar eventos.</div>';
+        feed.innerHTML = avisoErro(() => filtrarAgenda(cat, el));
       }
       return;
     }
@@ -2175,7 +2326,7 @@
         eventos.forEach(ev => window._eventos[ev.id] = ev);
         if (!eventos.length) { feed.innerHTML = '<div class="carregando">Nenhum evento cadastrado.</div>'; return; }
         feed.innerHTML = renderAgenda(eventos);
-      } catch(e) { feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
+      } catch(e) { feed.innerHTML = avisoErro(() => filtrarAgenda(cat, el)); }
       return;
     }
 
@@ -2203,7 +2354,7 @@
       }
       feed.innerHTML = lugares.map(l => cardLugar(l, cat, `abrirLugar('${esc(l.id)}')`)).join('');
     } catch(e) {
-      feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>';
+      feed.innerHTML = avisoErro(() => filtrarAgenda(cat, el));
     }
   }
 
@@ -2368,49 +2519,70 @@
 
   let _lojaDestaque = null;
 
+  // Horário em texto livre: "Fechada para restauração", "temporariamente fechado"… tiram o lugar da dica;
+  // "segunda-feira fechado" tira só no dia em que está fechado
+  const DIAS_SEMANA = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+  const fechadoLongo = h => /(fechad[oa]s? (para (restaura|reforma)|todos os dias|temporariamente)|temporariamente fechad|sem visitacao regular|^\s*fechad[oa] para visita)/.test(normBusca(h));
+  function fechadoHoje(h) {
+    const dia = DIAS_SEMANA[new Date().getDay()];
+    return normBusca(h).split(/[;.]/).some(t => t.includes('fechad') && t.includes(dia));
+  }
+
+  // Igrejas e museus com foto; a escolha gira um por dia e pula foto que não carrega
+  async function escolherLugarDoDia() {
+    const cab = { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } };
+    const campos = 'select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc';
+    const [ig, mu] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/igrejas?${campos}`, cab).then(r => r.json()),
+      fetch(`${SUPA_URL}/rest/v1/museus?${campos}`, cab).then(r => r.json())
+    ]);
+    const lista = [
+      ...(Array.isArray(ig) ? ig.map(x => ({ ...x, categoria: 'Igrejas', _cat: 'Igrejas' })) : []),
+      ...(Array.isArray(mu) ? mu.map(x => ({ ...x, categoria: 'Museus', _cat: 'Museus' })) : [])
+    ].filter(x => /^https?:\/\//.test(x.foto || '') && !fechadoLongo(x.horario_funcionamento) && !fechadoHoje(x.horario_funcionamento));
+    if (!lista.length) return null;
+    window._lugares = window._lugares || {};
+    lista.forEach(l => { if (!window._lugares[l.id]) window._lugares[l.id] = l; });
+    const dia = Math.floor(new Date(hojeISO() + 'T12:00:00').getTime() / 86400000);
+    const carrega = url => new Promise(ok => {
+      const im = new Image();
+      const t = setTimeout(() => ok(false), 4000);
+      im.onload = () => { clearTimeout(t); ok(true); };
+      im.onerror = () => { clearTimeout(t); ok(false); };
+      im.src = url;
+    });
+    for (let k = 0; k < Math.min(5, lista.length); k++) {
+      const l = lista[(dia + k * 7) % lista.length];
+      if (await carrega(l.foto)) return window._lugares[l.id];
+    }
+    return null;
+  }
+
   async function carregarDestaque(lojas) {
     const set = (id, html) => { document.getElementById(id).innerHTML = html; };
     const badge = document.querySelector('.destaque-badge');
     const resumo = t => t ? esc(t.substring(0, 110)) + (t.length > 110 ? '…' : '') : '';
-    // Busca o próximo evento (data futura mais próxima)
+    // Dica do dia: uma igreja ou um museu com foto, o mesmo para todos no mesmo dia
     try {
-      const hoje = hojeISO();
-      const r = await fetch(
-        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hoje}&order=data_evento.asc&limit=1&select=*`,
-        { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
-      );
-      const eventos = await r.json();
-      if (eventos.length) {
-        const ev = eventos[0];
-        window._eventos = window._eventos || {};
-        window._eventos[ev.id] = ev;
-
-        const data = new Date(ev.data_evento + 'T12:00:00');
-        const dataStr = data.toLocaleDateString('pt-BR', { day:'numeric', month:'long' });
-
-        // Preenche o card de destaque com o evento
-        set('destaque-cat', esc(ev.fonte || 'Evento'));
-        set('destaque-nome', nomeComEm(ev.nome));
-        set('destaque-desc', resumo(ev.descricao));
-
-        // Foto
-        const imgEl = document.getElementById('destaque-img');
-        if (ev.foto) imgEl.style.backgroundImage = `url('${ev.foto}')`;
-
-        // Data e horário
-        set('destaque-rating', `${icone('calendario', 14, 2)} ${dataStr}`);
-        set('destaque-fresco', `${icone('relogio', 14, 2)} ${esc(ev.horario || 'Em breve')}`);
-
-        if (badge) badge.textContent = 'Próximo evento';
-
-        // Clique abre o evento
-        document.getElementById('card-destaque').onclick = () => abrirEventoCompleto(ev.id);
+      const l = await escolherLugarDoDia();
+      if (l) {
+        const curto = t => t.length > 44 ? t.slice(0, 43).trim() + '…' : t;
+        set('destaque-cat', esc(l.categoria === 'Igrejas' ? 'Igreja' : 'Museu'));
+        set('destaque-nome', nomeComEm(l.nome));
+        set('destaque-desc', resumo(l.descricao));
+        document.getElementById('destaque-img').style.backgroundImage = `url('${escUrl(l.foto)}')`;
+        set('destaque-rating', l.horario_funcionamento
+          ? `${icone('relogio', 14, 2)} ${esc(curto(l.horario_funcionamento))}`
+          : (l.endereco ? `${icone('pin', 14, 2)} ${esc(curto(l.endereco))}` : ''));
+        set('destaque-fresco', '');
+        if (badge) badge.textContent = 'Dica do dia';
+        document.getElementById('card-destaque').onclick = () => abrirLugar(l.id);
         return;
       }
     } catch(e) {}
 
-    // Fallback: loja mais acessada com info fresca
-    if (!lojas.length) return;
+    // Sem lugar com foto: a loja mais acessada com info fresca; sem lojas, o card sai
+    if (!lojas.length) { document.getElementById('card-destaque').style.display = 'none'; return; }
     const frescas = lojas.filter(l => {
       const at = l['ATUALIZADO_EM'] || l.atualizado_em;
       if (!at) return false;
@@ -2457,7 +2629,7 @@
 
   async function abrirLojaPorId(id, tc) {
     const loja = (window._lojas || {})[id];
-    if (!loja) { alert('Loja não encontrada. Recarregue o app.'); return; }
+    if (!loja) { avisar('Não encontramos este perfil. Ele pode ter saído do guia.', 'erro'); return; }
     // Registra acesso
     const nome = loja['NOME'] || loja.nome || '';
     registrarAcesso('loja', id, nome);
@@ -2651,7 +2823,7 @@
     const el = document.getElementById('lista-lojas');
     try {
       const lojas = await buscarLojasAtivas('select=*&order=created_at.desc');
-      if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
+      if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; carregarDestaque([]); return; }
       // "Atualizados recentemente": quem atualizou por último vem primeiro
       lojas.sort((a, b) => new Date(b['ATUALIZADO_EM'] || 0) - new Date(a['ATUALIZADO_EM'] || 0));
       // Sem novidade nos últimos 30 dias, a seção não promete "recentemente"
@@ -2662,11 +2834,9 @@
       _todasLojas = lojas;
       await renderLojas(lojas);
       carregarDestaque(lojas);
-      // Link direto para um perfil: guiadicadeouro.com.br/?loja=123
-      const idLink = new URLSearchParams(location.search).get('loja');
-      if (idLink && window._lojas?.[idLink]) abrirLojaPorId(window._lojas[idLink].id, 't1');
+      // O link direto para um perfil (?loja=123 ou #/loja/123) é aberto pelas ROTAS, no fim da página
     } catch(e) {
-      el.innerHTML = '<div class="carregando">Erro ao carregar. Tente novamente.</div>';
+      el.innerHTML = avisoErro(() => carregarLojas());
     }
   }
 
@@ -2676,12 +2846,12 @@
     try {
       const headers = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` };
       const [rIg, rMu, rMi, rPa, rRe, rUf] = await Promise.all([
-        fetch(`${SUPA_URL}/rest/v1/igrejas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/museus?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/minas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/parques_cachoeiras?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/republicas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?ativo=eq.true&select=id,titulo,descricao,subcategoria,link,foto,origem,unidade,campus,responsavel&order=created_at.desc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/igrejas?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/museus?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/minas?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/parques_cachoeiras?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/republicas?select=*&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?ativo=eq.true&select=id,titulo,descricao,subcategoria,link,foto,data_encerramento,origem,unidade,campus,responsavel&order=created_at.desc`, { headers }),
       ]);
       const igrejas = (await rIg.json()).map(x => ({ ...x, _cat: 'Igrejas', _tab: 'igrejas' }));
       const museus  = (await rMu.json()).map(x => ({ ...x, _cat: 'Museus', _tab: 'museus' }));
@@ -2692,7 +2862,7 @@
       _todosLugares = [...igrejas, ...museus, ...minas, ...parques, ...reps, ...ufops];
       // Indexa para abrir depois
       window._lugares = window._lugares || {};
-      [...igrejas, ...museus, ...minas, ...parques].forEach(l => { l.categoria = l._cat; window._lugares[l.id] = l; });
+      [...igrejas, ...museus, ...minas, ...parques].forEach(l => { l.categoria = l._cat; window._lugares[l.id] = { ...(window._lugares[l.id] || {}), ...l }; });
       window._republicas = window._republicas || {};
       reps.forEach(r => { window._republicas[r.id] = r; });
       window._ufop = window._ufop || {};
@@ -3001,8 +3171,8 @@
     const ant = document.getElementById(anterior);
     ant.classList.add('saindo');
     setTimeout(() => {
-      ant.classList.add('oculta');
       ant.classList.remove('saindo');
+      if (anterior !== telaAtual) ant.classList.add('oculta');  // o visitante pode ter voltado antes do fim da animação
     }, 320);
     document.getElementById('tabbar').style.display = TELAS_COM_TAB.includes(id) ? 'flex' : 'none';
     marcarTab(id);
@@ -3076,7 +3246,7 @@
   function cadVoltar() {
     const logado = !!localStorage.getItem('dica_uid');
     if (_cadEtapa > (logado ? 2 : 1)) { cadIrEtapa(_cadEtapa - 1); return; }
-    voltarPara(_origemCadastro && _origemCadastro !== 'tela-cadastro' ? _origemCadastro : (logado ? 'tela-painel' : 'tela-home'));
+    voltar(_origemCadastro && _origemCadastro !== 'tela-cadastro' ? _origemCadastro : (logado ? 'tela-painel' : 'tela-home'));
   }
 
   function voltarPara(id) {
@@ -3788,7 +3958,7 @@
     const tabela = localStorage.getItem('dica_loja_tabela') || 'loja';
 
     if (!lojaId) {
-      alert('Nenhum anúncio selecionado.');
+      avisar('Escolha um anúncio antes de apagar.', 'erro');
       return;
     }
     const tokenApagar = await tokenValido();
@@ -3797,14 +3967,12 @@
     const item = (window._lojasDoAnunciante || []).find(l => String(l.id) === String(lojaId));
     const nome = item ? (item['NOME'] || item.nome || item.titulo || 'este anúncio') : 'este anúncio';
 
-    const ok = confirm(`Tem certeza que quer apagar "${nome}"? Esta ação não pode ser desfeita.`);
+    const ok = await confirmar({
+      titulo: `Apagar "${nome}"?`,
+      texto: 'O anúncio sai do guia na hora e não dá para desfazer.',
+      botao: 'Apagar anúncio', perigo: true, palavra: 'APAGAR'
+    });
     if (!ok) return;
-
-    const confirmacao = prompt(`Para confirmar, digite APAGAR (em maiúsculas):`);
-    if (confirmacao !== 'APAGAR') {
-      alert('Cancelado.');
-      return;
-    }
 
     const tabelaBanco = tabela === 'republica' ? 'republicas' :
                         tabela === 'ufop' ? 'ufop_conteudo' : 'lojas';
@@ -3824,11 +3992,11 @@
 
       if (!r.ok) {
         const err = await r.json().catch(() => ({}));
-        alert('Erro ao apagar: ' + (err.message || r.status));
+        avisar('Não conseguimos apagar: ' + (err.message || r.status), 'erro');
         return;
       }
 
-      alert('Anúncio apagado com sucesso.');
+      avisar('Anúncio apagado.');
 
       // Recarrega o painel
       const uid = localStorage.getItem('dica_uid');
@@ -3840,7 +4008,7 @@
         irPara('tela-home', 'tab-inicio');
       }
     } catch(e) {
-      alert('Erro de conexão. Tente novamente.');
+      avisar('Sem conexão agora. Tente de novo em instantes.', 'erro');
     }
   }
 
@@ -3925,7 +4093,7 @@
         });
         setTimeout(() => {
           msgEl.textContent = '';
-          voltarPara('tela-detalhe');
+          voltar('tela-detalhe');
         }, 2000);
       } else {
         const err = await r.json().catch(()=>({}));
@@ -3938,41 +4106,91 @@
     }
   }
 
+  // ACONTECE HOJE: eventos de hoje e dos próximos dias em Ouro Preto; os arredores entram pelo filtro
+  let _eventosHome = [];
+  let _hojeArredores = false;
+  try { _hojeArredores = localStorage.getItem('dica_hoje_arredores') === '1'; } catch (e) {}
+  const emOuroPreto = ev => normBusca(ev.local).includes('ouro preto');
+  // "Teatro Ouro Preto, Rua X, Ouro Preto - MG" → "Teatro Ouro Preto, Rua X"; outra cidade continua no texto
+  const localCurto = t => String(t || '').replace(/,?\s*Ouro Preto\s*-\s*MG\.?\s*$/i, '').replace(/\s*-\s*MG\.?\s*$/i, '').trim();
+
   async function carregarCardEventos() {
     const lista = document.getElementById('card-ev-lista');
     if (!lista) return;
     try {
       const hoje = hojeISO();
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&data_evento=gte.${hoje}&order=data_evento.asc&select=id,nome,data_evento,fonte,horario,local&limit=3`,
+        `${SUPA_URL}/rest/v1/eventos?ativo=eq.true&or=(data_evento.gte.${hoje},data_fim.gte.${hoje})&order=data_evento.asc&limit=80&select=id,nome,data_evento,data_fim,fonte,horario,local,foto`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
       const eventos = await r.json();
-      if (!eventos.length) {
-        lista.innerHTML = '<div class="ev-vazio">Nenhum evento cadastrado.</div>';
-        return;
-      }
+      if (!Array.isArray(eventos)) throw new Error('resposta inesperada');
       // Guarda em memória para o clique funcionar (o detalhe busca o evento completo)
       window._eventos = window._eventos || {};
       eventos.forEach(ev => { if (!window._eventos[ev.id]) window._eventos[ev.id] = ev; });
+      _eventosHome = eventos;
+      renderHoje();
+    } catch(e) {
+      lista.innerHTML = avisoErro(() => carregarCardEventos(), 'ev-vazio');
+    }
+  }
 
-      lista.innerHTML = eventos.map(ev => {
-        const data = new Date(ev.data_evento + 'T12:00:00');
-        const dia = data.getDate();
-        const mes = data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.','');
-        const sub = [ev.horario, ev.local].filter(Boolean).join(' · ') || ev.fonte || 'Dica de Ouro';
-        return `<div class="ev-row" onclick="abrirEventoCompleto('${esc(ev.id)}')">
-          <div class="ev-data"><div class="d">${dia}</div><div class="m">${mes}</div></div>
+  function renderHoje() {
+    const lista = document.getElementById('card-ev-lista');
+    if (!lista) return;
+    const hoje = hojeISO();
+    const dataLonga = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    const eyebrow = document.getElementById('hoje-data');
+    if (eyebrow) eyebrow.textContent = dataLonga.charAt(0).toUpperCase() + dataLonga.slice(1);
+    document.querySelectorAll('.filtros-hoje .filtro').forEach((b, i) => {
+      const on = (i === 1) === _hojeArredores;
+      b.classList.toggle('ativo', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    const ini = ev => String(ev.data_evento || '').slice(0, 10);
+    const fim = ev => String(ev.data_fim || ev.data_evento || '').slice(0, 10);
+    const base = _eventosHome.filter(ev => _hojeArredores || emOuroPreto(ev));
+    // Hoje: primeiro os eventos de um dia, depois os que duram vários dias
+    const deHoje = base.filter(ev => ini(ev) <= hoje && fim(ev) >= hoje)
+      .sort((a, b) => (fim(a) > ini(a)) - (fim(b) > ini(b)));
+    const depois = base.filter(ev => ini(ev) > hoje);
+    const itens = [...deHoje, ...depois].slice(0, 5);
+    const titulo = document.getElementById('hoje-titulo');
+    if (titulo) titulo.innerHTML = deHoje.length ? 'Acontece <em>hoje</em>' : 'Próximos <em>dias</em>';
+    if (!itens.length) {
+      const fora = _eventosHome.length - base.length;
+      lista.innerHTML = fora && !_hojeArredores
+        ? `<div class="ev-vazio">Nada na agenda de Ouro Preto nos próximos dias. <button type="button" class="link-inline" onclick="filtrarHoje(true)">Ver ${fora} nos arredores</button></div>`
+        : '<div class="ev-vazio">Nenhum evento na agenda por enquanto.</div>';
+      return;
+    }
+    const semana = 6 * 86400000;
+    lista.innerHTML = itens.map(ev => {
+      const ehHoje = ini(ev) <= hoje;
+      const d = new Date((ehHoje ? hoje : ini(ev)) + 'T12:00:00');
+      const rotulo = ehHoje ? 'hoje'
+        : (d - new Date(hoje + 'T12:00:00') <= semana
+          ? d.toLocaleDateString('pt-BR', { weekday: 'short' })
+          : d.toLocaleDateString('pt-BR', { month: 'short' })).replace('.', '');
+      const ate = fim(ev) > ini(ev) && fim(ev) > hoje
+        ? 'até ' + new Date(fim(ev) + 'T12:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '')
+        : '';
+      const sub = [ate, ev.horario, localCurto(ev.local)].filter(Boolean).join(' · ');
+      return `<div class="ev-row" onclick="abrirEventoCompleto('${esc(ev.id)}')">
+          <div class="ev-data${ehHoje ? ' hoje' : ''}"><div class="d">${d.getDate()}</div><div class="m">${esc(rotulo)}</div></div>
           <div class="ev-texto">
             <div class="nome">${esc(ev.nome)}</div>
             <div class="src">${esc(sub)}</div>
           </div>
           ${icone('chevron', 16, 2)}
         </div>`;
-      }).join('');
-    } catch(e) {
-      lista.innerHTML = '<div class="ev-vazio">Erro ao carregar.</div>';
-    }
+    }).join('');
+  }
+
+  function filtrarHoje(arredores) {
+    _hojeArredores = !!arredores;
+    try { localStorage.setItem('dica_hoje_arredores', _hojeArredores ? '1' : '0'); } catch (e) {}
+    renderHoje();
   }
 
   // MAPA
@@ -4421,7 +4639,7 @@
   async function abrirAdmin() {
     const email = localStorage.getItem('dica_email');
     if (email !== ADMIN_EMAIL) {
-      alert('Acesso restrito ao administrador.');
+      avisar('Área restrita à administração do guia.', 'erro');
       return;
     }
     irPara('tela-admin');
@@ -4545,11 +4763,11 @@
           }).join('')}
         </div>
 
-        <button class="btn-sair-admin" onclick="voltarPara('tela-painel')">Voltar ao painel</button>
+        <button class="btn-sair-admin" onclick="voltar('tela-painel')">Voltar ao painel</button>
         <button class="btn-sair-admin" style="margin-top:6px;" onclick="carregarAdmin()">Atualizar relatório</button>
       `;
     } catch(e) {
-      corpo.innerHTML = `<div class="carregando" style="color:var(--cal);">Erro ao carregar. Tente novamente.</div>`;
+      corpo.innerHTML = avisoErro(() => carregarAdmin());
     }
   }
 
@@ -4598,6 +4816,13 @@
   }
 
   document.getElementById('hero-saudacao').textContent = saudacao();
+  aplicarGravura();
+  // Voltando ao site depois de horas, a gravura e a saudação acompanham a hora
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    aplicarGravura();
+    document.getElementById('hero-saudacao').textContent = saudacao();
+  });
 
   // Telas escondidas ficam fora do alcance do teclado e do leitor de tela
   // (roda de novo quando a página termina de carregar, para as telas que vêm depois deste script)
@@ -4640,7 +4865,7 @@
 
   // Quem já visitou, ou chega por um link direto, vai direto para a home
   try {
-    if (localStorage.getItem('dica_visitou') || new URLSearchParams(location.search).has('loja')) voltarPara('tela-home');
+    if (localStorage.getItem('dica_visitou') || new URLSearchParams(location.search).has('loja') || /^#\/./.test(location.hash)) voltarPara('tela-home');
     localStorage.setItem('dica_visitou', '1');
   } catch (e) {}
   carregarLojas();
@@ -4770,6 +4995,28 @@
     return bannerHTML(subcat || 'ufop', 'É da UFOP?', BANNERS_UFOP[subcat] || BANNERS_UFOP.geral, 'Divulgar aqui',
       subcat ? "dicaAnunciar('ufop','" + subcat + "')" : "dicaAnunciar('ufop')");
   }
+  // Lista vazia de uma categoria comercial: a gravura da categoria e um caminho para o turista antes do convite
+  var ARTE_CAT = {
+    'Comer':    ['comer', 393, 'restaurantes e cafés'],
+    'Beber':    ['beber', 422, 'bares'],
+    'Hospedar': ['hospedar', 435, 'hospedagens'],
+    'Comprar':  ['comprar', 404, 'lojas e ateliês'],
+    'Serviços': ['servicos', 445, 'serviços']
+  };
+  function vazioComArte(ctx) {
+    var cat = String(ctx || '').indexOf('loja:') === 0 ? String(ctx).slice(5) : '';
+    var a = ARTE_CAT[cat];
+    if (!a) return '';
+    return '<div class="vazio-cat">' +
+      '<img class="vazio-cat-arte" src="img/cat-' + a[0] + '.webp" alt="" width="600" height="' + a[1] + '" decoding="async">' +
+      '<p>Ainda não há ' + a[2] + ' no guia. Enquanto isso:</p>' +
+      '<div class="vazio-cat-atalhos">' +
+        '<button type="button" onclick="irTab(\'tela-agenda\',\'tab-agenda\')">Agenda</button>' +
+        '<button type="button" onclick="abrirLugaresPorCat(\'Igrejas\')">Igrejas</button>' +
+        '<button type="button" onclick="abrirLugaresPorCat(\'Museus\')">Museus</button>' +
+      '</div></div>';
+  }
+
   function bannerDoContexto(ctx) {
     if (!ctx || ctx === 'busca') return '';
     if (ctx.indexOf('loja:') === 0) return bannerLoja(ctx.slice(5));
@@ -4814,7 +5061,7 @@
     if (VAZIO_REPUBLICA.test(texto)) ctx = 'republicas';
     var html = bannerDoContexto(ctx);
     if (!html) return;
-    if (VAZIO_LOJA.test(texto) || VAZIO_REPUBLICA.test(texto)) lista.innerHTML = html;
+    if (VAZIO_LOJA.test(texto) || VAZIO_REPUBLICA.test(texto)) lista.innerHTML = (VAZIO_LOJA.test(texto) ? vazioComArte(ctx) : '') + html;
     else if (primeiro.classList.contains('tiles-titulo')) primeiro.insertAdjacentHTML('afterend', html);
     else lista.insertAdjacentHTML('afterbegin', html);
   }
@@ -4942,13 +5189,13 @@
     var container = document.getElementById('lista-lojas');
     container.innerHTML = '<div class="carregando">Carregando…</div>';
     try { renderListaUFOP(container, await buscarUFOP(subcat), subcat, label); }
-    catch (e) { container.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
+    catch (e) { container.innerHTML = avisoErro(function () { window.abrirUFOPSubcat(subcat, label); }); }
   };
   window.abrirUFOPSubcatAgenda = async function (subcat, label) {
     var feed = document.getElementById('agenda-feed');
     feed.innerHTML = '<div class="carregando">Carregando…</div>';
     try { renderListaUFOP(feed, await buscarUFOP(subcat), subcat, label); }
-    catch (e) { feed.innerHTML = '<div class="carregando">Erro ao carregar.</div>'; }
+    catch (e) { feed.innerHTML = avisoErro(function () { window.abrirUFOPSubcatAgenda(subcat, label); }); }
   };
 
   // página do item: rótulo do botão conforme o tipo de conteúdo
@@ -4962,6 +5209,309 @@
     else if (item.subcategoria === 'pos_graduacao') btn.textContent = 'Site do programa';
     else if (ESTRUTURADAS.indexOf(item.subcategoria) >= 0) btn.textContent = 'Acessar site';
   };
+})();
+</script>
+
+<!-- Avisos e confirmação no estilo do guia -->
+<div id="aviso-toast" class="aviso-toast" role="status" aria-live="polite" hidden></div>
+<dialog id="dialogo-confirmar" class="dialogo" aria-labelledby="dialogo-titulo" aria-describedby="dialogo-texto">
+  <form method="dialog">
+    <h2 id="dialogo-titulo">Confirmar</h2>
+    <p id="dialogo-texto"></p>
+    <label class="dialogo-campo" id="dialogo-rotulo-campo" hidden>Para confirmar, digite <strong id="dialogo-palavra">APAGAR</strong>
+      <input id="dialogo-campo" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    </label>
+    <div class="dialogo-acoes">
+      <button type="submit" value="cancelar" class="dialogo-cancelar">Cancelar</button>
+      <button type="submit" value="ok" class="dialogo-ok" id="dialogo-ok">Confirmar</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+// ROTAS: cada ficha, evento, categoria e aba tem endereço próprio (#/lugar/…, #/evento/…),
+// o título da aba acompanha a tela e o voltar do celular volta para a tela anterior do guia
+(function () {
+  if (typeof irPara !== 'function' || window.__rotas) return;
+  window.__rotas = true;
+
+  var TITULO_SITE = document.title;
+  var SITE = 'https://guiadicadeouro.com.br/';
+  var rotaHome = '#/';         // home: "Tudo" ou uma categoria
+  var rotaAgenda = '#/agenda'; // a tela da agenda também mostra igrejas, museus, minas e parques
+  var noHistorico = false;     // o site está respondendo ao voltar ou avançar do navegador
+
+  function slug(s) { return normBusca(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60); }
+  var CATS_HOME = ['Descubra', 'Comer', 'Beber', 'Hospedar', 'Comprar', 'Serviços', 'Saúde', 'Republicas', 'UFOP'];
+  var CATS_LUGAR = ['Igrejas', 'Museus', 'Minas', 'Parques e Cachoeiras'];
+  function porSlug(lista, s) {
+    for (var i = 0; i < lista.length; i++) if (slug(lista[i]) === s) return lista[i];
+    return null;
+  }
+
+  function rotaLugar(l) {
+    if (!l || !l.id) return '#/';
+    var cat = l.categoria || l._cat;
+    if (cat === 'UFOP') return '#/ufop/' + l.id;
+    return (cat === 'República' ? '#/republica/' : '#/lugar/') + slug(l.nome || l.titulo) + '-' + String(l.id).slice(0, 6);
+  }
+  function rotaDaTela(id) {
+    switch (id) {
+      case 'tela-home': return rotaHome;
+      case 'tela-agenda': return rotaAgenda;
+      case 'tela-explorar': return '#/mapa';
+      case 'tela-lugar': return rotaLugar(_lugarAtual);
+      case 'tela-evento': return _eventoAtual ? '#/evento/' + _eventoAtual.id : '#/agenda';
+      case 'tela-detalhe': return window._lojaAtual && window._lojaAtual.id ? '#/loja/' + window._lojaAtual.id : '#/';
+      case 'tela-cadastro': return '#/anunciar';
+      case 'tela-login': return '#/entrar';
+      case 'tela-painel': return '#/painel';
+      case 'tela-avaliar': return '#/avaliar';
+      case 'tela-pagamento': return '#/ativacao';
+      case 'tela-admin': return '#/admin';
+      default: return '#/';
+    }
+  }
+  function tituloDaTela(id) {
+    var c;
+    switch (id) {
+      case 'tela-home': c = porSlug(CATS_HOME, rotaHome.split('/')[2] || ''); return c === 'Republicas' ? 'Repúblicas' : (c || '');
+      case 'tela-agenda': return porSlug(CATS_LUGAR, rotaAgenda.split('/')[2] || '') || 'Agenda';
+      case 'tela-explorar': return 'Mapa';
+      case 'tela-lugar': return _lugarAtual ? (_lugarAtual.nome || _lugarAtual.titulo || '') : '';
+      case 'tela-evento': return _eventoAtual ? (_eventoAtual.nome || '') : '';
+      case 'tela-detalhe': c = window._lojaAtual; return c ? (c['NOME'] || c.nome || '') : '';
+      case 'tela-cadastro': return 'Anunciar';
+      case 'tela-login': return 'Entrar';
+      case 'tela-painel': return 'Meu painel';
+      case 'tela-avaliar': return 'Avaliar';
+      case 'tela-pagamento': return 'Perfil criado';
+      case 'tela-admin': return 'Administração';
+      default: return '';
+    }
+  }
+  function atualizarTitulo() {
+    var t = tituloDaTela(telaAtual);
+    document.title = t ? t + ' · Dica de Ouro' : TITULO_SITE;
+  }
+
+  // Grava a tela atual: "push" cria uma entrada no histórico (o voltar retorna a ela), "replace" só atualiza a atual
+  function marcarRota(modo) {
+    atualizarTitulo();
+    if (noHistorico || telaAtual === 'tela-splash') return;
+    var rota = rotaDaTela(telaAtual);
+    var atual = history.state && history.state.dica ? history.state : { n: 0 };
+    if (modo === 'push' && atual.tela === telaAtual && atual.rota === rota) modo = 'replace';
+    var estado = { dica: 1, n: (atual.n || 0) + (modo === 'push' ? 1 : 0), tela: telaAtual, rota: rota };
+    try {
+      if (modo === 'push') history.pushState(estado, '', rota === '#/' ? location.pathname : rota);
+      else history.replaceState(estado, '', rota === '#/' ? location.pathname : rota);
+    } catch (e) {}
+  }
+  function podeVoltar() { return !!(history.state && history.state.dica && history.state.n > 0); }
+
+  // Trocas de tela sem volta: saindo da abertura, depois do login e do cadastro concluído
+  var SEM_VOLTA = { 'tela-splash': 1, 'tela-login>tela-painel': 1, 'tela-cadastro>tela-pagamento': 1, 'tela-cadastro>tela-painel': 1 };
+
+  var irParaOriginal = window.irPara;
+  window.irPara = function (id) {
+    var antes = telaAtual;
+    var r = irParaOriginal.apply(this, arguments);
+    if (telaAtual !== antes) marcarRota(SEM_VOLTA[antes] || SEM_VOLTA[antes + '>' + telaAtual] ? 'replace' : 'push');
+    return r;
+  };
+  var voltarParaOriginal = window.voltarPara;
+  window.voltarPara = function () {
+    var r = voltarParaOriginal.apply(this, arguments);
+    marcarRota('replace');
+    return r;
+  };
+  var irTabOriginal = window.irTab;
+  window.irTab = function (telaId) {
+    if (telaId === 'tela-agenda') rotaAgenda = '#/agenda';
+    var antes = telaAtual;
+    var r = irTabOriginal.apply(this, arguments);
+    if (telaAtual === antes) marcarRota('replace');
+    return r;
+  };
+  var filtrarLojasOriginal = window.filtrarLojas;
+  window.filtrarLojas = function (cat) {
+    rotaHome = cat === 'Tudo' ? '#/' : '#/categoria/' + slug(cat);
+    var r = filtrarLojasOriginal.apply(this, arguments);
+    if (telaAtual === 'tela-home') marcarRota('replace');
+    return r;
+  };
+  var buscarLojasOriginal = window.buscarLojas;
+  window.buscarLojas = function () {
+    if (rotaHome !== '#/') { rotaHome = '#/'; if (telaAtual === 'tela-home') marcarRota('replace'); }
+    return buscarLojasOriginal.apply(this, arguments);
+  };
+  var abrirLugaresPorCatOriginal = window.abrirLugaresPorCat;
+  window.abrirLugaresPorCat = function (cat) {
+    rotaAgenda = '#/lugares/' + slug(cat === 'Parques' ? 'Parques e Cachoeiras' : cat);
+    var antes = telaAtual;
+    var r = abrirLugaresPorCatOriginal.apply(this, arguments);
+    if (telaAtual === antes) marcarRota('replace');
+    return r;
+  };
+
+  // Botões "voltar" das telas: com tela anterior do guia no histórico, fazem o mesmo que o voltar do celular
+  var voltarOrigemOriginal = window.voltarOrigem;
+  window.voltarOrigem = function () {
+    if (podeVoltar()) { history.back(); return; }
+    return voltarOrigemOriginal.apply(this, arguments);
+  };
+  window.voltar = function (id) {
+    if (podeVoltar()) { history.back(); return; }
+    return voltarPara(id);
+  };
+
+  // Compartilhar a ficha aberta (lugar ou evento) com o endereço próprio dela
+  window.compartilharTela = function () {
+    var ev = telaAtual === 'tela-evento';
+    var item = ev ? _eventoAtual : _lugarAtual;
+    if (!item) return;
+    var nome = item.nome || item.titulo || 'Dica de Ouro';
+    var url = SITE + rotaDaTela(telaAtual);
+    registrarAcesso('compartilhar', item.id || '-', nome);
+    var texto = nome + ' no Dica de Ouro, o guia de Ouro Preto:';
+    if (navigator.share) navigator.share({ title: 'Dica de Ouro', text: texto, url: url }).catch(function () {});
+    else window.open('https://wa.me/?text=' + encodeURIComponent(texto + ' ' + url), '_blank');
+  };
+
+  // ---------------------------------------------------------------- abrir um endereço
+  function esperar(cond, ms) {
+    return new Promise(function (ok) {
+      var t0 = Date.now();
+      (function tenta() {
+        var v = null;
+        try { v = cond(); } catch (e) {}
+        if (v) return ok(v);
+        if (Date.now() - t0 > (ms || 12000)) return ok(null);
+        setTimeout(tenta, 150);
+      })();
+    });
+  }
+  function cabecalho() { return { headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY } }; }
+  var baseLugares = null;
+  function carregarLugaresBase() {
+    if (baseLugares) return baseLugares;
+    var campos = 'select=id,nome,descricao,endereco,site,horario_funcionamento,foto';
+    var tabelas = [['igrejas', 'Igrejas'], ['museus', 'Museus'], ['minas', 'Minas'], ['parques_cachoeiras', 'Parques']];
+    var pedidos = tabelas.map(function (t) {
+      return fetch(SUPA_URL + '/rest/v1/' + t[0] + '?' + campos, cabecalho()).then(function (r) { return r.json(); }).then(function (lista) {
+        window._lugares = window._lugares || {};
+        (Array.isArray(lista) ? lista : []).forEach(function (l) {
+          l.categoria = t[1]; l._cat = t[1];
+          window._lugares[l.id] = Object.assign({}, window._lugares[l.id] || {}, l);
+        });
+      });
+    });
+    pedidos.push(fetch(SUPA_URL + '/rest/v1/republicas?select=*', cabecalho()).then(function (r) { return r.json(); }).then(function (lista) {
+      window._republicas = window._republicas || {};
+      (Array.isArray(lista) ? lista : []).forEach(function (r) { window._republicas[r.id] = r; });
+    }));
+    baseLugares = Promise.all(pedidos).catch(function () { baseLugares = null; });
+    return baseLugares;
+  }
+  function porPrefixo(mapa, prefixo) {
+    var ids = Object.keys(mapa || {});
+    for (var i = 0; i < ids.length; i++) if (ids[i].indexOf(prefixo) === 0) return mapa[ids[i]];
+    return null;
+  }
+  function carregarItemUFOP(id) {
+    if ((window._ufop || {})[id]) return Promise.resolve(true);
+    return fetch(SUPA_URL + '/rest/v1/ufop_conteudo?id=eq.' + encodeURIComponent(id) + '&ativo=eq.true&select=*', cabecalho())
+      .then(function (r) { return r.json(); })
+      .then(function (lista) {
+        if (!Array.isArray(lista) || !lista.length) return false;
+        var x = lista[0];
+        window._ufop = window._ufop || {};
+        window._ufop[x.id] = Object.assign({}, x, { nome: x.titulo, _cat: 'UFOP', _tab: 'ufop' });
+        return true;
+      })
+      .catch(function () { return false; });
+  }
+  function chipHome(cat) {
+    var chips = document.querySelectorAll('#cats-home .cat');
+    for (var i = 0; i < chips.length; i++) if ((chips[i].getAttribute('onclick') || '').indexOf("'" + cat + "'") >= 0) return chips[i];
+    return null;
+  }
+  function irParaHome() { if (telaAtual !== 'tela-home') irTab('tela-home', 'tab-inicio'); }
+
+  async function abrirRota(rota) {
+    var m;
+    rota = rota || '';
+    if (rota === '' || rota === '#' || rota === '#/') {
+      irParaHome();
+      if (rotaHome !== '#/' && chipHome('Tudo')) filtrarLojas('Tudo', chipHome('Tudo'));
+      return;
+    }
+    if ((m = /^#\/categoria\/([a-z0-9-]+)$/.exec(rota))) {
+      var cat = porSlug(CATS_HOME, m[1]);
+      irParaHome();
+      // Espera a lista da home terminar de carregar; senão ela chega depois e cobre a categoria
+      await esperar(function () { return !/Carregando/.test(document.getElementById('lista-lojas').textContent); }, 15000);
+      if (cat && chipHome(cat)) filtrarLojas(cat, chipHome(cat));
+      return;
+    }
+    if (rota === '#/agenda') return irTab('tela-agenda', 'tab-agenda');
+    if (rota === '#/mapa') return irTab('tela-explorar', 'tab-explorar');
+    if (rota === '#/anunciar') return irPara('tela-cadastro');
+    if ((m = /^#\/lugares\/([a-z0-9-]+)$/.exec(rota)) && porSlug(CATS_LUGAR, m[1])) return abrirLugaresPorCat(porSlug(CATS_LUGAR, m[1]));
+    if ((m = /^#\/evento\/([0-9a-f-]{8,})$/.exec(rota))) return abrirEventoCompleto(m[1]);
+    if ((m = /^#\/loja\/(\d+)$/.exec(rota))) {
+      var idLoja = m[1];
+      if (await esperar(function () { return (window._lojas || {})[idLoja]; })) return abrirLojaPorId(Number(idLoja), 't1');
+    }
+    if ((m = /^#\/(lugar|republica)\/(?:[a-z0-9-]*-)?([0-9a-f]{6})$/.exec(rota))) {
+      await carregarLugaresBase();
+      var l = porPrefixo(m[1] === 'lugar' ? window._lugares : window._republicas, m[2]);
+      if (l) return m[1] === 'lugar' ? abrirLugar(l.id) : abrirRepublica(l.id);
+    }
+    if ((m = /^#\/ufop\/([0-9a-f-]{36})$/.exec(rota))) {
+      if (await carregarItemUFOP(m[1])) return abrirUFOPItem(m[1]);
+    }
+    // Endereço desconhecido ou ficha que saiu do ar: fica na home
+    irParaHome();
+  }
+
+  // Voltar e avançar do navegador (e do celular)
+  window.addEventListener('popstate', function (e) {
+    var st = e.state;
+    noHistorico = true;
+    var pendente = null;
+    try {
+      if (st && st.dica && st.tela && document.getElementById(st.tela)) {
+        // A tela ainda mostra o que mostrava: só volta para ela, sem recarregar (a lista continua onde estava)
+        if (rotaDaTela(st.tela) === st.rota) { if (telaAtual !== st.tela) voltarParaOriginal(st.tela); }
+        else pendente = abrirRota(st.rota);
+      } else {
+        pendente = abrirRota(location.hash);
+      }
+    } catch (err) {}
+    Promise.resolve(pendente).catch(function () {}).then(function () {
+      noHistorico = false;
+      if (st && st.dica) atualizarTitulo();
+      else marcarRota('replace');  // endereço digitado: esta entrada passa a ser do guia
+    });
+  });
+
+  // Chegada: link direto abre a ficha por cima da home (o voltar cai no guia, não fora dele)
+  (function iniciar() {
+    try { origemVisita(); } catch (e) {}
+    var rota = /^#\/./.test(location.hash) ? location.hash : '';
+    var loja = new URLSearchParams(location.search).get('loja');
+    if (!rota && loja && /^\d+$/.test(loja)) rota = '#/loja/' + loja;
+    if (rota && rota !== '#/') {
+      if (telaAtual === 'tela-splash') voltarParaOriginal('tela-home');
+      try { history.replaceState({ dica: 1, n: 0, tela: 'tela-home', rota: '#/' }, '', location.pathname); } catch (e) {}
+      abrirRota(rota);
+    } else {
+      try { history.replaceState({ dica: 1, n: 0, tela: telaAtual, rota: rotaDaTela(telaAtual) }, '', location.pathname); } catch (e) {}
+      atualizarTitulo();
+    }
+  })();
 })();
 </script>
 
