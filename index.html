@@ -9,11 +9,11 @@
 <meta name="apple-mobile-web-app-title" content="Dica de Ouro" />
 <meta name="theme-color" content="#1a1410" />
 <title>Dica de Ouro — Ouro Preto</title>
-<meta name="description" content="Guia de Ouro Preto atualizado por quem vive aqui: onde comer, beber e se hospedar, agenda de eventos e mapa.">
+<meta name="description" content="Guia de Ouro Preto atualizado por quem vive aqui: igrejas, museus, minas, agenda de eventos, mapa e negócios locais.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://guiadicadeouro.com.br/">
 <meta property="og:title" content="Dica de Ouro — Ouro Preto">
-<meta property="og:description" content="Descubra o que está aberto e quente agora em Ouro Preto. Negócios locais: perfil grátis por 90 dias.">
+<meta property="og:description" content="O que ver e fazer em Ouro Preto hoje: igrejas, museus, agenda de eventos e mapa. Negócios locais: perfil grátis por 90 dias.">
 <meta property="og:image" content="https://guiadicadeouro.com.br/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -23,8 +23,7 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://unpkg.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -614,6 +613,41 @@
   .dica-banner h4 { margin: 0 0 4px; font-family: 'Fraunces', Georgia, serif; font-size: 18px; line-height: 1.25; }
   .dica-banner p { margin: 0 0 12px; font-size: 14px; line-height: 1.45; opacity: .85; }
   .dica-banner .btn-primario { width: auto; max-width: 100%; margin-bottom: 0; padding: 10px 18px; font-size: 0.8rem; }
+  /* Fase 1 da auditoria de UX (nov/2026): foco, movimento, busca e ações sem botão morto */
+  :focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3px; }
+  .busca:focus-within { outline: 3px solid var(--gold-bright); outline-offset: 2px; }
+  .campo-claro { border-color: #a08f7a; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .resultado-busca { margin-top: 22px; }
+  .grupo-busca { margin: 18px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ouro-texto); }
+  .busca-vazia { text-align: center; padding: 28px 8px 8px; color: var(--texto-2); font-size: 15px; line-height: 1.5; }
+  .busca-sugestoes { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 14px 0 6px; }
+  .busca-sugestoes button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--borda-forte); background: var(--card); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+  .home-corpo:has(#lista-lojas > :is(.resultado-busca, .busca-vazia, .busca-carregando)) #sec-lista-titulo { display: none; }
+  .rotulo-rota { display: none; }
+  .cta-evento:has(.btn-site.sem-link) .btn-site { display: none; }
+  .cta-evento:has(.btn-site.sem-link) .btn-mapa { flex: 1; width: auto; gap: 8px; background: var(--ink); color: var(--gold-bright); border: none; font-weight: 600; font-size: 15px; }
+  .cta-evento:has(.btn-site.sem-link) .rotulo-rota { display: inline; }
+  .cta-evento.sem-rota .btn-mapa { display: none; }
+  .cta-evento.sem-rota:has(.btn-site.sem-link) { display: none; }
+  .mapa-aviso { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center; color: var(--texto-2); font-size: 15px; line-height: 1.5; }
+  /* 1.8 Lista com conteúdo: o convite para anunciar fica compacto. Lista vazia: cartão completo */
+  .dica-banner:not(:only-child) { align-items: center; gap: 12px; padding: 12px 14px; margin: 4px 0 12px; border-radius: 14px; }
+  .dica-banner:not(:only-child) .dica-banner-ic { flex: 0 0 34px; height: 34px; }
+  .dica-banner:not(:only-child) .dica-banner-ic svg { width: 18px; height: 18px; }
+  .dica-banner:not(:only-child) h4 { margin: 0 0 8px; font-size: 15px; }
+  .dica-banner:not(:only-child) p { display: none; }
+  .dica-banner:not(:only-child) .btn-primario { padding: 8px 14px; }
+  /* banner seguido só do aviso de lista vazia volta ao cartão completo */
+  .dica-banner:has(+ .carregando:last-child) { align-items: flex-start; gap: 14px; padding: 18px; margin: 4px 0 16px; border-radius: 18px; }
+  .dica-banner:has(+ .carregando:last-child) .dica-banner-ic { flex: 0 0 40px; height: 40px; }
+  .dica-banner:has(+ .carregando:last-child) .dica-banner-ic svg { width: 22px; height: 22px; }
+  .dica-banner:has(+ .carregando:last-child) h4 { margin: 0 0 4px; font-size: 18px; }
+  .dica-banner:has(+ .carregando:last-child) p { display: block; }
+  .dica-banner:has(+ .carregando:last-child) .btn-primario { padding: 10px 18px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  }
 </style>
 </head>
 <body>
@@ -622,7 +656,7 @@
 <div id="tela-splash" class="tela escura">
   <img class="splash-base"
        src="imagembase.webp"
-       alt="Ouro Preto"/>
+       alt="Ouro Preto" fetchpriority="high"/>
   <div class="splash-content">
     <div class="splash-eyebrow">Vila Rica · MG · 1711</div>
     <div class="splash-mark" aria-hidden="true"><span>D</span></div>
@@ -644,10 +678,10 @@
       <button type="button" id="btn-favoritos" class="btn-fav-home" onclick="abrirFavoritos()" aria-label="Meus favoritos" title="Meus favoritos"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></button>
     </div>
     <p class="hero-saudacao" id="hero-saudacao">Bom dia, viajante</p>
-    <h1 class="hero-titulo">Descubra o que está <em>aberto e quente</em> agora.</h1>
+    <h1 class="hero-titulo">O que ver e fazer em Ouro Preto <em>hoje</em>.</h1>
     <div class="busca">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11a7 7 0 1 1-14 0a7 7 0 0 1 14 0zM21 21l-4.3-4.3"/></svg>
-      <input id="input-busca" type="search" aria-label="Buscar em Ouro Preto" oninput="buscarLojas(this.value)" placeholder="Restaurantes, ateliês, bares…">
+      <input id="input-busca" type="search" aria-label="Buscar em Ouro Preto" enterkeyhint="search" autocomplete="off" oninput="agendarBusca(this.value)" onkeydown="teclaBusca(event)" placeholder="Igrejas, museus, eventos…"><span id="aviso-busca" class="sr-only" aria-live="polite"></span>
       <button type="button" class="busca-mapa" onclick="irTab('tela-explorar','tab-explorar')" aria-label="Ver no mapa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0ZM15 6.5v15M9 3.8v15"/></svg></button>
     </div>
   </div>
@@ -851,7 +885,7 @@
     <div id="lugar-infos"></div>
   </div>
   <div class="cta-evento">
-    <button type="button" class="btn-mapa" onclick="abrirMapsLugar()" aria-label="Como chegar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8-8-2z"/></svg></button>
+    <button type="button" class="btn-mapa" onclick="abrirMapsLugar()" aria-label="Como chegar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8-8-2z"/></svg><span class="rotulo-rota">Como chegar</span></button>
     <button type="button" class="btn-site" id="btn-site-lugar" onclick="abrirSiteLugar()">Ver site oficial</button>
   </div>
 </div>
@@ -874,7 +908,7 @@
     <div id="evento-infos"></div>
   </div>
   <div class="cta-evento">
-    <button type="button" class="btn-mapa" onclick="abrirMapsEvento()" aria-label="Como chegar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8-8-2z"/></svg></button>
+    <button type="button" class="btn-mapa" onclick="abrirMapsEvento()" aria-label="Como chegar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8-8-2z"/></svg><span class="rotulo-rota">Como chegar</span></button>
     <button type="button" class="btn-site" id="btn-site-evento" onclick="abrirSiteEvento()">Ver site do evento</button>
   </div>
 </div>
@@ -912,7 +946,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>
         </div>
         <div class="cad-promo-titulo"><em>90 dias</em> grátis</div>
-        <p>Perfil completo com fotos, horário, WhatsApp e estatísticas. Sem cartão e sem cobrança automática.</p>
+        <p>Perfil completo com fotos, horário, WhatsApp e estatísticas. Depois, R$ 100 por mês só se você quiser continuar. Sem cartão e sem cobrança automática.</p>
       </div>
       <div id="cad-promo-gratuito" class="cad-promo-gratuito" style="display:none;">Repúblicas e conteúdos da UFOP são sempre gratuitos.</div>
     </section>
@@ -1352,6 +1386,7 @@
   }
 
   function compartilharPerfil(lojaId, nome) {
+    registrarAcesso('compartilhar', lojaId, nome);
     const url = `https://guiadicadeouro.com.br/?loja=${lojaId}`;
     const texto = `${nome} está no Dica de Ouro, o guia de Ouro Preto. Veja e avalie:`;
     if (navigator.share) {
@@ -1668,7 +1703,7 @@
     if (!r) return;
     registrarAcesso('republica', id, r.nome);
     // Reutiliza tela de detalhe de lugar
-    window._lugarAtual = { ...r, categoria: 'República', horario_funcionamento: r.horario||'' };
+    _lugarAtual = { ...r, categoria: 'República', horario_funcionamento: r.horario||'' };
     const fotoEl = document.getElementById('lugar-foto');
     if (r.foto) { fotoEl.style.backgroundImage=`url('${r.foto}')`; fotoEl.style.display='block'; }
     else { fotoEl.style.backgroundImage=''; fotoEl.style.display='none'; }
@@ -1681,7 +1716,7 @@
     if (r.site) infos += infoRow('globo', 'Site ou Instagram', r.site, true);
     document.getElementById('lugar-infos').innerHTML = infos;
     const btnSite = document.getElementById('btn-site-lugar');
-    if (r.site) { btnSite.textContent='Ver site'; btnSite.classList.remove('sem-link'); btnSite.onclick=()=>{ let u=r.site; if(!u.startsWith('http'))u='https://'+u; window.open(u,'_blank'); }; }
+    if (r.site) { btnSite.textContent='Ver site'; btnSite.classList.remove('sem-link'); btnSite.onclick=()=>{ registrarAcesso('site', r.id, r.nome); let u=r.site; if(!u.startsWith('http'))u='https://'+u; window.open(u,'_blank'); }; }
     else { btnSite.textContent='Sem site'; btnSite.classList.add('sem-link'); }
     irPara('tela-lugar');
   }
@@ -1779,7 +1814,7 @@
     registrarAcesso('ufop', id, item.titulo);
     const sub = UFOP_SUBCATS.find(s => s.key === item.subcategoria);
     const label = sub ? sub.label : 'UFOP';
-    window._lugarAtual = { ...item, categoria: 'UFOP', nome: item.titulo };
+    _lugarAtual = { ...item, categoria: 'UFOP', nome: item.titulo };
     const fotoEl = document.getElementById('lugar-foto');
     if (item.foto) { fotoEl.style.backgroundImage=`url('${item.foto}')`; fotoEl.style.display='block'; }
     else { fotoEl.style.backgroundImage=''; fotoEl.style.display='none'; }
@@ -1797,7 +1832,7 @@
     if (item.link) {
       btnSite.textContent='Acessar oportunidade';
       btnSite.classList.remove('sem-link');
-      btnSite.onclick=()=>{ let u=item.link; if(!u.startsWith('http'))u='https://'+u; window.open(u,'_blank'); };
+      btnSite.onclick=()=>{ registrarAcesso('site', item.id, item.titulo); let u=item.link; if(!u.startsWith('http'))u='https://'+u; window.open(u,'_blank'); };
     } else {
       btnSite.textContent='Sem link cadastrado';
       btnSite.classList.add('sem-link');
@@ -2017,14 +2052,22 @@
     irPara('tela-evento');
   }
 
+  // Texto de busca do Google Maps: acrescenta a cidade só quando o endereço não traz o estado
+  function consultaMaps(texto) {
+    const t = String(texto || '').trim();
+    return encodeURIComponent(/\bMG\b|Minas Gerais/i.test(t) ? t : `${t} Ouro Preto MG`);
+  }
+
   function abrirMapsEvento() {
     if (!_eventoAtual || !_eventoAtual.local) return;
-    const query = encodeURIComponent(_eventoAtual.local + ' Ouro Preto MG');
+    registrarAcesso('rota', _eventoAtual.id, _eventoAtual.nome);
+    const query = consultaMaps(_eventoAtual.local);
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
   }
 
   function abrirSiteEvento() {
     if (!_eventoAtual || !_eventoAtual.link) return;
+    registrarAcesso('site', _eventoAtual.id, _eventoAtual.nome);
     let url = _eventoAtual.link;
     if (!url.startsWith('http')) url = 'https://' + url;
     window.open(url, '_blank');
@@ -2215,12 +2258,14 @@
 
   function abrirMapsLugar() {
     if (!_lugarAtual || !_lugarAtual.endereco) return;
-    const q = encodeURIComponent(_lugarAtual.endereco + ' Ouro Preto MG');
+    registrarAcesso('rota', _lugarAtual.id, _lugarAtual.nome);
+    const q = consultaMaps(_lugarAtual.endereco);
     window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank');
   }
 
   function abrirSiteLugar() {
     if (!_lugarAtual || !_lugarAtual.site) return;
+    registrarAcesso('site', _lugarAtual.id, _lugarAtual.nome);
     let url = _lugarAtual.site;
     if (!url.startsWith('http')) url = 'https://' + url;
     window.open(url, '_blank');
@@ -2256,6 +2301,7 @@
         end: loja['ENDEREÇO'] || '—',
         foto: loja['FOTO'] || null
       });
+      registrarAcesso('salvar', lojaId, lojaNome || '');
       if (btn) btn.classList.add('curtido');
     }
     setFavoritos(favs);
@@ -2403,7 +2449,9 @@
 
   function abrirMaps() {
     const end = localStorage.getItem('det_endereco') || '';
-    const query = encodeURIComponent(end + ' Ouro Preto MG');
+    const lojaRota = window._lojaAtual || {};
+    registrarAcesso('rota', lojaRota.id || '-', lojaRota['NOME'] || lojaRota.nome || '');
+    const query = consultaMaps(end);
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
   }
 
@@ -2473,6 +2521,7 @@
       const siteEl = document.getElementById('det-site');
       siteEl.textContent = site.replace(/^https?:\/\//, '');
       siteEl.onclick = () => {
+        registrarAcesso('site', loja.id, loja['NOME'] || loja.nome || '');
         let url = site;
         if (!url.startsWith('http')) url = 'https://' + url;
         window.open(url, '_blank');
@@ -2509,6 +2558,9 @@
 
     // Guarda endereço para Google Maps
     localStorage.setItem('det_endereco', end);
+    // Sem endereço, o botão de rota não aparece
+    const btnRota = document.getElementById('btn-mapa');
+    if (btnRota) btnRota.style.display = end ? '' : 'none';
 
     // Guarda para avaliação
     localStorage.setItem('aval_loja_id', loja.id);
@@ -2602,6 +2654,11 @@
       if (!lojas.length) { el.innerHTML='<div class="carregando">Nenhuma loja cadastrada ainda.</div>'; return; }
       // "Atualizados recentemente": quem atualizou por último vem primeiro
       lojas.sort((a, b) => new Date(b['ATUALIZADO_EM'] || 0) - new Date(a['ATUALIZADO_EM'] || 0));
+      // Sem novidade nos últimos 30 dias, a seção não promete "recentemente"
+      if (Date.now() - new Date(lojas[0]['ATUALIZADO_EM'] || 0) > 30 * 86400000) {
+        const h2 = document.querySelector('#sec-lista-titulo h2');
+        if (h2) h2.innerHTML = 'Em <em>destaque</em>';
+      }
       _todasLojas = lojas;
       await renderLojas(lojas);
       carregarDestaque(lojas);
@@ -2624,7 +2681,7 @@
         fetch(`${SUPA_URL}/rest/v1/minas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
         fetch(`${SUPA_URL}/rest/v1/parques_cachoeiras?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
         fetch(`${SUPA_URL}/rest/v1/republicas?select=id,nome,descricao,endereco,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?ativo=eq.true&select=id,titulo,descricao,subcategoria,link,foto&order=created_at.desc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?ativo=eq.true&select=id,titulo,descricao,subcategoria,link,foto,origem,unidade,campus,responsavel&order=created_at.desc`, { headers }),
       ]);
       const igrejas = (await rIg.json()).map(x => ({ ...x, _cat: 'Igrejas', _tab: 'igrejas' }));
       const museus  = (await rMu.json()).map(x => ({ ...x, _cat: 'Museus', _tab: 'museus' }));
@@ -2644,79 +2701,184 @@
     return _todosLugares;
   }
 
+  // BUSCA: ignora acentos, procura cada palavra (todas precisam aparecer) e agrupa os resultados por tipo
+  const normBusca = s => (s || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const PALAVRAS_VAZIAS = new Set(['a', 'o', 'as', 'os', 'e', 'de', 'da', 'do', 'das', 'dos', 'em', 'no', 'na', 'nos', 'nas', 'para', 'pra', 'com', 'um', 'uma', 'por']);
+  function termosBusca(texto) {
+    const todos = normBusca(texto).split(/[^a-z0-9]+/).filter(Boolean);
+    const uteis = todos.filter(t => !PALAVRAS_VAZIAS.has(t));
+    return uteis.length ? uteis : todos;
+  }
+  // 3 pontos por palavra no nome, 2 na categoria e 1 no resto; mais 2 se a frase inteira estiver no nome
+  function pontuarBusca(nome, categoria, resto, termos, frase) {
+    const n = normBusca(nome), c = normBusca(categoria), r = normBusca(resto);
+    let pontos = 0;
+    for (const t of termos) {
+      if (n.includes(t)) pontos += 3;
+      else if (c.includes(t)) pontos += 2;
+      else if (r.includes(t)) pontos += 1;
+      else return 0;
+    }
+    if (frase && n.includes(frase)) pontos += 2;
+    return pontos;
+  }
+
+  // Espera o visitante parar de digitar por 200 ms antes de buscar
+  let _buscaEspera = null;
+  function agendarBusca(valor) {
+    clearTimeout(_buscaEspera);
+    _buscaEspera = setTimeout(() => buscarLojas(valor), 200);
+  }
+  // Enter busca na hora e fecha o teclado do celular para mostrar os resultados
+  function teclaBusca(e) {
+    if (e.key !== 'Enter') return;
+    clearTimeout(_buscaEspera);
+    buscarLojas(e.target.value);
+    e.target.blur();
+  }
+
+  let _eventosBusca = null;
+  async function carregarEventosBusca() {
+    if (_eventosBusca) return _eventosBusca;
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/eventos?ativo=eq.true&select=*&order=data_evento.asc`, { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } });
+      const lista = await r.json();
+      const hoje = hojeISO();
+      // Só eventos que ainda não terminaram
+      _eventosBusca = Array.isArray(lista) ? lista.filter(ev => String(ev.data_fim || ev.data_evento || '').slice(0, 10) >= hoje) : [];
+      window._eventos = window._eventos || {};
+      _eventosBusca.forEach(ev => { if (!window._eventos[ev.id]) window._eventos[ev.id] = ev; });
+    } catch (e) { _eventosBusca = []; }
+    return _eventosBusca;
+  }
+
+  // Busca sem resultado é registrada uma vez por termo, quando o visitante para de digitar
+  let _buscaVaziaEspera = null;
+  const _buscasVaziasRegistradas = new Set();
+
   async function buscarLojas(termo) {
-    termo = (termo || '').trim().toLowerCase();
+    const bruto = (termo || '').trim();
     const marcarTudo = on => {
       document.querySelectorAll('#cats-home .cat').forEach(c => c.classList.remove('ativo'));
       const tudo = document.querySelector('#cats-home .cat[onclick*="Tudo"]');
       if (on && tudo) tudo.classList.add('ativo');
     };
+    const aviso = document.getElementById('aviso-busca');
+    const container = document.getElementById('lista-lojas');
+    clearTimeout(_buscaVaziaEspera);
 
-    if (!termo) {
+    if (!bruto) {
       moverDestaque(false);
       renderLojas(_todasLojas);
       marcarTudo(true);
+      if (aviso) aviso.textContent = '';
       return;
     }
 
     moverDestaque(true);
     marcarTudo(false);
+    if (!_todosLugares || !_eventosBusca) container.innerHTML = '<div class="carregando busca-carregando">Buscando…</div>';
+    const termos = termosBusca(bruto);
+    const frase = normBusca(bruto);
+    const [lugares, eventos] = await Promise.all([carregarTodosLugares(), carregarEventosBusca()]);
 
-    // Lojas
-    const lojasFiltradas = (_todasLojas || []).filter(l => {
-      const nome = (l['NOME'] || l.nome || '').toLowerCase();
-      const cat  = (l['CATEGORIA'] || l.categoria || '').toLowerCase();
-      const desc = (l['DESCRIÇÃO'] || l.descricao || '').toLowerCase();
-      const end  = (l['ENDEREÇO'] || l.endereco || '').toLowerCase();
-      return nome.includes(termo) || cat.includes(termo) || desc.includes(termo) || end.includes(termo);
+    // O visitante pode ter continuado digitando enquanto os dados carregavam
+    const atual = (document.getElementById('input-busca').value || '').trim();
+    if (atual !== bruto) return;
+
+    const grupos = {};
+    const somar = (grupo, item) => { (grupos[grupo] = grupos[grupo] || []).push(item); };
+    (_todasLojas || []).forEach((l, i) => {
+      const p = pontuarBusca(l['NOME'] || l.nome, l['CATEGORIA'] || l.categoria,
+        [l['DESCRIÇÃO'] || l.descricao, l['ENDEREÇO'] || l.endereco].join(' '), termos, frase);
+      if (p) somar('Comércios e serviços', { p, tipo: 'loja', l, i });
+    });
+    (lugares || []).forEach(l => {
+      let cat = l._cat, resto = [l.descricao, l.endereco].join(' ');
+      if (l._cat === 'UFOP') {
+        const sub = (typeof UFOP_SUBCATS !== 'undefined' ? UFOP_SUBCATS : []).find(s => s.key === l.subcategoria);
+        cat = ['UFOP', sub ? sub.label : '', l.subcategoria].join(' ');
+        resto = [l.descricao, l.unidade, l.campus, l.responsavel].join(' ');
+      }
+      const p = pontuarBusca(l.nome, cat, resto, termos, frase);
+      if (p) somar(l._cat === 'República' ? 'Repúblicas' : l._cat, { p, tipo: 'lugar', l });
+    });
+    (eventos || []).forEach(ev => {
+      const p = pontuarBusca(ev.nome, 'evento eventos agenda', [ev.descricao, ev.local, ev.horario, ev.fonte].join(' '), termos, frase);
+      if (p) somar('Eventos', { p, tipo: 'evento', l: ev });
     });
 
-    // Lugares (igrejas, museus, minas, parques, repúblicas, UFOP)
-    await carregarTodosLugares();
-    const lugaresFiltrados = (_todosLugares || []).filter(l => {
-      const nome = (l.nome || '').toLowerCase();
-      const desc = (l.descricao || '').toLowerCase();
-      const end  = (l.endereco || '').toLowerCase();
-      const cat  = (l._cat || '').toLowerCase();
-      return nome.includes(termo) || desc.includes(termo) || end.includes(termo) || cat.includes(termo);
-    });
-
-    // O visitante pode ter continuado digitando enquanto os lugares carregavam
-    const atual = (document.getElementById('input-busca').value || '').trim().toLowerCase();
-    if (atual !== termo) return;
-
-    const container = document.getElementById('lista-lojas');
-    const total = lojasFiltradas.length + lugaresFiltrados.length;
+    // Grupos ordenados pelo melhor resultado de cada um; dentro do grupo, do mais ao menos relevante
+    const ordem = Object.entries(grupos)
+      .map(([nome, itens]) => [nome, itens.sort((a, b) => b.p - a.p)])
+      .sort((a, b) => b[1][0].p - a[1][0].p);
+    const total = ordem.reduce((s, [, itens]) => s + itens.length, 0);
 
     if (!total) {
-      container.innerHTML = `<div class="carregando">Nenhum resultado para "${esc(termo)}". Tente outra palavra.</div>`;
+      container.innerHTML = `<div class="busca-vazia">Nada encontrado para "${esc(bruto)}".<br>Tente outra palavra ou comece por aqui:
+        <div class="busca-sugestoes">
+          <button type="button" onclick="sugestaoBusca('igreja')">Igrejas</button>
+          <button type="button" onclick="sugestaoBusca('museu')">Museus</button>
+          <button type="button" onclick="irTab('tela-agenda','tab-agenda')">Agenda</button>
+          <button type="button" onclick="irTab('tela-explorar','tab-explorar')">Mapa</button>
+        </div></div>`;
+      if (aviso) aviso.textContent = `Nenhum resultado para ${bruto}`;
+      const chave = normBusca(bruto);
+      _buscaVaziaEspera = setTimeout(() => {
+        const agora = (document.getElementById('input-busca').value || '').trim();
+        if (agora !== bruto || _buscasVaziasRegistradas.has(chave)) return;
+        _buscasVaziasRegistradas.add(chave);
+        registrarAcesso('busca_vazia', '-', bruto.slice(0, 80));
+      }, 1500);
       return;
     }
 
-    // Renderiza tudo num feed unificado
-    let html = `<div class="resultado-busca">${total} resultado${total>1?'s':''} para "${esc(termo)}"</div>`;
-
-    // Lugares primeiro
-    lugaresFiltrados.forEach(l => {
-      const foto = l.foto || '';
-      const thumbStyle = foto ? `background-image:url('${escUrl(foto)}');` : '';
-      const onclickFn = l._cat === 'República' ? `abrirRepublica('${esc(l.id)}')` :
-                        l._cat === 'UFOP' ? `abrirUFOPItem('${esc(l.id)}')` :
-                        `abrirLugar('${esc(l.id)}')`;
-      html += `<div class="lugar" onclick="${onclickFn}">
-        <div class="lugar-thumb ${foto ? '' : 't1'}" style="${thumbStyle}">${foto ? '' : icone(IC_LUGAR[l._cat] || 'pin', 28, 1.6)}</div>
-        <div class="lugar-info">
-          <div class="cat-tag">${esc(l._cat)}</div>
-          <h4>${esc(l.nome)}</h4>
-          <div class="onde">${esc(l.endereco)}</div>
-        </div>
-      </div>`;
+    let html = `<div class="resultado-busca">${total} resultado${total > 1 ? 's' : ''} para "${esc(bruto)}"</div>`;
+    ordem.forEach(([nome, itens]) => {
+      html += `<div class="grupo-busca">${esc(nome)} · ${itens.length}</div>`;
+      itens.forEach(it => { html += cardBusca(it); });
     });
-
     container.innerHTML = html;
+    if (aviso) aviso.textContent = `${total} resultado${total > 1 ? 's' : ''} para ${bruto}`;
+  }
 
-    // Depois anexa as lojas
-    if (lojasFiltradas.length) await renderLojasAppend(lojasFiltradas, container);
+  function sugestaoBusca(texto) {
+    document.getElementById('input-busca').value = texto;
+    buscarLojas(texto);
+  }
+
+  function cardBusca(it) {
+    const l = it.l;
+    if (it.tipo === 'loja') {
+      const nome = l['NOME'] || l.nome || '—', cat = l['CATEGORIA'] || l.categoria || '', end = l['ENDEREÇO'] || l.endereco || '';
+      const foto = l['FOTO'] || l.foto || '', tc = ['t1', 't2', 't3'][it.i % 3];
+      const atualizado = l['ATUALIZADO_EM'] || l.atualizado_em || null;
+      const thumb = foto ? `background-image:url('${escUrl(foto)}');` : '';
+      return `<div class="lugar" onclick="abrirLojaPorId(${Number(l.id) || 0},'${tc}')">
+        <div class="lugar-thumb ${foto ? '' : tc}" style="${thumb}">${foto ? '' : svgIcone(cat, tc)}</div>
+        <div class="lugar-info"><div class="cat-tag">${esc(cat)}</div><h4>${esc(nome)}</h4><div class="onde">${esc(end)}</div>
+          <div class="meta-row"><div class="fresco"><span class="dot ${corDot(atualizado)}"></span> ${tempoAtras(atualizado)}</div></div></div>
+      </div>`;
+    }
+    if (it.tipo === 'evento') {
+      const ini = String(l.data_evento || '').slice(0, 10), fim = String(l.data_fim || '').slice(0, 10);
+      const dia = d => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+      const quando = fim && fim > ini ? `até ${dia(fim)}` : (ini ? dia(ini) : '');
+      const thumb = l.foto ? `background-image:url('${escUrl(l.foto)}');` : '';
+      return `<div class="lugar" onclick="abrirEventoCompleto('${esc(l.id)}')">
+        <div class="lugar-thumb ${l.foto ? '' : 't2'}" style="${thumb}">${l.foto ? '' : icone('calendario', 28, 1.6)}</div>
+        <div class="lugar-info"><div class="cat-tag">Evento${quando ? ' · ' + esc(quando) : ''}</div><h4>${esc(l.nome)}</h4><div class="onde">${esc(l.local || '')}</div></div>
+      </div>`;
+    }
+    const foto = l.foto || '';
+    const thumb = foto ? `background-image:url('${escUrl(foto)}');` : '';
+    const abrir = l._cat === 'República' ? `abrirRepublica('${esc(l.id)}')` :
+                  l._cat === 'UFOP' ? `abrirUFOPItem('${esc(l.id)}')` : `abrirLugar('${esc(l.id)}')`;
+    const onde = l._cat === 'UFOP' ? (l.unidade || l.campus || '') : (l.endereco || '');
+    return `<div class="lugar" onclick="${abrir}">
+      <div class="lugar-thumb ${foto ? '' : 't1'}" style="${thumb}">${foto ? '' : icone(IC_LUGAR[l._cat] || 'pin', 28, 1.6)}</div>
+      <div class="lugar-info"><div class="cat-tag">${esc(l._cat)}</div><h4>${esc(l.nome)}</h4><div class="onde">${esc(onde)}</div></div>
+    </div>`;
   }
 
   async function renderLojasAppend(lojas, container) {
@@ -2816,7 +2978,17 @@
   let _origemDetalhe = null;   // de onde o visitante abriu um perfil, lugar ou evento
   let _origemCadastro = null;  // de onde chegou ao cadastro
 
+  // Lugar ou evento sem endereço: some o "Como chegar"; sem endereço e sem site, some a barra
+  function ajustarAcoes(id) {
+    const cta = document.querySelector(`#${id} .cta-evento`);
+    if (!cta) return;
+    const alvo = id === 'tela-lugar' ? _lugarAtual : id === 'tela-evento' ? _eventoAtual : null;
+    const temRota = !!(alvo && (id === 'tela-evento' ? alvo.local : alvo.endereco));
+    cta.classList.toggle('sem-rota', !temRota);
+  }
+
   function irPara(id) {
+    ajustarAcoes(id);
     if (id === telaAtual) return;
     const anterior = telaAtual;
     if (['tela-detalhe','tela-lugar','tela-evento'].includes(id) && TELAS_COM_TAB.includes(anterior)) _origemDetalhe = anterior;
@@ -3905,8 +4077,35 @@
 
   // MAPA
   // Cria o mapa uma vez só; nas próximas visitas à aba, só reajusta o tamanho
+  // O mapa (Leaflet) só é baixado quando alguém abre o Explorar
+  let _leafletCarga = null;
+  function carregarLeaflet() {
+    if (_leafletCarga) return _leafletCarga;
+    if (typeof L !== 'undefined') return Promise.resolve();
+    const esperar = el => new Promise((ok, falha) => { el.onload = ok; el.onerror = falha; });
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    const js = document.createElement('script');
+    js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    _leafletCarga = Promise.all([esperar(css), esperar(js)]).catch(e => {
+      css.remove(); js.remove(); _leafletCarga = null; throw e;
+    });
+    document.head.insertBefore(css, document.head.querySelector('style'));
+    document.head.appendChild(js);
+    return _leafletCarga;
+  }
+
   async function iniciarMapa() {
-    if (typeof L === 'undefined') { setTimeout(iniciarMapa, 500); return; }
+    // Espera o CSS e o JS do mapa; sem conexão, avisa e tenta de novo na próxima abertura
+    const caixa = document.getElementById('mapa-container');
+    try {
+      await carregarLeaflet();
+    } catch (e) {
+      if (caixa && !_mapa && !caixa.querySelector('.mapa-aviso')) caixa.insertAdjacentHTML('beforeend', '<div class="mapa-aviso">Não foi possível carregar o mapa. Confira a conexão e abra o Explorar de novo.</div>');
+      return;
+    }
+    caixa?.querySelector('.mapa-aviso')?.remove();
     if (_mapa) { _mapa.invalidateSize(); return; }
     if (_mapaCarregado) return;
     _mapaCarregado = true;
@@ -4065,7 +4264,9 @@
   }
   function rotasSelecionadoMapa() {
     const it = _selMapa && _selMapa.itemData;
-    if (it) window.open(`https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lng}`, '_blank');
+    if (!it) return;
+    registrarAcesso('rota', it.id || '-', it.nome || '');
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lng}`, '_blank');
   }
 
   function filtrarMapa(tipo, el) {
@@ -4151,14 +4352,36 @@
   });
 
   // REGISTRAR ACESSO
-  async function registrarAcesso(tipo, id, nome) {
+  // Origem da visita (?origem=pousada-x), guardada durante a sessão
+  function origemVisita() {
     try {
-      await fetch(`${SUPA_URL}/rest/v1/acessos`, {
-        method: 'POST',
-        headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ tipo, referencia_id: String(id), referencia_nome: nome || null })
-      });
-    } catch(e) {}
+      const p = new URLSearchParams(location.search).get('origem');
+      if (p) sessionStorage.setItem('dica_origem', p.slice(0, 60));
+      return sessionStorage.getItem('dica_origem');
+    } catch (e) { return null; }
+  }
+
+  // Registra visualizações e ações (rota, site, WhatsApp, compartilhar, salvar, busca sem resultado).
+  // Visitante e origem só são gravados depois que o arquivo SQL da Fase 1 for aplicado;
+  // até lá o banco recusa essas colunas e o registro volta ao formato de antes.
+  let _acessosBasico = false;
+  async function registrarAcesso(tipo, id, nome) {
+    const base = { tipo, referencia_id: String(id), referencia_nome: nome || null };
+    const enviar = corpo => fetch(`${SUPA_URL}/rest/v1/acessos`, {
+      method: 'POST', keepalive: true,
+      headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify(corpo)
+    });
+    try {
+      if (_acessosBasico) { await enviar(base); return; }
+      let visitante = null;
+      try { visitante = getVisitorId(); } catch (e) {}  // navegador sem localStorage
+      const r = await enviar({ ...base, visitante, origem: origemVisita() });
+      if (r.status === 400) {
+        const erro = await r.json().catch(() => ({}));
+        if (erro.code === 'PGRST204' || erro.code === '42703') { _acessosBasico = true; await enviar(base); }
+      }
+    } catch (e) {}
   }
 
   // STATS DO ANUNCIANTE
@@ -4375,6 +4598,51 @@
   }
 
   document.getElementById('hero-saudacao').textContent = saudacao();
+
+  // Telas escondidas ficam fora do alcance do teclado e do leitor de tela
+  // (roda de novo quando a página termina de carregar, para as telas que vêm depois deste script)
+  function vigiarTelas() {
+    document.querySelectorAll('.tela').forEach(t => {
+      if (t._vigiada) return;
+      t._vigiada = true;
+      const ajustar = () => { t.inert = t.classList.contains('oculta'); };
+      ajustar();
+      new MutationObserver(ajustar).observe(t, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  vigiarTelas();
+  document.addEventListener('DOMContentLoaded', vigiarTelas);
+
+  // Cards e fotos clicáveis que não são botão nem link entram no Tab e abrem com Enter ou Espaço
+  const SEL_CLICAVEL = '[onclick]:not(button):not(a):not(input):not(select):not(textarea):not(label):not(#img-viewer)';
+  function prepararClicaveis() {
+    document.querySelectorAll(SEL_CLICAVEL).forEach(el => {
+      if (el.hasAttribute('tabindex') || el.parentElement?.closest(SEL_CLICAVEL)) return;
+      el.tabIndex = 0;
+      if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
+      if (!el.getAttribute('aria-label') && !el.textContent.trim()) el.setAttribute('aria-label', 'Ampliar foto');
+    });
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const el = e.target;
+    if (el && el.matches && el.matches(SEL_CLICAVEL)) { e.preventDefault(); el.click(); }
+  });
+  let _clicaveisPendente = false;
+  new MutationObserver(registros => {
+    if (_clicaveisPendente) return;
+    // Mudanças dentro do mapa (blocos do OpenStreetMap) não criam cards
+    if (registros.every(r => r.target.closest && r.target.closest('.leaflet-container'))) return;
+    _clicaveisPendente = true;
+    requestAnimationFrame(() => { _clicaveisPendente = false; prepararClicaveis(); });
+  }).observe(document.body, { childList: true, subtree: true });
+  prepararClicaveis();
+
+  // Quem já visitou, ou chega por um link direto, vai direto para a home
+  try {
+    if (localStorage.getItem('dica_visitou') || new URLSearchParams(location.search).has('loja')) voltarPara('tela-home');
+    localStorage.setItem('dica_visitou', '1');
+  } catch (e) {}
   carregarLojas();
   carregarCardEventos();
   registrarSessao();
@@ -4477,7 +4745,7 @@
   var POR_PAGINA = 40;
 
   function norm(s) {
-    return (s || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    return (s || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
   function siglaUnidade(u) {
     var m = /\(([A-Z]{2,8})\)/.exec(u || '');
