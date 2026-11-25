@@ -850,6 +850,24 @@
     .mob-fones .info-linha:nth-child(2) { border-top: none; }
     .mob-emergencia { grid-template-columns: repeat(4, minmax(0, 160px)); }
   }
+  /* Lote 6 (nov/2026): seletor de língua */
+  .topo-acoes { display: flex; align-items: center; gap: 8px; }
+  .btn-lingua { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #f4ede04d; background: #1a141066; color: var(--cal); font: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; }
+  .hero-hoje:not([data-periodo="noite"]) .btn-lingua { border-color: #1a141033; background: #fffcf6b3; color: var(--ink); }
+  .tab-lingua { display: none; }
+  .splash-linguas { display: flex; justify-content: center; flex-wrap: wrap; gap: 0; margin-top: 18px; }
+  .splash-linguas button { min-height: 44px; padding: 0 9px; border: none; border-radius: 999px; background: transparent; color: #f4ede0b3; font: inherit; font-size: 13px; cursor: pointer; }
+  .splash-linguas button.atual { color: var(--cal); font-weight: 700; text-decoration: underline; text-underline-offset: 5px; text-decoration-color: var(--gold-bright); }
+  .dialogo-lingua .linguas { display: grid; gap: 8px; margin-top: 14px; }
+  .dialogo-lingua .linguas button { display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--borda-forte); background: transparent; color: var(--ink); font: inherit; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer; }
+  .dialogo-lingua .linguas button.atual { border-color: var(--ink); background: var(--ink); color: var(--cal); }
+  .dialogo-lingua .linguas button.atual::after { content: '✓'; color: var(--gold-bright); }
+  .dialogo-lingua p { margin-top: 14px; font-size: 14px; }
+  .aviso-lingua { margin: 10px 20px 0; font-size: 13px; line-height: 1.45; color: var(--texto-2); }
+  @media (min-width: 1024px) {
+    .tab-lingua { display: inline-flex; margin-left: 8px; min-height: 40px; border-color: #f4ede03d; background: transparent; color: #f4ede0cc; }
+    .aviso-lingua { margin-left: 0; margin-right: 0; }
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   }
@@ -871,6 +889,7 @@
       <button class="btn-primario" onclick="irPara('tela-home','tab-inicio')">Explorar Ouro Preto<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
       <button class="btn-negocio" onclick="abrirNegocio()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4a04a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>Tenho um negócio · 90 dias grátis</button>
     </div>
+    <div class="splash-linguas" role="group" aria-label="Idioma" data-sem-traducao><button type="button" lang="pt-BR" data-lingua="pt" onclick="trocarLingua('pt')">Português</button><button type="button" lang="en" data-lingua="en" onclick="trocarLingua('en')">English</button><button type="button" lang="es" data-lingua="es" onclick="trocarLingua('es')">Español</button><button type="button" lang="fr" data-lingua="fr" onclick="trocarLingua('fr')">Français</button></div>
   </div>
 </div>
 
@@ -880,7 +899,10 @@
     <img class="hero-gravura" id="hero-gravura" alt="" aria-hidden="true" decoding="async">
     <div class="hero-topo">
       <div class="marca">Dica de <b>Ouro</b></div>
-      <button type="button" class="btn-anunciar-home" onclick="abrirAnunciar()">Anunciar</button>
+      <div class="topo-acoes">
+        <button type="button" class="btn-lingua" onclick="abrirLinguas()" aria-label="Idioma" data-sem-traducao><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12a10 10 0 1 1-20 0a10 10 0 1 1 20 0zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span class="cod">PT</span></button>
+        <button type="button" class="btn-anunciar-home" onclick="abrirAnunciar()">Anunciar</button>
+      </div>
     </div>
     <p class="hero-saudacao" id="hero-saudacao">Bom dia, viajante</p>
     <h1 class="hero-titulo">O que ver e fazer em Ouro Preto <em>hoje</em>.</h1>
@@ -1153,6 +1175,7 @@
       <button type="button" class="filtro" data-cidade="mariana" aria-pressed="false" onclick="filtrarAgendaPor('cidade','mariana')">Mariana</button>
       <button type="button" class="filtro" data-cidade="arredores" aria-pressed="false" onclick="filtrarAgendaPor('cidade','arredores')">Arredores</button>
     </div>
+    <p class="aviso-lingua so-traduzido" hidden>Os eventos aparecem em português, como os organizadores publicam.</p>
   </div>
   <div class="agenda-feed" id="agenda-feed">
     <div class="carregando">Carregando…</div>
@@ -1295,7 +1318,7 @@
 </div>
 
 <!-- TELA 6: CADASTRO ANUNCIANTE -->
-<div id="tela-cadastro" class="tela oculta escura">
+<div id="tela-cadastro" data-sem-traducao class="tela oculta escura">
   <div class="cadastro-content">
     <button type="button" class="btn-redondo escuro" onclick="cadVoltar()" aria-label="Voltar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <div class="cadastro-eyebrow">Área do anunciante</div>
@@ -1481,7 +1504,7 @@
 </div>
 
 <!-- TELA 7: LOGIN ANUNCIANTE -->
-<div id="tela-login" class="tela oculta escura">
+<div id="tela-login" data-sem-traducao class="tela oculta escura">
   <div class="login-content">
     <button type="button" class="btn-redondo escuro" onclick="voltar('tela-home')" aria-label="Voltar para o app"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     <div class="login-eyebrow">Área do anunciante</div>
@@ -1505,7 +1528,7 @@
 </div>
 
 <!-- TELA 7: PAINEL DO ANUNCIANTE -->
-<div id="tela-painel" class="tela oculta">
+<div id="tela-painel" data-sem-traducao class="tela oculta">
   <div class="painel-topo">
     <div class="painel-eyebrow">Painel do anunciante</div>
     <h2>Olá, <em id="painel-nome-anunciante">—</em></h2>
@@ -1691,13 +1714,182 @@
     <div class="tab-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
     Salvos
   </button>
+  <button type="button" class="btn-lingua tab-lingua" onclick="abrirLinguas()" aria-label="Idioma" data-sem-traducao><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12a10 10 0 1 1-20 0a10 10 0 1 1 20 0zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span class="cod">PT</span></button>
   <button type="button" class="tab-anunciar" onclick="abrirAnunciar()">Anunciar</button>
 </nav>
 
+<script type="application/json" id="i18n-dicionario">{"e":{"A cidade colonial, atualizada hoje por quem vive nela.":["The colonial town, updated today by the people who live here.","La ciudad colonial, actualizada hoy por quienes viven en ella.","La ville coloniale, mise à jour aujourd'hui par ceux qui y vivent."],"Explorar Ouro Preto":["Explore Ouro Preto","Explorar Ouro Preto","Explorer Ouro Preto"],"Tenho um negócio · 90 dias grátis":["I have a business · 90 days free","Tengo un negocio · 90 días gratis","J'ai une entreprise · 90 jours gratuits"],"Tenho um negócio":["I have a business","Tengo un negocio","J'ai une entreprise"],"Início":["Home","Inicio","Accueil"],"Agenda":["Events","Agenda","Agenda"],"Explorar":["Explore","Explorar","Explorer"],"Mobilidade":["Transport","Movilidad","Transports"],"Salvos":["Saved","Guardados","Favoris"],"Anunciar":["Advertise","Anunciar","Annoncer"],"Navegação principal":["Main navigation","Navegación principal","Navigation principale"],"Voltar":["Back","Volver","Retour"],"Sem conexão: mostrando dados salvos.":["Offline: showing saved data.","Sin conexión: mostrando datos guardados.","Hors ligne : affichage des données enregistrées."],"Idioma":["Language","Idioma","Langue"],"Escolha o idioma":["Choose your language","Elige el idioma","Choisissez la langue"],"Eventos, notícias da UFOP e repúblicas aparecem em português.":["Events, UFOP news and student houses are shown in Portuguese.","Los eventos, las noticias de la UFOP y las repúblicas aparecen en portugués.","Les événements, les actualités de l'UFOP et les maisons étudiantes s'affichent en portugais."],"Fechar":["Close","Cerrar","Fermer"],"Bom dia, viajante":["Good morning, traveler","Buenos días, viajero","Bonjour, voyageur"],"Boa tarde, viajante":["Good afternoon, traveler","Buenas tardes, viajero","Bonjour, voyageur"],"Boa noite, viajante":["Good evening, traveler","Buenas noches, viajero","Bonsoir, voyageur"],"O que ver e fazer em Ouro Preto <em>hoje<\/em>.":["What to see and do in Ouro Preto <em>today<\/em>.","Qué ver y hacer en Ouro Preto <em>hoy<\/em>.","Que voir et faire à Ouro Preto <em>aujourd'hui<\/em>."],"Buscar em Ouro Preto":["Search Ouro Preto","Buscar en Ouro Preto","Rechercher à Ouro Preto"],"Igrejas, museus, eventos…":["Churches, museums, events…","Iglesias, museos, eventos…","Églises, musées, événements…"],"Ver no mapa":["View on map","Ver en el mapa","Voir sur la carte"],"Categorias":["Categories","Categorías","Catégories"],"Tudo":["All","Todo","Tout"],"Descubra":["Discover","Descubre","Découvrir"],"Comer":["Eat","Comer","Manger"],"Beber":["Drink","Beber","Boire"],"Hospedar":["Stay","Alojarse","Dormir"],"Comprar":["Shop","Comprar","Shopping"],"Serviços":["Services","Servicios","Services"],"Saúde":["Health","Salud","Santé"],"Repúblicas":["Student houses","Repúblicas","Maisons étudiantes"],"República":["Student house","República","Maison étudiante"],"Hoje":["Today","Hoy","Aujourd'hui"],"hoje":["today","hoy","auj."],"Acontece <em>hoje<\/em>":["Happening <em>today<\/em>","Pasa <em>hoy<\/em>","Ça se passe <em>aujourd'hui<\/em>"],"Próximos <em>dias<\/em>":["Coming <em>up<\/em>","Próximos <em>días<\/em>","Les prochains <em>jours<\/em>"],"Ver agenda":["See all events","Ver agenda","Voir l'agenda"],"Eventos de onde":["Event location","Ubicación de los eventos","Lieu des événements"],"Em Ouro Preto":["In Ouro Preto","En Ouro Preto","À Ouro Preto"],"Com arredores":["Including nearby","Con alrededores","Avec les environs"],"Carregando…":["Loading…","Cargando…","Chargement…"],"Dica do dia":["Tip of the day","Consejo del día","Conseil du jour"],"Promoção para empresas":["Offer for businesses","Promoción para empresas","Offre pour les entreprises"],"Promoção de lançamento":["Launch offer","Promoción de lanzamiento","Offre de lancement"],"Tem um negócio em Ouro Preto? Seu perfil é <em>grátis por 90 dias<\/em>.":["Have a business in Ouro Preto? Your profile is <em>free for 90 days<\/em>.","¿Tienes un negocio en Ouro Preto? Tu perfil es <em>gratis por 90 días<\/em>.","Vous avez une entreprise à Ouro Preto ? Votre profil est <em>gratuit pendant 90 jours<\/em>."],"Cadastrar meu negócio":["List my business","Registrar mi negocio","Inscrire mon entreprise"],"Atualizados <em>recentemente<\/em>":["Recently <em>updated<\/em>","Actualizados <em>recientemente<\/em>","Mis à jour <em>récemment<\/em>"],"Em <em>destaque<\/em>":["In the <em>spotlight<\/em>","Lo <em>destacado<\/em>","À la <em>une<\/em>"],"Ver tudo":["See all","Ver todo","Tout voir"],"Carregando lojas…":["Loading businesses…","Cargando negocios…","Chargement des commerces…"],"Nada na agenda de Ouro Preto nos próximos dias.":["Nothing on in Ouro Preto in the next few days.","Nada en la agenda de Ouro Preto en los próximos días.","Rien à l'agenda d'Ouro Preto dans les prochains jours."],"Nenhum evento na agenda por enquanto.":["No events on the calendar yet.","No hay eventos en la agenda por ahora.","Aucun événement à l'agenda pour l'instant."],"Informação fresca":["Fresh info","Información reciente","Info toute fraîche"],"Informação recente":["Recent info","Información reciente","Info récente"],"Informação desatualizada":["Out-of-date info","Información desactualizada","Info pas à jour"],"Novidade de hoje":["New today","Novedad de hoy","Nouveau aujourd'hui"],"Curadoria Dica de Ouro":["Picked by Dica de Ouro","Selección de Dica de Ouro","Sélection Dica de Ouro"],"Prefeitura de Ouro Preto":["Ouro Preto City Hall","Alcaldía de Ouro Preto","Mairie d'Ouro Preto"],"Confirmar horário":["Check opening hours","Confirmar horario","Vérifier les horaires"],"Ainda não atualizado pelo local":["Not yet updated by the venue","Aún no actualizado por el lugar","Pas encore mis à jour par le lieu"],"sem data":["no date","sin fecha","sans date"],"Sem avaliações":["No reviews","Sin reseñas","Aucun avis"],"Sem avaliações ainda":["No reviews yet","Sin reseñas todavía","Pas encore d'avis"],"Endereço não informado":["Address not provided","Dirección no informada","Adresse non renseignée"],"Sem site":["No website","Sin sitio web","Pas de site"],"Sem site cadastrado":["No website listed","Sin sitio web registrado","Aucun site renseigné"],"Sem link cadastrado":["No link listed","Sin enlace registrado","Aucun lien renseigné"],"sem telefone":["no phone","sin teléfono","pas de téléphone"],"Seu negócio pode aparecer aqui":["Your business could be here","Tu negocio podría estar aquí","Votre entreprise pourrait être ici"],"Seu bar pode aparecer aqui":["Your bar could be here","Tu bar podría estar aquí","Votre bar pourrait être ici"],"Seu consultório pode aparecer aqui":["Your practice could be here","Tu consultorio podría estar aquí","Votre cabinet pourrait être ici"],"Seu passeio pode aparecer aqui":["Your tour could be here","Tu paseo podría estar aquí","Votre excursion pourrait être ici"],"Seu restaurante pode aparecer aqui":["Your restaurant could be here","Tu restaurante podría estar aquí","Votre restaurant pourrait être ici"],"Seu serviço pode aparecer aqui":["Your service could be here","Tu servicio podría estar aquí","Votre service pourrait être ici"],"Sua hospedagem pode aparecer aqui":["Your lodging could be here","Tu alojamiento podría estar aquí","Votre hébergement pourrait être ici"],"Sua loja pode aparecer aqui":["Your shop could be here","Tu tienda podría estar aquí","Votre boutique pourrait être ici"],"Sua república pode aparecer aqui":["Your student house could be here","Tu república podría estar aquí","Votre maison étudiante pourrait être ici"],"Os primeiros 90 dias são grátis.":["The first 90 days are free.","Los primeros 90 días son gratis.","Les 90 premiers jours sont gratuits."],"Bar, boteco, cervejaria ou adega? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Bar, pub, brewery or wine shop? Advertise on Dica de Ouro. The first 90 days are free.","¿Bar, cantina, cervecería o bodega? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Bar, bistrot, brasserie ou cave ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Bar, boteco, cervejaria ou adega? Anuncie no Dica de Ouro.":["Bar, pub, brewery or wine shop? Advertise on Dica de Ouro.","¿Bar, cantina, cervecería o bodega? Anuncia en Dica de Ouro.","Bar, bistrot, brasserie ou cave ? Annoncez sur Dica de Ouro."],"Clínica, consultório, farmácia ou terapia? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Clinic, practice, pharmacy or therapy? Advertise on Dica de Ouro. The first 90 days are free.","¿Clínica, consultorio, farmacia o terapia? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Clinique, cabinet, pharmacie ou thérapie ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Clínica, consultório, farmácia ou terapia? Anuncie no Dica de Ouro.":["Clinic, practice, pharmacy or therapy? Advertise on Dica de Ouro.","¿Clínica, consultorio, farmacia o terapia? Anuncia en Dica de Ouro.","Clinique, cabinet, pharmacie ou thérapie ? Annoncez sur Dica de Ouro."],"Guia, transporte, beleza, reparos ou outro serviço? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Guide, transport, beauty, repairs or another service? Advertise on Dica de Ouro. The first 90 days are free.","¿Guía, transporte, belleza, reparaciones u otro servicio? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Guide, transport, beauté, réparations ou autre service ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Guia, transporte, beleza, reparos ou outro serviço? Anuncie no Dica de Ouro.":["Guide, transport, beauty, repairs or another service? Advertise on Dica de Ouro.","¿Guía, transporte, belleza, reparaciones u otro servicio? Anuncia en Dica de Ouro.","Guide, transport, beauté, réparations ou autre service ? Annoncez sur Dica de Ouro."],"Loja, ateliê, artesanato ou pedra-sabão? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Shop, studio, crafts or soapstone? Advertise on Dica de Ouro. The first 90 days are free.","¿Tienda, taller, artesanía o piedra jabón? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Boutique, atelier, artisanat ou stéatite ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Loja, ateliê, artesanato ou pedra-sabão? Anuncie no Dica de Ouro.":["Shop, studio, crafts or soapstone? Advertise on Dica de Ouro.","¿Tienda, taller, artesanía o piedra jabón? Anuncia en Dica de Ouro.","Boutique, atelier, artisanat ou stéatite ? Annoncez sur Dica de Ouro."],"Pousada, hotel, hostel ou casa de temporada? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Guesthouse, hotel, hostel or holiday home? Advertise on Dica de Ouro. The first 90 days are free.","¿Posada, hotel, hostel o casa de temporada? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Pousada, hôtel, auberge ou location saisonnière ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Pousada, hotel, hostel ou casa de temporada? Anuncie no Dica de Ouro.":["Guesthouse, hotel, hostel or holiday home? Advertise on Dica de Ouro.","¿Posada, hotel, hostel o casa de temporada? Anuncia en Dica de Ouro.","Pousada, hôtel, auberge ou location saisonnière ? Annoncez sur Dica de Ouro."],"Restaurante, lanchonete, café ou doceria? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Restaurant, snack bar, café or sweet shop? Advertise on Dica de Ouro. The first 90 days are free.","¿Restaurante, cafetería, café o dulcería? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Restaurant, snack, café ou pâtisserie ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Restaurante, lanchonete, café ou doceria? Anuncie no Dica de Ouro.":["Restaurant, snack bar, café or sweet shop? Advertise on Dica de Ouro.","¿Restaurante, cafetería, café o dulcería? Anuncia en Dica de Ouro.","Restaurant, snack, café ou pâtisserie ? Annoncez sur Dica de Ouro."],"Tem um negócio na região? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Have a business in the area? Advertise on Dica de Ouro. The first 90 days are free.","¿Tienes un negocio en la región? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Vous avez une entreprise dans la région ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Tem um negócio na região? Anuncie no Dica de Ouro.":["Have a business in the area? Advertise on Dica de Ouro.","¿Tienes un negocio en la región? Anuncia en Dica de Ouro.","Vous avez une entreprise dans la région ? Annoncez sur Dica de Ouro."],"Tem um passeio, ateliê, mina ou atração para visitantes? Anuncie no Dica de Ouro. Os primeiros 90 dias são grátis.":["Run a tour, studio, mine or visitor attraction? Advertise on Dica de Ouro. The first 90 days are free.","¿Tienes un paseo, taller, mina o atracción para visitantes? Anuncia en Dica de Ouro. Los primeros 90 días son gratis.","Vous proposez une excursion, un atelier, une mine ou une attraction ? Annoncez sur Dica de Ouro. Les 90 premiers jours sont gratuits."],"Tem um passeio, ateliê, mina ou atração para visitantes? Anuncie no Dica de Ouro.":["Run a tour, studio, mine or visitor attraction? Advertise on Dica de Ouro.","¿Tienes un paseo, taller, mina o atracción para visitantes? Anuncia en Dica de Ouro.","Vous proposez une excursion, un atelier, une mine ou une attraction ? Annoncez sur Dica de Ouro."],"Mora numa república? Cadastre a sua no Dica de Ouro, de graça.":["Live in a student house? List yours on Dica de Ouro for free.","¿Vives en una república? Registra la tuya en Dica de Ouro, gratis.","Vous vivez dans une maison étudiante ? Inscrivez-la sur Dica de Ouro, gratuitement."],"Divulgue vagas, projetos, laboratórios e eventos da UFOP aqui, de graça.":["Post UFOP openings, projects, labs and events here for free.","Publica vacantes, proyectos, laboratorios y eventos de la UFOP aquí, gratis.","Publiez ici gratuitement les offres, projets, laboratoires et événements de l'UFOP."],"Coordena um laboratório? Divulgue vagas e novidades dele aqui, de graça.":["Run a lab? Post its openings and news here for free.","¿Coordinas un laboratorio? Publica aquí sus vacantes y novedades, gratis.","Vous dirigez un laboratoire ? Publiez ici ses offres et actualités, gratuitement."],"Coordena um projeto de extensão? Divulgue aqui, de graça.":["Run an outreach project? Post it here for free.","¿Coordinas un proyecto de extensión? Publícalo aquí, gratis.","Vous coordonnez un projet d'extension ? Publiez-le ici, gratuitement."],"Orienta iniciação científica? Divulgue sua vaga de IC aqui, de graça.":["Supervise undergraduate research? Post your opening here for free.","¿Diriges iniciación científica? Publica tu vacante aquí, gratis.","Vous encadrez de l'initiation à la recherche ? Publiez votre offre ici, gratuitement."],"Seu departamento abriu uma seleção ou concurso? Divulgue aqui, de graça.":["Has your department opened a selection or exam? Post it here for free.","¿Tu departamento abrió una selección o concurso? Publícalo aquí, gratis.","Votre département a ouvert une sélection ou un concours ? Publiez-le ici, gratuitement."],"Tem vaga de bolsista, voluntário ou monitoria no seu projeto? Divulgue aqui, de graça.":["Have a scholarship, volunteer or tutoring opening in your project? Post it here for free.","¿Tienes una vacante de becario, voluntario o monitoría en tu proyecto? Publícala aquí, gratis.","Vous avez une offre de bourse, de bénévolat ou de tutorat dans votre projet ? Publiez-la ici, gratuitement."],"Tem vaga de estágio no seu setor, laboratório ou empresa júnior? Divulgue aqui, de graça.":["Have an internship in your department, lab or junior enterprise? Post it here for free.","¿Tienes una vacante de prácticas en tu sector, laboratorio o empresa júnior? Publícala aquí, gratis.","Vous avez un stage dans votre service, laboratoire ou junior-entreprise ? Publiez-le ici, gratuitement."],"É de um programa de pós-graduação? Divulgue editais e seleções aqui, de graça.":["From a graduate program? Post calls and selections here for free.","¿Eres de un programa de posgrado? Publica convocatorias y selecciones aquí, gratis.","Vous faites partie d'un programme de master ou de doctorat ? Publiez ici appels et sélections, gratuitement."],"Divulgar aqui":["Post here","Publicar aquí","Publier ici"],"Anunciar meu negócio":["Advertise my business","Anunciar mi negocio","Annoncer mon entreprise"],"Cadastrar minha república":["List my student house","Registrar mi república","Inscrire ma maison étudiante"],"É da UFOP?":["Are you from UFOP?","¿Eres de la UFOP?","Vous êtes de l'UFOP ?"],"Apareça no guia grátis por 90 dias. Depois, R$ 100 por mês, só se quiser continuar. Sem cartão.":["Get listed free for 90 days. After that, R$ 100 a month, only if you want to continue. No card needed.","Aparece en la guía gratis por 90 días. Después, R$ 100 al mes, solo si quieres seguir. Sin tarjeta.","Figurez dans le guide gratuitement pendant 90 jours. Ensuite, 100 R$ par mois, seulement si vous voulez continuer. Sans carte."],"Tem um negócio em Ouro Preto?":["Have a business in Ouro Preto?","¿Tienes un negocio en Ouro Preto?","Vous avez une entreprise à Ouro Preto ?"],"Já anuncio: entrar":["Already advertising? Sign in","Ya anuncio: entrar","J'annonce déjà : me connecter"],"Para negócios":["For businesses","Para negocios","Pour les entreprises"],"Ainda não há bares no guia. Enquanto isso:":["No bars in the guide yet. Meanwhile:","Aún no hay bares en la guía. Mientras tanto:","Pas encore de bars dans le guide. En attendant :"],"Ainda não há hospedagens no guia. Enquanto isso:":["No lodging in the guide yet. Meanwhile:","Aún no hay alojamientos en la guía. Mientras tanto:","Pas encore d'hébergements dans le guide. En attendant :"],"Ainda não há lojas e ateliês no guia. Enquanto isso:":["No shops or studios in the guide yet. Meanwhile:","Aún no hay tiendas ni talleres en la guía. Mientras tanto:","Pas encore de boutiques ni d'ateliers dans le guide. En attendant :"],"Ainda não há restaurantes e cafés no guia. Enquanto isso:":["No restaurants or cafés in the guide yet. Meanwhile:","Aún no hay restaurantes ni cafés en la guía. Mientras tanto:","Pas encore de restaurants ni de cafés dans le guide. En attendant :"],"Ainda não há serviços no guia. Enquanto isso:":["No services in the guide yet. Meanwhile:","Aún no hay servicios en la guía. Mientras tanto:","Pas encore de services dans le guide. En attendant :"],"Ainda não há saúde no guia. Enquanto isso:":["No health services in the guide yet. Meanwhile:","Aún no hay servicios de salud en la guía. Mientras tanto:","Pas encore de services de santé dans le guide. En attendant :"],"Nenhuma loja nessa categoria ainda.":["No businesses in this category yet.","Todavía no hay negocios en esta categoría.","Aucun commerce dans cette catégorie pour le moment."],"Nenhuma loja cadastrada ainda.":["No businesses listed yet.","Aún no hay negocios registrados.","Aucun commerce inscrit pour le moment."],"Buscando…":["Searching…","Buscando…","Recherche…"],"Tente outra palavra ou comece por aqui:":["Try another word or start here:","Prueba otra palabra o empieza por aquí:","Essayez un autre mot ou commencez ici :"],"Barroco mineiro":["Minas baroque","Barroco minero","Baroque du Minas"],"História e arte":["History and art","Historia y arte","Histoire et art"],"Ouro e aventura":["Gold and adventure","Oro y aventura","Or et aventure"],"Natureza e cachoeiras":["Nature and waterfalls","Naturaleza y cascadas","Nature et cascades"],"Labs, projetos e vagas":["Labs, projects and openings","Laboratorios, proyectos y vacantes","Labos, projets et offres"],"Igrejas":["Churches","Iglesias","Églises"],"Museus":["Museums","Museos","Musées"],"Minas":["Mines","Minas","Mines"],"Parques":["Parks","Parques","Parcs"],"Cachoeiras":["Waterfalls","Cascadas","Cascades"],"Parques e Cachoeiras":["Parks and waterfalls","Parques y cascadas","Parcs et cascades"],"Museu":["Museum","Museo","Musée"],"Igreja":["Church","Iglesia","Église"],"Mina":["Mine","Mina","Mine"],"Parque":["Park","Parque","Parc"],"Cachoeira":["Waterfall","Cascada","Cascade"],"Lojas":["Businesses","Negocios","Commerces"],"Negócios":["Businesses","Negocios","Commerces"],"Lugares":["Places","Lugares","Lieux"],"Eventos":["Events","Eventos","Événements"],"Evento":["Event","Evento","Événement"],"Este lugar":["This place","Este lugar","Ce lieu"],"Toque em qualquer item para saber mais.":["Tap any item to learn more.","Toca cualquier elemento para saber más.","Touchez un élément pour en savoir plus."],"Categoria não encontrada.":["Category not found.","Categoría no encontrada.","Catégorie introuvable."],"Sobre o <em>local<\/em>":["About the <em>place<\/em>","Sobre el <em>lugar<\/em>","À propos du <em>lieu<\/em>"],"O que <em>disseram<\/em>":["What people <em>said<\/em>","Lo que <em>dijeron<\/em>","Ce qu'ils en <em>disent<\/em>"],"Horário":["Hours","Horario","Horaires"],"Endereço":["Address","Dirección","Adresse"],"Site":["Website","Sitio web","Site web"],"Site ou Instagram":["Website or Instagram","Sitio web o Instagram","Site web ou Instagram"],"Contato":["Contact","Contacto","Contact"],"Link":["Link","Enlace","Lien"],"Local":["Venue","Lugar","Lieu"],"Encerramento":["Closing date","Cierre","Clôture"],"Como chegar":["Directions","Cómo llegar","Itinéraire"],"Rotas":["Directions","Cómo llegar","Itinéraire"],"Ver site oficial":["Official website","Ver sitio oficial","Voir le site officiel"],"Ver site":["Website","Ver sitio","Voir le site"],"Ver site do evento":["Event website","Ver sitio del evento","Voir le site de l'événement"],"Site do programa":["Program website","Sitio del programa","Site du programme"],"Ver detalhes":["View details","Ver detalles","Voir les détails"],"Adicionar ao calendário":["Add to calendar","Añadir al calendario","Ajouter au calendrier"],"Compartilhar":["Share","Compartir","Partager"],"Salvar":["Save","Guardar","Enregistrer"],"Salvar nos favoritos":["Save to favorites","Guardar en favoritos","Ajouter aux favoris"],"Remover dos salvos":["Remove from saved","Quitar de guardados","Retirer des favoris"],"Ampliar foto":["Enlarge photo","Ampliar foto","Agrandir la photo"],"Chamar no WhatsApp":["Message on WhatsApp","Escribir por WhatsApp","Écrire sur WhatsApp"],"Quando":["When","Cuándo","Quand"],"Onde":["Where","Dónde","Où"],"Avaliar":["Review","Opinar","Donner un avis"],"Avaliar este lugar":["Review this place","Opinar sobre este lugar","Donner un avis sur ce lieu"],"Produto":["Product","Producto","Produit"],"Serviço":["Service","Servicio","Service"],"Estrutura":["Facilities","Instalaciones","Installations"],"Notas por critério":["Ratings by category","Notas por criterio","Notes par critère"],"A comida, a bebida, o que comprou.":["The food, the drinks, what you bought.","La comida, la bebida, lo que compraste.","La nourriture, les boissons, ce que vous avez acheté."],"Atenção, simpatia, tempo de espera.":["Attentiveness, friendliness, waiting time.","Atención, simpatía, tiempo de espera.","Accueil, amabilité, temps d'attente."],"Espaço, limpeza, conforto, acesso.":["Space, cleanliness, comfort, access.","Espacio, limpieza, comodidad, acceso.","Espace, propreté, confort, accès."],"Dê uma nota para cada parte da experiência. Quem chega amanhã lê antes de cruzar a praça.":["Rate each part of the experience. Tomorrow's visitors read it before crossing the square.","Califica cada parte de la experiencia. Quien llega mañana lo lee antes de cruzar la plaza.","Notez chaque partie de l'expérience. Ceux qui arrivent demain le liront avant de traverser la place."],"Seu nome":["Your name","Tu nombre","Votre nom"],"Como você se chama?":["What's your name?","¿Cómo te llamas?","Comment vous appelez-vous ?"],"Aparece junto da sua avaliação.":["Shown with your review.","Aparece junto a tu reseña.","Affiché avec votre avis."],"Conte algo a quem chegar amanhã":["Tell tomorrow's visitors something","Cuéntale algo a quien llegue mañana","Dites quelque chose à ceux qui arrivent demain"],"O tutu veio sequinho, o garçom soube indicar a melhor cachaça…":["The tutu was spot on, the waiter knew the best cachaça…","El tutu vino perfecto, el mesero supo recomendar la mejor cachaça…","Le tutu était parfait, le serveur a su conseiller la meilleure cachaça…"],"Avaliações com links, ofensas ou propaganda são removidas.":["Reviews with links, insults or ads are removed.","Se eliminan las reseñas con enlaces, ofensas o publicidad.","Les avis contenant des liens, des insultes ou de la publicité sont supprimés."],"Enviar avaliação":["Submit review","Enviar reseña","Envoyer l'avis"],"Digite seu nome antes de enviar.":["Enter your name before submitting.","Escribe tu nombre antes de enviar.","Saisissez votre nom avant d'envoyer."],"Dê uma nota para os 3 itens antes de enviar.":["Rate all 3 items before submitting.","Califica los 3 elementos antes de enviar.","Notez les 3 critères avant d'envoyer."],"Erro de conexão. Tente novamente.":["Connection error. Please try again.","Error de conexión. Inténtalo de nuevo.","Erreur de connexion. Réessayez."],"Erro de conexão.":["Connection error.","Error de conexión.","Erreur de connexion."],"Erro de conexão":["Connection error","Error de conexión","Erreur de connexion"],"Sem conexão agora. Tente de novo em instantes.":["No connection right now. Try again in a moment.","Sin conexión ahora. Inténtalo de nuevo en un momento.","Pas de connexion pour le moment. Réessayez dans un instant."],"Não encontramos este perfil. Ele pode ter saído do guia.":["We couldn't find this profile. It may have left the guide.","No encontramos este perfil. Puede que haya salido de la guía.","Ce profil est introuvable. Il a peut-être quitté le guide."],"Não conseguimos carregar agora.":["We couldn't load this right now.","No pudimos cargar ahora.","Chargement impossible pour le moment."],"Tentar de novo":["Try again","Intentar de nuevo","Réessayer"],"Cancelar":["Cancel","Cancelar","Annuler"],"Confirmar":["Confirm","Confirmar","Confirmer"],"Atenção":["Attention","Atención","Attention"],"Agenda de <em>eventos<\/em>":["Events <em>calendar<\/em>","Agenda de <em>eventos<\/em>","Agenda des <em>événements<\/em>"],"O que acontece na cidade, semana a semana.":["What's on in town, week by week.","Lo que pasa en la ciudad, semana a semana.","Ce qui se passe en ville, semaine après semaine."],"O que acontece em Ouro Preto e nos arredores.":["What's on in Ouro Preto and nearby.","Lo que pasa en Ouro Preto y alrededores.","Ce qui se passe à Ouro Preto et dans les environs."],"Os eventos aparecem em português, como os organizadores publicam.":["Events are shown in Portuguese, as published by the organizers.","Los eventos aparecen en portugués, tal como los publican los organizadores.","Les événements s'affichent en portugais, tels que publiés par les organisateurs."],"Hoje à noite":["Tonight","Esta noche","Ce soir"],"Fim de semana":["Weekend","Fin de semana","Week-end"],"Esta semana":["This week","Esta semana","Cette semaine"],"Próximos 30 dias":["Next 30 days","Próximos 30 días","30 prochains jours"],"Todas":["All","Todas","Toutes"],"Arredores":["Nearby","Alrededores","Environs"],"Todas as cidades":["All towns","Todas las ciudades","Toutes les villes"],"Nenhum evento esta semana.":["No events this week.","No hay eventos esta semana.","Aucun événement cette semaine."],"Nenhum evento nos próximos 30 dias.":["No events in the next 30 days.","No hay eventos en los próximos 30 días.","Aucun événement dans les 30 prochains jours."],"Nenhum evento cadastrado.":["No events listed.","No hay eventos registrados.","Aucun événement inscrit."],"Nenhum evento hoje.":["No events today.","No hay eventos hoy.","Aucun événement aujourd'hui."],"Nenhum evento hoje à noite.":["No events tonight.","No hay eventos esta noche.","Aucun événement ce soir."],"Nenhum evento neste fim de semana.":["No events this weekend.","No hay eventos este fin de semana.","Aucun événement ce week-end."],"Nenhum evento nesta semana.":["No events this week.","No hay eventos esta semana.","Aucun événement cette semaine."],"Nenhum evento nos arredores hoje.":["No events nearby today.","No hay eventos en los alrededores hoy.","Aucun événement dans les environs aujourd'hui."],"Nenhum evento nos arredores hoje à noite.":["No events nearby tonight.","No hay eventos en los alrededores esta noche.","Aucun événement dans les environs ce soir."],"Nenhum evento nos arredores neste fim de semana.":["No events nearby this weekend.","No hay eventos en los alrededores este fin de semana.","Aucun événement dans les environs ce week-end."],"Nenhum evento nos arredores nesta semana.":["No events nearby this week.","No hay eventos en los alrededores esta semana.","Aucun événement dans les environs cette semaine."],"Nenhum evento nos arredores nos próximos 30 dias.":["No events nearby in the next 30 days.","No hay eventos en los alrededores en los próximos 30 días.","Aucun événement dans les environs dans les 30 prochains jours."],"Oportunidades <em>UFOP<\/em>":["Opportunities at <em>UFOP<\/em>","Oportunidades <em>UFOP<\/em>","Opportunités <em>UFOP<\/em>"],"Laboratórios, projetos, oportunidades e muito mais.":["Labs, projects, opportunities and much more.","Laboratorios, proyectos, oportunidades y mucho más.","Laboratoires, projets, opportunités et bien plus."],"Toque numa categoria para ver o conteúdo.":["Tap a category to see its content.","Toca una categoría para ver el contenido.","Touchez une catégorie pour voir son contenu."],"Concursos":["Public exams","Concursos","Concours"],"Estágio":["Internships","Prácticas","Stages"],"Eventos e vagas":["Events and openings","Eventos y vacantes","Événements et offres"],"Vagas e eventos":["Openings and events","Vacantes y eventos","Offres et événements"],"Extensão":["Outreach","Extensión","Extension"],"Iniciação Científica":["Undergraduate research","Iniciación científica","Initiation à la recherche"],"Laboratórios":["Labs","Laboratorios","Laboratoires"],"Pós-graduação":["Graduate programs","Posgrado","Master et doctorat"],"Vagas":["Openings","Vacantes","Offres"],"Oportunidades":["Opportunities","Oportunidades","Opportunités"],"Buscar por nome, unidade ou responsável":["Search by name, department or person in charge","Buscar por nombre, unidad o responsable","Rechercher par nom, unité ou responsable"],"Carregando repúblicas…":["Loading student houses…","Cargando repúblicas…","Chargement des maisons étudiantes…"],"Nenhuma república cadastrada ainda.":["No student houses listed yet.","Aún no hay repúblicas registradas.","Aucune maison étudiante inscrite pour le moment."],"Nenhuma república cadastrada.":["No student houses listed.","No hay repúblicas registradas.","Aucune maison étudiante inscrite."],"Explorar <em>tudo<\/em>":["Explore <em>everything<\/em>","Explorar <em>todo<\/em>","Tout <em>explorer<\/em>"],"Filtrar o mapa":["Filter the map","Filtrar el mapa","Filtrer la carte"],"Ver como":["View as","Ver como","Afficher en"],"Lista":["List","Lista","Liste"],"Mapa":["Map","Mapa","Carte"],"ordenar pela distância":["sort by distance","ordenar por distancia","trier par distance"],"ver todos":["see all","ver todos","tout voir"],"Carregando os lugares…":["Loading places…","Cargando lugares…","Chargement des lieux…"],"Lugar selecionado":["Selected place","Lugar seleccionado","Lieu sélectionné"],"Minha localização":["My location","Mi ubicación","Ma position"],"Mostrar minha localização no mapa":["Show my location on the map","Mostrar mi ubicación en el mapa","Afficher ma position sur la carte"],"Você está aqui":["You are here","Estás aquí","Vous êtes ici"],"Procurando você no mapa…":["Finding you on the map…","Buscándote en el mapa…","Recherche de votre position…"],"Este navegador não informa a localização.":["This browser doesn't share your location.","Este navegador no informa la ubicación.","Ce navigateur ne partage pas votre position."],"Não foi possível ver sua localização. Confira a permissão do navegador.":["Couldn't get your location. Check the browser permission.","No se pudo obtener tu ubicación. Revisa el permiso del navegador.","Impossible d'obtenir votre position. Vérifiez l'autorisation du navigateur."],"Não foi possível carregar o mapa. Confira a conexão e abra o Explorar de novo.":["Couldn't load the map. Check your connection and open Explore again.","No se pudo cargar el mapa. Revisa la conexión y abre Explorar de nuevo.","Impossible de charger la carte. Vérifiez la connexion et rouvrez Explorer."],"Nenhum local encontrado.":["No places found.","No se encontraron lugares.","Aucun lieu trouvé."],"Zoom in":["Zoom in","Acercar","Zoom avant"],"Zoom out":["Zoom out","Alejar","Zoom arrière"],"Seus <em>salvos<\/em>":["Saved <em>places<\/em>","Tus <em>guardados<\/em>","Vos <em>favoris<\/em>"],"Igrejas, museus, eventos e negócios que você guardou.":["Churches, museums, events and businesses you saved.","Iglesias, museos, eventos y negocios que guardaste.","Églises, musées, événements et commerces que vous avez enregistrés."],"Nada salvo ainda. Toque no coração de uma igreja, museu, evento ou negócio para guardar aqui.":["Nothing saved yet. Tap the heart on a church, museum, event or business to keep it here.","Nada guardado todavía. Toca el corazón de una iglesia, museo, evento o negocio para guardarlo aquí.","Rien d'enregistré pour le moment. Touchez le cœur d'une église, d'un musée, d'un événement ou d'un commerce pour le garder ici."],"Neste aparelho":["On this device","En este dispositivo","Sur cet appareil"],"Salvo. Está na aba Salvos.":["Saved. It's in the Saved tab.","Guardado. Está en la pestaña Guardados.","Enregistré. Il est dans l'onglet Favoris."],"Removido dos salvos":["Removed from saved","Quitado de guardados","Retiré des favoris"],"Como se <em>locomover<\/em>":["Getting <em>around<\/em>","Cómo <em>moverse<\/em>","Se <em>déplacer<\/em>"],"Ônibus, táxi, lotação, aplicativos e telefones úteis.":["Buses, taxis, shared taxis, apps and useful phone numbers.","Autobuses, taxis, taxis colectivos, aplicaciones y teléfonos útiles.","Bus, taxis, taxis collectifs, applis et numéros utiles."],"Seções da página":["Page sections","Secciones de la página","Sections de la page"],"Ônibus":["Buses","Autobuses","Bus"],"Táxi":["Taxi","Taxi","Taxi"],"Táxi lotação":["Shared taxi","Taxi colectivo","Taxi collectif"],"Aplicativos":["Apps","Aplicaciones","Applis"],"Telefones":["Phone numbers","Teléfonos","Téléphones"],"Ônibus na <em>cidade<\/em>":["City <em>buses<\/em>","Autobuses en la <em>ciudad<\/em>","Bus en <em>ville<\/em>"],"por viagem, em qualquer linha urbana ou distrital":["per ride, on any city or district line","por viaje, en cualquier línea urbana o distrital","par trajet, sur toute ligne urbaine ou de district"],"Os ônibus da sede e dos distritos são do Consórcio Rota Real. Desde julho de 2025 a passagem é a mesma em todas as linhas, com subsídio da Prefeitura (Decreto nº 8.908/2025).":["Buses in town and to the districts are run by Consórcio Rota Real. Since July 2025 the fare has been the same on every line, subsidized by City Hall (Decree no. 8,908/2025).","Los autobuses de la ciudad y de los distritos son del Consórcio Rota Real. Desde julio de 2025 el pasaje es el mismo en todas las líneas, con subsidio de la Alcaldía (Decreto n.º 8.908/2025).","Les bus de la ville et des districts sont exploités par le Consórcio Rota Real. Depuis juillet 2025, le ticket coûte le même prix sur toutes les lignes, grâce à une subvention de la mairie (décret n° 8.908/2025)."],"Ver horários e linhas":["Timetables and routes","Ver horarios y líneas","Horaires et lignes"],"WhatsApp da central":["Central WhatsApp line","WhatsApp de la central","WhatsApp du standard"],"Ligar":["Call","Llamar","Appeler"],"Para outras <em>cidades<\/em>":["To other <em>towns<\/em>","A otras <em>ciudades<\/em>","Vers d'autres <em>villes<\/em>"],"Os ônibus para Mariana, Belo Horizonte e outras cidades saem do Terminal Rodoviário 8 de Julho, na Rua Padre Rolim, 661, São Cristóvão.":["Buses to Mariana, Belo Horizonte and other towns leave from the 8 de Julho bus station, at Rua Padre Rolim, 661, São Cristóvão.","Los autobuses a Mariana, Belo Horizonte y otras ciudades salen de la Terminal Rodoviaria 8 de Julho, en la Rua Padre Rolim, 661, São Cristóvão.","Les bus pour Mariana, Belo Horizonte et d'autres villes partent de la gare routière 8 de Julho, Rua Padre Rolim, 661, São Cristóvão."],"Rodoviária":["Bus station","Terminal de autobuses","Gare routière"],"Transcotta · Mariana e distritos":["Transcotta · Mariana and districts","Transcotta · Mariana y distritos","Transcotta · Mariana et districts"],"seg a sex, 8h às 17h":["Mon–Fri, 8am–5pm","lun a vie, 8 h a 17 h","lun.–ven., 8 h–17 h"],"seg a sex, 9h às 18h":["Mon–Fri, 9am–6pm","lun a vie, 9 h a 18 h","lun.–ven., 9 h–18 h"],"Como chegar à rodoviária":["Directions to the bus station","Cómo llegar a la terminal","Itinéraire vers la gare routière"],"Horários da Transcotta":["Transcotta timetables","Horarios de Transcotta","Horaires de Transcotta"],"Para Belo Horizonte, a linha é da Pássaro Verde; as passagens são vendidas na rodoviária e em sites de venda de passagem.":["To Belo Horizonte, the line is run by Pássaro Verde; tickets are sold at the bus station and on ticketing websites.","A Belo Horizonte, la línea es de Pássaro Verde; los pasajes se venden en la terminal y en sitios de venta de pasajes.","Pour Belo Horizonte, la ligne est assurée par Pássaro Verde ; les billets sont vendus à la gare routière et sur les sites de billetterie."],"Táxi <em>comum<\/em>":["Regular <em>taxi<\/em>","Taxi <em>común<\/em>","Taxi <em>classique<\/em>"],"Os táxis de Ouro Preto são autorizados pela Prefeitura e cobram os valores oficiais: pelo taxímetro e, em alguns trajetos, por uma tabela de preços. Antes de sair, pergunte quanto vai custar e, se quiser, peça para ver a tabela.":["Ouro Preto's taxis are licensed by City Hall and charge official rates: by the meter and, on some routes, by a price table. Before you set off, ask how much it will cost and, if you like, ask to see the table.","Los taxis de Ouro Preto están autorizados por la Alcaldía y cobran las tarifas oficiales: por taxímetro y, en algunos trayectos, según una tabla de precios. Antes de salir, pregunta cuánto costará y, si quieres, pide ver la tabla.","Les taxis d'Ouro Preto sont agréés par la mairie et appliquent les tarifs officiels : au compteur et, sur certains trajets, selon une grille de prix. Avant de partir, demandez le prix et, si vous le souhaitez, demandez à voir la grille."],"Cobraram a mais?":["Overcharged?","¿Te cobraron de más?","Vous avez payé trop cher ?"],"Anote a placa e o número do táxi e avise a Prefeitura. A OuroTran cuida do trânsito e do transporte; o Procon recebe queixas de consumidor.":["Note the plate and the taxi number and tell City Hall. OuroTran handles traffic and transport; Procon takes consumer complaints.","Anota la placa y el número del taxi y avisa a la Alcaldía. OuroTran se encarga del tránsito y el transporte; Procon recibe quejas de consumidores.","Notez la plaque et le numéro du taxi et prévenez la mairie. OuroTran s'occupe de la circulation et des transports ; le Procon reçoit les plaintes des consommateurs."],"OuroTran · trânsito e transporte":["OuroTran · traffic and transport","OuroTran · tránsito y transporte","OuroTran · circulation et transports"],"E-mail da OuroTran":["Email OuroTran","Correo de OuroTran","E-mail d'OuroTran"],"Ouvidoria da Prefeitura":["City Hall ombudsman","Defensoría de la Alcaldía","Médiateur de la mairie"],"Táxi <em>lotação<\/em>":["Shared <em>taxi<\/em>","Taxi <em>colectivo<\/em>","Taxi <em>collectif<\/em>"],"por passageiro, preço fixo":["per passenger, fixed price","por pasajero, precio fijo","par passager, prix fixe"],"É um jeito bem de Ouro Preto de andar pela cidade, em funcionamento desde 1996.":["A very Ouro Preto way to get around town, running since 1996.","Una forma muy de Ouro Preto de moverse por la ciudad, en funcionamiento desde 1996.","Une façon bien d'Ouro Preto de se déplacer en ville, en service depuis 1996."],"É um táxi que faz o caminho de uma linha de ônibus e leva várias pessoas ao mesmo tempo.":["It's a taxi that follows a bus route and carries several people at once.","Es un taxi que hace el recorrido de una línea de autobús y lleva a varias personas a la vez.","C'est un taxi qui suit le trajet d'une ligne de bus et transporte plusieurs personnes à la fois."],"Cada passageiro paga a sua passagem, sem taxímetro: R$ 4,00, valor fixado pela Prefeitura em abril de 2024.":["Each passenger pays their own fare, with no meter: R$ 4.00, set by City Hall in April 2024.","Cada pasajero paga su pasaje, sin taxímetro: R$ 4,00, valor fijado por la Alcaldía en abril de 2024.","Chaque passager paie sa place, sans compteur : 4,00 R$, tarif fixé par la mairie en avril 2024."],"Com menos gente e menos paradas, costuma chegar antes do ônibus.":["With fewer people and fewer stops, it usually gets there before the bus.","Con menos gente y menos paradas, suele llegar antes que el autobús.","Avec moins de monde et moins d'arrêts, il arrive en général avant le bus."],"A tarifa de R$ 2 vale só para o ônibus: o lotação não entra no subsídio.":["The R$ 2 fare is for buses only: shared taxis aren't subsidized.","La tarifa de R$ 2 vale solo para el autobús: el taxi colectivo no está subsidiado.","Le tarif de 2 R$ ne vaut que pour le bus : le taxi collectif n'est pas subventionné."],"Aplicativos de <em>corrida<\/em>":["Ride-hailing <em>apps<\/em>","Aplicaciones de <em>transporte<\/em>","Applis de <em>VTC<\/em>"],"A Uber não funciona em Ouro Preto. Para chamar um carro pelo celular, use um destes:":["Uber doesn't operate in Ouro Preto. To call a car from your phone, use one of these:","Uber no funciona en Ouro Preto. Para pedir un auto desde el celular, usa uno de estos:","Uber ne fonctionne pas à Ouro Preto. Pour appeler une voiture depuis votre téléphone, utilisez l'une de ces applis :"],"Em Ouro Preto tem carro particular (99Pop) e táxi (99Táxi).":["In Ouro Preto it offers private cars (99Pop) and taxis (99Táxi).","En Ouro Preto tiene auto particular (99Pop) y taxi (99Táxi).","À Ouro Preto, elle propose des voitures particulières (99Pop) et des taxis (99Táxi)."],"Abrir 99":["Open 99","Abrir 99","Ouvrir 99"],"Aplicativo de motoristas de Ouro Preto.":["An app with local Ouro Preto drivers.","Aplicación de conductores de Ouro Preto.","Appli de chauffeurs d'Ouro Preto."],"Aplicativo local de corridas.":["A local ride app.","Aplicación local de viajes.","Appli locale de courses."],"Telefones <em>úteis<\/em>":["Useful <em>numbers<\/em>","Teléfonos <em>útiles<\/em>","Numéros <em>utiles<\/em>"],"Emergência":["Emergency","Emergencia","Urgences"],"Polícia Militar":["Military Police","Policía Militar","Police militaire"],"SAMU":["Ambulance","Ambulancia","SAMU"],"Bombeiros":["Fire brigade","Bomberos","Pompiers"],"Defesa Civil":["Civil Defense","Defensa Civil","Défense civile"],"Prefeitura (geral)":["City Hall (main line)","Alcaldía (general)","Mairie (standard)"],"Guarda Civil Municipal":["Municipal Guard","Guardia Civil Municipal","Garde municipale"],"Defesa Civil municipal":["Municipal Civil Defense","Defensa Civil municipal","Défense civile municipale"],"UPA Ouro Preto":["UPA Ouro Preto (urgent care)","UPA Ouro Preto (urgencias)","UPA Ouro Preto (urgences)"],"Policlínica":["Polyclinic","Policlínica","Polyclinique"],"Secretaria de Saúde":["Health Department","Secretaría de Salud","Service de santé"],"Procon":["Procon (consumer protection)","Procon (defensa del consumidor)","Procon (protection des consommateurs)"],"Cultura e Turismo":["Culture and Tourism","Cultura y Turismo","Culture et tourisme"],"Desenvolvimento Social":["Social Development","Desarrollo Social","Développement social"],"Conselho Tutelar":["Child Protection Council","Consejo Tutelar","Conseil de protection de l'enfance"],"Limpeza urbana":["Street cleaning","Limpieza urbana","Propreté urbaine"],"Água e luz":["Water and power","Agua y luz","Eau et électricité"],"Saneouro · água e esgoto":["Saneouro · water and sewage","Saneouro · agua y alcantarillado","Saneouro · eau et assainissement"],"Cemig · energia":["Cemig · electricity","Cemig · energía","Cemig · électricité"],"Telefones da lista oficial da Prefeitura, conferidos em novembro de 2026.":["Numbers from City Hall's official list, checked in November 2026.","Teléfonos de la lista oficial de la Alcaldía, verificados en noviembre de 2026.","Numéros de la liste officielle de la mairie, vérifiés en novembre 2026."],"Ver a lista completa":["See the full list","Ver la lista completa","Voir la liste complète"]},"m":{"Ver {0} nos arredores":["See {0} nearby","Ver {0} en los alrededores","Voir {0} dans les environs"],"Fonte: {0}":["Source: {0}","Fuente: {0}","Source : {0}"],"Atualizado há {0}min pelo próprio local":["Updated {0} min ago by the venue","Actualizado hace {0} min por el propio lugar","Mis à jour il y a {0} min par le lieu"],"Atualizado há {0}h pelo próprio local":["Updated {0}h ago by the venue","Actualizado hace {0} h por el propio lugar","Mis à jour il y a {0} h par le lieu"],"Atualizado há {0} dias pelo próprio local":["Updated {0} days ago by the venue","Actualizado hace {0} días por el propio lugar","Mis à jour il y a {0} jours par le lieu"],"Atualizado há {0} dia pelo próprio local":["Updated {0} day ago by the venue","Actualizado hace {0} día por el propio lugar","Mis à jour il y a {0} jour par le lieu"],"Há {0}min":["{0} min ago","Hace {0} min","Il y a {0} min"],"Há {0}h":["{0}h ago","Hace {0} h","Il y a {0} h"],"Há {0} dias":["{0} days ago","Hace {0} días","Il y a {0} jours"],"Há {0} dia":["{0} day ago","Hace {0} día","Il y a {0} jour"],"{0} resultados para \"{1}\"":["{0} results for \"{1}\"","{0} resultados para \"{1}\"","{0} résultats pour « {1} »"],"{0} resultado para \"{1}\"":["{0} result for \"{1}\"","{0} resultado para \"{1}\"","{0} résultat pour « {1} »"],"{0} resultados para {1}":["{0} results for {1}","{0} resultados para {1}","{0} résultats pour {1}"],"{0} resultado para {1}":["{0} result for {1}","{0} resultado para {1}","{0} résultat pour {1}"],"Nada encontrado para \"{0}\".":["Nothing found for \"{0}\".","No se encontró nada para \"{0}\".","Rien trouvé pour « {0} »."],"Buscar em {0}":["Search {0}","Buscar en {0}","Rechercher dans {0}"],"Nenhum resultado para {0}":["No results for {0}","Sin resultados para {0}","Aucun résultat pour {0}"],"{0} · {1}":["{0} · {1}","{0} · {1}","{0} · {1}"],"Remover {0} dos salvos":["Remove {0} from saved","Quitar {0} de guardados","Retirer {0} des favoris"],"{0}: {1} de 5":["{0}: {1} of 5","{0}: {1} de 5","{0} : {1} sur 5"],"✓ Avaliação enviada. Obrigado, {0}!":["✓ Review sent. Thank you, {0}!","✓ Reseña enviada. ¡Gracias, {0}!","✓ Avis envoyé. Merci, {0} !"],"Hoje · {0}":["Today · {0}","Hoy · {0}","Aujourd'hui · {0}"],"até {0}":["until {0}","hasta {0}","jusqu'au {0}"],"{0} a {1}":["{0} to {1}","{0} a {1}","du {0} au {1}"],"Nenhum evento em {0} hoje.":["No events in {0} today.","No hay eventos en {0} hoy.","Aucun événement à {0} aujourd'hui."],"Nenhum evento em {0} hoje à noite.":["No events in {0} tonight.","No hay eventos en {0} esta noche.","Aucun événement à {0} ce soir."],"Nenhum evento em {0} neste fim de semana.":["No events in {0} this weekend.","No hay eventos en {0} este fin de semana.","Aucun événement à {0} ce week-end."],"Nenhum evento em {0} nesta semana.":["No events in {0} this week.","No hay eventos en {0} esta semana.","Aucun événement à {0} cette semaine."],"Nenhum evento em {0} nos próximos 30 dias.":["No events in {0} in the next 30 days.","No hay eventos en {0} en los próximos 30 días.","Aucun événement à {0} dans les 30 prochains jours."],"Mostrar mais ({0})":["Show more ({0})","Mostrar más ({0})","Afficher plus ({0})"],"Nenhum conteúdo em {0} ainda.":["Nothing in {0} yet.","Aún no hay contenido en {0}.","Pas encore de contenu dans {0}."],"{0} lugares em ordem alfabética ·":["{0} places in alphabetical order ·","{0} lugares en orden alfabético ·","{0} lieux par ordre alphabétique ·"],"{0} lugar em ordem alfabética ·":["{0} place in alphabetical order ·","{0} lugar en orden alfabético ·","{0} lieu par ordre alphabétique ·"],"{0} lugares no mesmo ponto do mapa ·":["{0} places at the same spot on the map ·","{0} lugares en el mismo punto del mapa ·","{0} lieux au même endroit sur la carte ·"],"{0} lugares, do mais perto ao mais longe de você":["{0} places, from nearest to farthest","{0} lugares, del más cercano al más lejano","{0} lieux, du plus proche au plus éloigné"],"{0} lugar, do mais perto ao mais longe de você":["{0} place, from nearest to farthest","{0} lugar, del más cercano al más lejano","{0} lieu, du plus proche au plus éloigné"],"{0} lugares aqui. Toque para aproximar":["{0} places here. Tap to zoom in","{0} lugares aquí. Toca para acercar","{0} lieux ici. Touchez pour zoomer"],"{0} lugares":["{0} places","{0} lugares","{0} lieux"],"Você está a {0} km de Ouro Preto. O mapa continua na cidade.":["You are {0} km from Ouro Preto. The map stays on the town.","Estás a {0} km de Ouro Preto. El mapa sigue en la ciudad.","Vous êtes à {0} km d'Ouro Preto. La carte reste sur la ville."],"{0} está no Dica de Ouro, o guia de Ouro Preto. Veja e avalie:":["{0} is on Dica de Ouro, the Ouro Preto guide. Take a look and leave a review:","{0} está en Dica de Ouro, la guía de Ouro Preto. Míralo y deja tu opinión:","{0} est sur Dica de Ouro, le guide d'Ouro Preto. Découvrez-le et donnez votre avis :"],"{0} no Dica de Ouro, o guia de Ouro Preto:":["{0} on Dica de Ouro, the Ouro Preto guide:","{0} en Dica de Ouro, la guía de Ouro Preto:","{0} sur Dica de Ouro, le guide d'Ouro Preto :"]},"c":["{0} a {1}","até {0}"]}</script>
 <script>
   // SUPABASE
   const SUPA_URL = 'https://qwwncqvdzpzmgntxkulu.supabase.co';
   const SUPA_KEY = 'sb_publishable_DIqdMLgMQben5Y42DGvGlg_gDlE6s9D';
+
+  // ===================== Línguas (Lote 6) =====================
+  // O português é o original. Em inglês, espanhol ou francês, os textos da interface são trocados pelo
+  // dicionário do <script id="i18n-dicionario">, cuja chave é o próprio texto em português: na carga e em
+  // tudo o que entra na tela depois (um MutationObserver). Os lugares do guia trazem a tradução do banco
+  // (coluna traducoes); eventos, UFOP e repúblicas ficam em português. Trocar de língua recarrega a página.
+  const LINGUAS = { pt: 'Português', en: 'English', es: 'Español', fr: 'Français' };
+  const LOCALES = { pt: 'pt-BR', en: 'en-US', es: 'es-ES', fr: 'fr-FR' };
+  const LANG = (() => {
+    try { const s = localStorage.getItem('dica_lingua'); if (LINGUAS[s]) return s; } catch (e) {}
+    // Buscadores e testes automáticos veem o original em português
+    if (navigator.webdriver || /bot|crawl|spider|slurp|lighthouse|headless/i.test(navigator.userAgent)) return 'pt';
+    for (const l of (navigator.languages || [navigator.language || 'pt'])) {
+      const c = String(l).slice(0, 2).toLowerCase();
+      if (LINGUAS[c]) return c;
+    }
+    return 'pt';
+  })();
+  const LOCALE = LOCALES[LANG];
+  document.documentElement.lang = LOCALE;
+
+  const I18N = (() => {
+    if (LANG === 'pt') return null;
+    try {
+      const dados = JSON.parse(document.getElementById('i18n-dicionario').textContent);
+      const col = { en: 0, es: 1, fr: 2 }[LANG];
+      const exatos = new Map(), html = new Map(), modelos = new Map(), padroes = [];
+      for (const [pt, v] of Object.entries(dados.e)) if (v[col]) (pt.includes('<') ? html : exatos).set(pt, v[col]);
+      const soCodigo = new Set(dados.c || []);
+      for (const [pt, v] of Object.entries(dados.m)) {
+        if (!v[col]) continue;
+        modelos.set(pt, v[col]);
+        if (soCodigo.has(pt)) continue;
+        const partes = pt.split(/(\{\d\})/);
+        const re = new RegExp('^' + partes.map(p => /^\{\d\}$/.test(p) ? '(.+?)' : p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('') + '$');
+        padroes.push({ re, ordem: partes.filter(p => /^\{\d\}$/.test(p)).map(p => +p[1]), alvo: v[col], fixo: pt.replace(/\{\d\}/g, '').length });
+      }
+      padroes.sort((a, b) => b.fixo - a.fixo); // os mais específicos primeiro
+      return { exatos, html, modelos, padroes };
+    } catch (e) { return null; }
+  })();
+
+  // Traduz um texto inteiro; devolve o próprio texto quando não há tradução
+  function traduzir(s) {
+    if (!I18N || !s) return s;
+    const limpo = String(s).replace(/\s+/g, ' ').trim();
+    if (!limpo || !/[A-Za-zÀ-ú]/.test(limpo)) return s;
+    let r = I18N.exatos.get(limpo);
+    if (r === undefined) {
+      for (const p of I18N.padroes) {
+        const m = limpo.match(p.re);
+        if (!m) continue;
+        r = p.alvo.replace(/\{(\d)\}/g, (_, i) => { const v = m[p.ordem.indexOf(+i) + 1] ?? ''; return I18N.exatos.get(v) ?? v; });
+        break;
+      }
+    }
+    if (r === undefined || r === limpo) return s;
+    return String(s).match(/^\s*/)[0] + r + String(s).match(/\s*$/)[0]; // mantém os espaços das pontas
+  }
+  // Para o código: tr('Texto') ou tr('Modelo com {0}', valor)
+  function tr(chave, ...args) {
+    const modelo = args.length ? ((I18N && I18N.modelos.get(chave)) || chave) : traduzir(chave);
+    return args.length ? modelo.replace(/\{(\d)\}/g, (_, i) => args[i] ?? '') : modelo;
+  }
+  // Texto de um lugar do guia na língua escolhida (descrição e horário), com o português como reserva
+  function trad(l, campo) {
+    const v = LANG !== 'pt' && l && l.traducoes && l.traducoes[LANG] && l.traducoes[LANG][campo];
+    return v || (l ? l[campo] : '') || '';
+  }
+
+  const ORIGINAL_PT = new WeakMap(); // nó de texto → texto em português
+  const JA_TRADUZIDO = new WeakMap(); // nó de texto → texto que ele recebeu aqui
+  const ATRIBUTOS_I18N = ['aria-label', 'placeholder', 'title', 'alt'];
+  const SEM_TRADUCAO = 'script, style, svg, [data-sem-traducao]';
+  // O texto em português de um elemento (para o código que lê o que está na tela)
+  function textoOriginal(el) {
+    if (!el) return '';
+    if (!I18N) return el.textContent;
+    let s = '';
+    const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = w.nextNode())) s += JA_TRADUZIDO.get(n) === n.data ? ORIGINAL_PT.get(n) : n.data;
+    return s;
+  }
+  function traduzirElemento(el) {
+    for (const a of ATRIBUTOS_I18N) {
+      const v = el.getAttribute(a);
+      if (v) { const r = traduzir(v); if (r !== v) el.setAttribute(a, r); }
+    }
+    // Títulos com uma palavra em itálico trocam o HTML inteiro
+    if (el.childElementCount && el.childElementCount <= 3 && [...el.children].some(c => c.tagName === 'EM') && el.textContent.length < 300) {
+      const r = I18N.html.get(el.innerHTML.replace(/\s+/g, ' ').trim());
+      if (r !== undefined) { el.innerHTML = r; return true; }
+    }
+    return false;
+  }
+  function traduzirTexto(n) {
+    const v = n.data;
+    if (JA_TRADUZIDO.get(n) === v) return;
+    const r = traduzir(v);
+    if (r === v) return;
+    // Uma palavra solta só é traduzida quando é o texto inteiro do elemento: "Museu" num selo vira
+    // "Museum", mas o "Museu" de "Museu <em>Boulieu</em>" é parte do nome e fica como está
+    const t = v.trim();
+    if (!/\s/.test(t) && n.parentElement && n.parentElement.textContent.trim() !== t) return;
+    ORIGINAL_PT.set(n, v); JA_TRADUZIDO.set(n, r); n.data = r;
+  }
+  function traduzirArvore(raiz) {
+    if (!I18N || !raiz) return;
+    if (raiz.nodeType === 3) {
+      if (raiz.parentElement && !raiz.parentElement.closest(SEM_TRADUCAO)) traduzirTexto(raiz);
+      return;
+    }
+    if (raiz.nodeType !== 1 || raiz.closest(SEM_TRADUCAO)) return;
+    if (traduzirElemento(raiz)) return;
+    const w = document.createTreeWalker(raiz, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
+      acceptNode: n => (n.nodeType === 1 && n.matches(SEM_TRADUCAO)) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+    });
+    let n;
+    while ((n = w.nextNode())) n.nodeType === 3 ? traduzirTexto(n) : traduzirElemento(n);
+  }
+  if (I18N) {
+    traduzirArvore(document.body);
+    const obsI18N = new MutationObserver(registros => {
+      for (const r of registros) {
+        if (r.type === 'childList') {
+          if (r.target.nodeType === 1 && !r.target.closest(SEM_TRADUCAO) && traduzirElemento(r.target)) continue;
+          r.addedNodes.forEach(traduzirArvore);
+        } else if (r.type === 'characterData') {
+          if (r.target.parentElement && !r.target.parentElement.closest(SEM_TRADUCAO)) traduzirTexto(r.target);
+        } else if (!r.target.closest(SEM_TRADUCAO)) {
+          const v = r.target.getAttribute(r.attributeName);
+          if (v) { const t2 = traduzir(v); if (t2 !== v) r.target.setAttribute(r.attributeName, t2); }
+        }
+      }
+      obsI18N.takeRecords(); // descarta as mudanças feitas aqui mesmo
+    });
+    obsI18N.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATRIBUTOS_I18N });
+    document.addEventListener('DOMContentLoaded', () => traduzirArvore(document.body));
+  }
+
+  // Seletor de língua: botão no topo da home (celular), na barra superior (computador) e na abertura
+  function abrirLinguas() {
+    const d = document.getElementById('dialogo-lingua');
+    if (!d || typeof d.showModal !== 'function') return;
+    d.showModal();
+    d.querySelector('[data-lingua].atual')?.focus(); // o foco começa na língua atual, não na primeira da lista
+  }
+  function trocarLingua(cod) {
+    if (!LINGUAS[cod]) return;
+    try { localStorage.setItem('dica_lingua', cod); } catch (e) {}
+    if (cod === LANG) { document.getElementById('dialogo-lingua')?.close(); return; }
+    location.reload();
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-lingua]').forEach(b => {
+      const atual = b.dataset.lingua === LANG;
+      b.setAttribute('aria-pressed', atual ? 'true' : 'false');
+      b.classList.toggle('atual', atual);
+    });
+    document.querySelectorAll('.btn-lingua').forEach(b => {
+      b.setAttribute('aria-label', tr('Idioma') + ': ' + LINGUAS[LANG]);
+      const cod = b.querySelector('.cod');
+      if (cod) cod.textContent = LANG.toUpperCase();
+    });
+    document.querySelectorAll('.so-traduzido').forEach(el => { el.hidden = LANG === 'pt'; });
+  });
 
   // Escapa texto vindo do banco antes de entrar em innerHTML
   function esc(s) {
@@ -1804,7 +1996,7 @@
       restantes: Math.max(0, faltam),
       dia,
       pct: Math.max(2, Math.round(dia / 90 * 100)),
-      dataLonga: fim.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })
+      dataLonga: fim.toLocaleDateString(LOCALE, { day: 'numeric', month: 'long', year: 'numeric' })
     };
   }
   const textoDias = n => `${n} dia${n === 1 ? '' : 's'}`;
@@ -1827,7 +2019,7 @@
   function compartilharPerfil(lojaId, nome) {
     registrarAcesso('compartilhar', lojaId, nome);
     const url = `https://guiadicadeouro.com.br/?loja=${lojaId}`;
-    const texto = `${nome} está no Dica de Ouro, o guia de Ouro Preto. Veja e avalie:`;
+    const texto = tr('{0} está no Dica de Ouro, o guia de Ouro Preto. Veja e avalie:', nome);
     if (navigator.share) {
       navigator.share({ title: 'Dica de Ouro', text: texto, url }).catch(() => {});
     } else {
@@ -2219,7 +2411,7 @@
 
   // Cartão de um conteúdo UFOP (lista da home e da agenda)
   function cardUFOP(item, label) {
-    const enc = item.data_encerramento ? new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'short'}) : '';
+    const enc = item.data_encerramento ? new Date(item.data_encerramento+'T12:00:00').toLocaleDateString(LOCALE,{day:'numeric',month:'short'}) : '';
     const fotoStyle = item.foto ? `background-image:url('${escUrl(item.foto)}');` : '';
     // Sem foto: card compacto (ícone, título e unidade), sem o cabeçalho escuro vazio
     if (!item.foto) {
@@ -2292,7 +2484,7 @@
     document.getElementById('lugar-desc').textContent = item.descricao||'';
     let infos = '';
     if (item.data_encerramento) {
-      const dt = new Date(item.data_encerramento+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+      const dt = new Date(item.data_encerramento+'T12:00:00').toLocaleDateString(LOCALE,{day:'numeric',month:'long',year:'numeric'});
       infos += infoRow('calendario', 'Encerramento', dt);
     }
     if (item.link) infos += infoRow('globo', 'Link', item.link, true);
@@ -2386,7 +2578,7 @@
   // Cartão de um lugar (igreja, museu, mina, parque) na agenda
   function cardLugar(l, cat, onclick) {
     const fotoStyle = (l.foto && l.foto.startsWith('http')) ? `background-image:url('${escUrl(l.foto)}');` : '';
-    const horario = l.horario_funcionamento || l.horario || 'Confirmar horário';
+    const horario = trad(l, 'horario_funcionamento') || l.horario || 'Confirmar horário';
     return `<div class="lugar-card" onclick="${onclick}">
       <div class="lugar-card-hero" style="${fotoStyle}">
         <div class="lugar-card-cat">${selo(IC_LUGAR[cat] || 'pin', cat)}</div>
@@ -2422,7 +2614,7 @@
 
     try {
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/${tabela}?order=nome.asc&select=id,nome,descricao,endereco,site,horario_funcionamento,foto`,
+        `${SUPA_URL}/rest/v1/${tabela}?order=nome.asc&select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
       const lugares = await r.json();
@@ -2491,10 +2683,10 @@
     const data = new Date(ev.data_evento + 'T12:00:00');
     // Evento de vários dias mostra o período inteiro ("6 de nov a 6 de jan")
     const fimEv = String(ev.data_fim || '').slice(0, 10);
-    const curta = d => d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '');
+    const curta = d => d.toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' }).replace('.', '');
     const dataStr = fimEv && fimEv > String(ev.data_evento).slice(0, 10)
-      ? `${curta(data)} a ${curta(new Date(fimEv + 'T12:00:00'))}`
-      : data.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+      ? tr('{0} a {1}', curta(data), curta(new Date(fimEv + 'T12:00:00')))
+      : data.toLocaleDateString(LOCALE, { weekday:'long', day:'numeric', month:'long' });
     document.getElementById('evento-data-chip').innerHTML = selo('calendario', dataStr);
 
     // Nome
@@ -2555,8 +2747,8 @@
     const fim = String(ev.data_fim || '').slice(0, 10);
     let ate = '';
     if (fim && fim > ini) {
-      const f = new Date(fim + 'T12:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
-      ate = `<span class="chip-fonte">até ${f}</span>`;
+      const f = new Date(fim + 'T12:00:00').toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' });
+      ate = `<span class="chip-fonte">${esc(tr('até {0}', f))}</span>`;
     }
     // Horário curto vira selo; texto longo vai numa linha abaixo do título
     const horaCurta = ev.horario && String(ev.horario).length <= 16;
@@ -2582,7 +2774,7 @@
       grupos.get(dia).push(ev);
     });
     return [...grupos.keys()].sort().map(dia => {
-      let titulo = new Date(dia + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+      let titulo = new Date(dia + 'T12:00:00').toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' });
       titulo = titulo.charAt(0).toUpperCase() + titulo.slice(1);
       if (dia === hoje) titulo = 'Hoje · ' + titulo;
       return `<h3 class="agenda-dia">${titulo}</h3>` + grupos.get(dia).map(renderEventoCard).join('');
@@ -2668,7 +2860,7 @@
     const tabela = tabelaMap[cat];
     if (!tabela) { feed.innerHTML = '<div class="carregando">Categoria não encontrada.</div>'; return; }
     try {
-      const r = await fetch(`${SUPA_URL}/rest/v1/${tabela}?order=nome.asc&select=id,nome,descricao,endereco,site,horario_funcionamento,foto`, cab);
+      const r = await fetch(`${SUPA_URL}/rest/v1/${tabela}?order=nome.asc&select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes`, cab);
       const lugares = await r.json();
       window._lugares = window._lugares || {};
       lugares.forEach(l => {
@@ -2713,10 +2905,10 @@
     document.getElementById('lugar-cat-chip').innerHTML = selo(IC_LUGAR[l.categoria] || 'pin', l.categoria||'');
 
     // Descrição — tenta campos com e sem acento
-    document.getElementById('lugar-desc').textContent = l.descricao || l['descrição'] || '';
+    document.getElementById('lugar-desc').textContent = trad(l, 'descricao') || l['descrição'] || '';
 
     // Infos — tenta variações de nome de coluna
-    const horario = l.horario_funcionamento || l['horário_funcionamento'] || l.horario || '';
+    const horario = trad(l, 'horario_funcionamento') || l['horário_funcionamento'] || l.horario || '';
     const endereco = l.endereco || l['endereço'] || '';
     const site = l.site || '';
     let infos = '';
@@ -2814,7 +3006,7 @@
   // Igrejas e museus com foto; a escolha gira um por dia e pula foto que não carrega
   async function escolherLugarDoDia() {
     const cab = { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } };
-    const campos = 'select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc';
+    const campos = 'select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes&order=nome.asc';
     const [ig, mu] = await Promise.all([
       fetch(`${SUPA_URL}/rest/v1/igrejas?${campos}`, cab).then(r => r.json()),
       fetch(`${SUPA_URL}/rest/v1/museus?${campos}`, cab).then(r => r.json())
@@ -2852,10 +3044,10 @@
         const curto = t => t.length > 44 ? t.slice(0, 43).trim() + '…' : t;
         set('destaque-cat', esc(l.categoria === 'Igrejas' ? 'Igreja' : 'Museu'));
         set('destaque-nome', nomeComEm(l.nome));
-        set('destaque-desc', resumo(l.descricao));
+        set('destaque-desc', resumo(trad(l, 'descricao')));
         document.getElementById('destaque-img').style.backgroundImage = `url('${escUrl(l.foto)}')`;
         set('destaque-rating', l.horario_funcionamento
-          ? `${icone('relogio', 14, 2)} ${esc(curto(l.horario_funcionamento))}`
+          ? `${icone('relogio', 14, 2)} ${esc(curto(trad(l, 'horario_funcionamento')))}`
           : (l.endereco ? `${icone('pin', 14, 2)} ${esc(curto(l.endereco))}` : ''));
         set('destaque-fresco', '');
         if (badge) badge.textContent = 'Dica do dia';
@@ -3070,7 +3262,7 @@
       if (comComTexto.length) {
         secCom.style.display = 'block';
         elCom.innerHTML = comComTexto.slice(0, 5).map(a => {
-          const data = new Date(a.created_at).toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+          const data = new Date(a.created_at).toLocaleDateString(LOCALE, { day:'numeric', month:'short' });
           return `<article class="comentario-card">
             <div class="com-header">
               <span class="com-nome">${esc(a.nome_avaliador || 'Anônimo')}</span>
@@ -3129,10 +3321,10 @@
     try {
       const headers = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` };
       const [rIg, rMu, rMi, rPa, rRe, rUf] = await Promise.all([
-        fetch(`${SUPA_URL}/rest/v1/igrejas?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/museus?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/minas?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
-        fetch(`${SUPA_URL}/rest/v1/parques_cachoeiras?select=id,nome,descricao,endereco,site,horario_funcionamento,foto&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/igrejas?select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/museus?select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/minas?select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes&order=nome.asc`, { headers }),
+        fetch(`${SUPA_URL}/rest/v1/parques_cachoeiras?select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes&order=nome.asc`, { headers }),
         fetch(`${SUPA_URL}/rest/v1/republicas?select=*&order=nome.asc`, { headers }),
         fetch(`${SUPA_URL}/rest/v1/ufop_conteudo?ativo=eq.true&select=id,titulo,descricao,subcategoria,link,foto,data_encerramento,origem,unidade,campus,responsavel&order=created_at.desc`, { headers }),
       ]);
@@ -3247,7 +3439,7 @@
       if (p) somar('Comércios e serviços', { p, tipo: 'loja', l, i });
     });
     (lugares || []).forEach(l => {
-      let cat = l._cat, resto = [l.descricao, l.endereco].join(' ');
+      let cat = l._cat, resto = [l.descricao, trad(l, 'descricao'), l.endereco].join(' ');
       if (l._cat === 'UFOP') {
         const sub = (typeof UFOP_SUBCATS !== 'undefined' ? UFOP_SUBCATS : []).find(s => s.key === l.subcategoria);
         cat = ['UFOP', sub ? sub.label : '', l.subcategoria].join(' ');
@@ -3315,7 +3507,7 @@
     }
     if (it.tipo === 'evento') {
       const ini = String(l.data_evento || '').slice(0, 10), fim = String(l.data_fim || '').slice(0, 10);
-      const dia = d => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+      const dia = d => new Date(d + 'T12:00:00').toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' });
       const quando = fim && fim > ini ? `até ${dia(fim)}` : (ini ? dia(ini) : '');
       const thumb = l.foto ? `background-image:url('${escUrl(l.foto)}');` : '';
       return `<div class="lugar" onclick="abrirEventoCompleto('${esc(l.id)}')">
@@ -4427,7 +4619,7 @@
     const lista = document.getElementById('card-ev-lista');
     if (!lista) return;
     const hoje = hojeISO();
-    const dataLonga = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    const dataLonga = new Date().toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' });
     const eyebrow = document.getElementById('hoje-data');
     if (eyebrow) eyebrow.textContent = dataLonga.charAt(0).toUpperCase() + dataLonga.slice(1);
     document.querySelectorAll('.filtros-hoje .filtro').forEach((b, i) => {
@@ -4458,10 +4650,10 @@
       const d = new Date((ehHoje ? hoje : ini(ev)) + 'T12:00:00');
       const rotulo = ehHoje ? 'hoje'
         : (d - new Date(hoje + 'T12:00:00') <= semana
-          ? d.toLocaleDateString('pt-BR', { weekday: 'short' })
-          : d.toLocaleDateString('pt-BR', { month: 'short' })).replace('.', '');
+          ? d.toLocaleDateString(LOCALE, { weekday: 'short' })
+          : d.toLocaleDateString(LOCALE, { month: 'short' })).replace('.', '');
       const ate = fim(ev) > ini(ev) && fim(ev) > hoje
-        ? 'até ' + new Date(fim(ev) + 'T12:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '')
+        ? tr('até {0}', new Date(fim(ev) + 'T12:00:00').toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' }).replace('.', ''))
         : '';
       const sub = [ate, ev.horario, localCurto(ev.local)].filter(Boolean).join(' · ');
       return `<div class="ev-row" onclick="abrirEventoCompleto('${esc(ev.id)}')">
@@ -4672,7 +4864,7 @@
   async function carregarLugaresMapa(tabela, cat) {
     try {
       const r = await fetch(
-        `${SUPA_URL}/rest/v1/${tabela}?select=id,nome,descricao,endereco,foto,lat,lng&order=nome.asc`,
+        `${SUPA_URL}/rest/v1/${tabela}?select=id,nome,descricao,endereco,foto,lat,lng,traducoes&order=nome.asc`,
         { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
       );
       const lugares = await r.json();
@@ -5341,7 +5533,7 @@
   async function carregarAdmin() {
     const corpo = document.getElementById('admin-corpo');
     const atualizado = document.getElementById('admin-atualizado');
-    atualizado.textContent = 'Atualizado agora · ' + new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    atualizado.textContent = 'Atualizado agora · ' + new Date().toLocaleTimeString(LOCALE, { hour:'2-digit', minute:'2-digit' });
 
     try {
       // Busca tudo em paralelo
@@ -5399,7 +5591,7 @@
         <div class="admin-sec">
           <h3>Promoção termina em 7 dias</h3>
           ${promoFim.length ? promoFim.map(l => {
-            const dt = new Date(String(l.gratis_ate).slice(0, 10) + 'T12:00:00').toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+            const dt = new Date(String(l.gratis_ate).slice(0, 10) + 'T12:00:00').toLocaleDateString(LOCALE, { day:'numeric', month:'short' });
             const venceu = String(l.gratis_ate).slice(0, 10) < hojeISO();
             let dig = String(l['TELEFONE'] || '').replace(/\D/g, '');
             if (dig && !(dig.startsWith('55') && dig.length >= 12)) dig = '55' + dig;
@@ -5434,7 +5626,7 @@
         <div class="admin-sec">
           <h3>Avaliações recentes</h3>
           ${avals.length ? avals.map(a => {
-            const dt = new Date(a.created_at).toLocaleDateString('pt-BR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+            const dt = new Date(a.created_at).toLocaleDateString(LOCALE, { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
             const nota = parseFloat(a.nota_geral||0).toFixed(1);
             return `<div class="admin-row">
               <span class="nome">Loja #${esc(a.loja_id)}</span>
@@ -5447,7 +5639,7 @@
         <div class="admin-sec">
           <h3>Próximos eventos</h3>
           ${proxEventos.slice(0,5).map(e => {
-            const dt = new Date(e.data_evento + 'T12:00:00').toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+            const dt = new Date(e.data_evento + 'T12:00:00').toLocaleDateString(LOCALE, { day:'numeric', month:'short' });
             return `<div class="admin-row">
               <span class="nome">${esc(e.nome)}</span>
               <span class="quando">${dt}</span>
@@ -5592,7 +5784,7 @@
   registrarSessao();
 </script>
 <!-- TELA DE ATIVAÇÃO (promoção de 90 dias; o id continua tela-pagamento) -->
-<div id="tela-pagamento" class="tela oculta">
+<div id="tela-pagamento" data-sem-traducao class="tela oculta">
   <div class="pag-content">
     <div class="ativ-check" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>
     <div class="ativ-eyebrow">Perfil criado</div>
@@ -5631,7 +5823,7 @@
 </div>
 
 <!-- TELA ADMIN -->
-<div id="tela-admin" class="tela oculta">
+<div id="tela-admin" data-sem-traducao class="tela oculta">
   <div class="admin-header">
     <div class="eyebrow">Painel administrativo</div>
     <h2>Dica de <em>Ouro</em></h2>
@@ -5775,7 +5967,7 @@
     var primeiro = lista && lista.firstElementChild;
     if (!primeiro || primeiro.classList.contains('dica-banner') || lista.querySelector(':scope > .dica-banner')) return;
     var aviso = lista.children.length === 1 && primeiro.classList.contains('carregando');
-    var texto = aviso ? (primeiro.textContent || '').trim() : '';
+    var texto = aviso ? (textoOriginal(primeiro) || '').trim() : '';
     if (aviso && !/^Nenhum/.test(texto)) return; // carregando ou erro: espera o conteúdo
     if (VAZIO_REPUBLICA.test(texto)) ctx = 'republicas';
     var html = bannerDoContexto(ctx);
@@ -5933,6 +6125,14 @@
 
 <!-- Avisos e confirmação no estilo do guia -->
 <div id="aviso-toast" class="aviso-toast" role="status" aria-live="polite" hidden></div>
+<dialog id="dialogo-lingua" class="dialogo dialogo-lingua" aria-labelledby="lingua-titulo">
+  <form method="dialog">
+    <h2 id="lingua-titulo">Escolha o idioma</h2>
+    <div class="linguas" role="group" aria-labelledby="lingua-titulo" data-sem-traducao><button type="button" lang="pt-BR" data-lingua="pt" onclick="trocarLingua('pt')">Português</button><button type="button" lang="en" data-lingua="en" onclick="trocarLingua('en')">English</button><button type="button" lang="es" data-lingua="es" onclick="trocarLingua('es')">Español</button><button type="button" lang="fr" data-lingua="fr" onclick="trocarLingua('fr')">Français</button></div>
+    <p class="so-traduzido" hidden>Eventos, notícias da UFOP e repúblicas aparecem em português.</p>
+    <div class="dialogo-acoes"><button type="submit" value="fechar" class="dialogo-cancelar">Fechar</button></div>
+  </form>
+</dialog>
 <dialog id="dialogo-confirmar" class="dialogo" aria-labelledby="dialogo-titulo" aria-describedby="dialogo-texto">
   <form method="dialog">
     <h2 id="dialogo-titulo">Confirmar</h2>
@@ -6025,7 +6225,7 @@
   }
   function atualizarTitulo() {
     var t = tituloDaTela(telaAtual);
-    document.title = t ? t + ' · Dica de Ouro' : TITULO_SITE;
+    document.title = t ? traduzir(t) + ' · Dica de Ouro' : TITULO_SITE;
   }
 
   // Grava a tela atual: "push" cria uma entrada no histórico (o voltar retorna a ela), "replace" só atualiza a atual
@@ -6121,7 +6321,7 @@
     var nome = item.nome || item.titulo || 'Dica de Ouro';
     var url = SITE + rotaDaTela(telaAtual);
     registrarAcesso('compartilhar', item.id || '-', nome);
-    var texto = nome + ' no Dica de Ouro, o guia de Ouro Preto:';
+    var texto = tr('{0} no Dica de Ouro, o guia de Ouro Preto:', nome);
     if (navigator.share) navigator.share({ title: 'Dica de Ouro', text: texto, url: url }).catch(function () {});
     else window.open('https://wa.me/?text=' + encodeURIComponent(texto + ' ' + url), '_blank');
   };
@@ -6143,7 +6343,7 @@
   var baseLugares = null;
   function carregarLugaresBase() {
     if (baseLugares) return baseLugares;
-    var campos = 'select=id,nome,descricao,endereco,site,horario_funcionamento,foto';
+    var campos = 'select=id,nome,descricao,endereco,site,horario_funcionamento,foto,traducoes';
     var tabelas = [['igrejas', 'Igrejas'], ['museus', 'Museus'], ['minas', 'Minas'], ['parques_cachoeiras', 'Parques']];
     var pedidos = tabelas.map(function (t) {
       return fetch(SUPA_URL + '/rest/v1/' + t[0] + '?' + campos, cabecalho()).then(function (r) { return r.json(); }).then(function (lista) {
@@ -6198,7 +6398,7 @@
       var cat = porSlug(CATS_HOME, m[1]);
       irParaHome();
       // Espera a lista da home terminar de carregar; senão ela chega depois e cobre a categoria
-      await esperar(function () { return !/Carregando/.test(document.getElementById('lista-lojas').textContent); }, 15000);
+      await esperar(function () { return !/Carregando/.test(textoOriginal(document.getElementById('lista-lojas'))); }, 15000);
       if (cat && chipHome(cat)) filtrarLojas(cat, chipHome(cat));
       return;
     }
